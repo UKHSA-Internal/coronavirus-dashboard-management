@@ -1,0 +1,283 @@
+from opencensus.ext.azure.log_exporter import AzureLogHandler
+from middleware.tracers.azure.exporter import Exporter as AzureExporter
+from opencensus.trace import config_integration
+
+from pathlib import Path
+from sys import stdout
+from os import getenv
+import re
+
+
+config_integration.trace_integrations(['postgresql'])
+config_integration.trace_integrations(['logging'])
+config_integration.trace_integrations(['requests'])
+
+
+db_cstr_pattern = re.compile(
+    r'^postgresql://'
+    r'(?P<USER>[^:]+):'
+    r'(?P<PASSWORD>.*)@'
+    r'(?P<HOST>[^/]+)/'
+    r'(?P<NAME>\w+)$',
+    re.ASCII | re.VERBOSE
+)
+
+db_cstr = getenv("POSTGRES_CONNECTION_STRING")
+db_creds = db_cstr_pattern.search(db_cstr)
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+ENVIRONMENT = getenv("API_ENV")
+INSTRUMENTATION_KEY_RAW = getenv("APPINSIGHTS_INSTRUMENTATIONKEY", "")
+INSTRUMENTATION_KEY = f'InstrumentationKey={INSTRUMENTATION_KEY_RAW}'
+CLOUD_ROLE_NAME = getenv("WEBSITE_SITE_NAME", "Administration")
+
+SECRET_KEY = getenv("DJANGO_SECRET_KEY")
+
+DEBUG = getenv("IS_DEV", "0") == "1"
+
+if not DEBUG:
+    IS_LIVE = True
+    SESSION_COOKIE_HTTPONLY = True
+
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+
+    SESSION_COOKIE_SECURE = True
+
+    CSRF_COOKIE_SECURE = True
+    SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+    SECURE_HSTS_SECONDS = 600
+    SECURE_HSTS_PRELOAD = True
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+    SECURE_REFERRER_POLICY = 'same-origin'
+
+    SECURE_SSL_REDIRECT = True
+
+    SESSION_COOKIE_AGE = 600
+
+    USE_X_FORWARDED_HOST = True
+
+
+ALLOWED_HOSTS = [
+    '0.0.0.0',
+    '.coronavirus.data.gov.uk'
+]
+
+# Application definition
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'guardian',
+    'service_admin',
+    'markdownx',
+    'django_admin_json_editor'
+]
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'middleware.tracers.django.TraceRequestMiddleware'
+
+]
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'guardian.backends.ObjectPermissionBackend',
+)
+
+ROOT_URLCONF = 'administration.urls'
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            BASE_DIR.joinpath("templates")
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+WSGI_APPLICATION = 'administration.wsgi.application'
+ASGI_APPLICATION = 'administration.asgi.application'
+
+# Database
+# https://docs.djangoproject.com/en/3.1/ref/settings/#databases
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django_multitenant.backends.postgresql',
+        'SCHEMA': 'covid19',
+        **db_creds.groupdict(),
+        'OPTIONS': {
+            'sslmode': 'require',
+            'options': '-c search_path=public,covid19'
+        }
+    },
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #     'SCHEMA': 'covid19',
+    #     **db_creds_prod.groupdict(),
+    #     'OPTIONS': {
+    #         'sslmode': 'require',
+    #         'options': '-c search_path=public,covid19'
+    #     }
+    # }
+}
+
+
+# Password validation
+# https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME':
+            'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'OPTIONS': {
+            'max_similarity': 0.3,
+        },
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 15,
+        },
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+]
+
+
+# log_handler = AzureLogHandler(instrumentation_key=INSTRUMENTATION_KEY_RAW)
+# log_handler.add_telemetry_processor(
+#     lambda envelope: envelope.tags.update({'ai.cloud.role': CLOUD_ROLE_NAME})
+# )
+
+EXPORTER = AzureExporter(instrumentation_key=INSTRUMENTATION_KEY_RAW)
+EXPORTER.add_telemetry_processor(
+    lambda envelope: envelope.tags.update({'ai.cloud.role': CLOUD_ROLE_NAME})
+)
+
+OPENCENSUS = {
+    'TRACE': {
+        'SAMPLER': 'opencensus.trace.samplers.AlwaysOnSampler()',
+        'EXPORTER': EXPORTER,
+    }
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    "handlers": {
+        "azure": {
+            "level": "INFO",
+            "class": "opencensus.ext.azure.log_exporter.AzureLogHandler",
+            "instrumentation_key": INSTRUMENTATION_KEY_RAW
+        },
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "stream": stdout,
+        },
+      },
+    "loggers": {
+        'django': {
+            'handlers': ["azure", "console"],
+            'propagate': True,
+            'level': 'INFO'
+        },
+        'uvicorn': {
+            'handlers': ["azure", "console"],
+            'propagate': True,
+            'level': 'INFO'
+        },
+        'gunicorn': {
+            'handlers': ["azure", "console"],
+            'propagate': True,
+            'level': 'INFO'
+        },
+    },
+}
+
+
+# Internationalization
+
+LANGUAGE_CODE = 'en-GB'
+
+TIME_ZONE = 'UTC'
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = True
+
+FIRST_DAY_OF_WEEK = 1  # Monday
+
+# -------------------------------------------------------------------
+# STATIC FILES
+# -------------------------------------------------------------------
+
+STATIC_URL = '/static/'
+
+STATIC_ROOT = BASE_DIR.joinpath('static')
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
+
+STATICFILES_DIRS = [
+    BASE_DIR.joinpath('static_private')
+]
+
+
+DEFAULT_FILE_STORAGE = 'storage.handler.AzureStorage'
+STATICFILES_STORAGE = 'storage.handler.AzureStorage'
+
+
+AZURE_CONNECTION_STRING = getenv("DeploymentBlobStorage")
+AZURE_SSL = True
+AZURE_UPLOAD_MAX_CONN = 10
+AZURE_CONNECTION_TIMEOUT_SECS = 20
+AZURE_BLOB_MAX_MEMORY_SIZE = '2MB'
+AZURE_URL_EXPIRATION_SECS = None
+AZURE_OVERWRITE_FILES = True
+AZURE_LOCATION = "admin"
+AZURE_CONTAINER = "static"
+AZURE_CACHE_CONTROL = "public, max-age=600, s-maxage=1800"

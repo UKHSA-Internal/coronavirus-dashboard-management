@@ -1,0 +1,17 @@
+{% load i18n static %}
+{% if cl.search_fields %}
+<div id="toolbar"><form id="govuk-fieldset" method="get">
+<div class="govuk-form-group govuk-!-margin-bottom-0"><!-- DIV needed for valid HTML -->
+<label class="govuk-label" for="searchbar">Search</label>
+<input class="govuk-input govuk-!-width-full" style="border-radius: 0; font-size: 1rem; padding: 3px; height: auto; border-color: black"
+       type="text" size="40" name="{{ search_var }}" value="{{ cl.query }}" id="searchbar" autofocus>
+	<button class="govuk-button govuk-!-margin-top-3 govuk-!-margin-bottom-1" type="submit">{% translate 'Search' %}</button>
+{% if show_result_count %}
+    <span class="small quiet">{% blocktranslate count counter=cl.result_count %}{{ counter }} result{% plural %}{{ counter }} results{% endblocktranslate %} (<a href="?{% if cl.is_popup %}_popup=1{% endif %}">{% if cl.show_full_result_count %}{% blocktranslate with full_result_count=cl.full_result_count %}{{ full_result_count }} total{% endblocktranslate %}{% else %}{% translate "Show all" %}{% endif %}</a>)</span>
+{% endif %}
+{% for pair in cl.params.items %}
+    {% if pair.0 != search_var %}<input type="hidden" name="{{ pair.0 }}" value="{{ pair.1 }}">{% endif %}
+{% endfor %}
+</div>
+</form></div>
+{% endif %}
