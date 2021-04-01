@@ -1254,3 +1254,6 @@ dmypy.json
 
 local.settings.json
 .env.dev
+
+
+app/static
