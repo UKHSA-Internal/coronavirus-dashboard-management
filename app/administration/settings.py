@@ -13,17 +13,7 @@ config_integration.trace_integrations(['logging'])
 config_integration.trace_integrations(['requests'])
 
 
-db_cstr_pattern = re.compile(
-    r'^postgresql://'
-    r'(?P<USER>[^:]+):'
-    r'(?P<PASSWORD>.*)@'
-    r'(?P<HOST>[^/]+)/'
-    r'(?P<NAME>\w+)$',
-    re.ASCII | re.VERBOSE
-)
-
 db_cstr = getenv("POSTGRES_CONNECTION_STRING")
-db_creds = db_cstr_pattern.search(db_cstr)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -127,25 +117,36 @@ ASGI_APPLICATION = 'administration.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+db_cstr_pattern = re.compile(
+    r'^postgres://'
+    r'(?P<USER>[^:]+):?'
+    r'(?P<PASSWORD>.*)?@'
+    r'(?P<HOST>[^/]+)/'
+    r'(?P<NAME>\w+)$',
+    re.ASCII | re.VERBOSE
+)
+
+db_creds = db_cstr_pattern.search(db_cstr).groupdict()
+
+DB_USER = getenv("Postgres_Write_Username", "")
+DB_PASSWORD = getenv("Postgres_Write_Password", "")
+DB_HOST = getenv("Postgres_Host", "")
+DB_NAME = getenv("Postgres_Db", "")
+
 DATABASES = {
     'default': {
         'ENGINE': 'django_multitenant.backends.postgresql',
         'SCHEMA': 'covid19',
-        **db_creds.groupdict(),
+        'DISABLE_SERVER_SIDE_CURSORS': False,
+        'USER': db_creds.get("USER", DB_USER),
+        'PASSWORD': db_creds.get("PASSWORD", DB_PASSWORD),
+        'HOST': db_creds.get("HOST", DB_HOST),
+        'NAME': db_creds.get("NAME", DB_NAME),
         'OPTIONS': {
             'sslmode': 'require',
-            'options': '-c search_path=public,covid19'
+            'options': '-c search_path=public,covid19',
         }
-    },
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #     'SCHEMA': 'covid19',
-    #     **db_creds_prod.groupdict(),
-    #     'OPTIONS': {
-    #         'sslmode': 'require',
-    #         'options': '-c search_path=public,covid19'
-    #     }
-    # }
+    }
 }
 
 
