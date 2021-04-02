@@ -35,7 +35,7 @@ if not DEBUG:
 
     SESSION_COOKIE_HTTPONLY = True
     SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-    SESSION_COOKIE_SECURE = True
+
     SESSION_COOKIE_DOMAIN = BASE_DOMAIN
     SESSION_COOKIE_AGE = 600
     SESSION_COOKIE_SAMESITE = 'Strict'
@@ -58,13 +58,13 @@ if not DEBUG:
 
     USE_X_FORWARDED_HOST = True
 
-    DISALLOWED_USER_AGENTS = [
-        re.compile(r'IE', re.IGNORECASE),
-        re.compile(r'bot', re.IGNORECASE),
-        re.compile(r'seamonkey', re.IGNORECASE),
-        re.compile(r'presto', re.IGNORECASE),
-        re.compile(r'trident', re.IGNORECASE),
-    ]
+DISALLOWED_USER_AGENTS = [
+    re.compile(r'IE', re.IGNORECASE),
+    re.compile(r'bot', re.IGNORECASE),
+    re.compile(r'seamonkey', re.IGNORECASE),
+    re.compile(r'presto', re.IGNORECASE),
+    re.compile(r'trident', re.IGNORECASE),
+]
 
 ALLOWED_HOSTS = [
     '0.0.0.0',
