@@ -67,8 +67,8 @@ RUN chmod +x /start-gunicorn.sh
 
 WORKDIR /app
 
-COPY ./server/uvicorn_worker.py                /app/app/uvicorn_worker.py
-COPY ./app/                                    /app/app/
+COPY app/                                      /app/app/
+COPY server/uvicorn_worker.py                  /app/app/uvicorn_worker.py
 COPY --from=builder /app/static_private/css    /app/app/static_private/css/
 #RUN chown -R app /app
 
