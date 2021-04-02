@@ -27,6 +27,9 @@ SECRET_KEY = getenv("DJANGO_SECRET_KEY")
 
 DEBUG = getenv("IS_DEV", "0") == "1"
 
+BASE_DOMAIN = '.coronavirus.data.gov.uk'
+
+
 if not DEBUG:
     IS_LIVE = True
     SESSION_COOKIE_HTTPONLY = True
@@ -38,6 +41,9 @@ if not DEBUG:
 
     CSRF_COOKIE_SECURE = True
     SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+    SESSION_COOKIE_DOMAIN = BASE_DOMAIN
+    CSRF_COOKIE_HTTPONLY = BASE_DOMAIN
 
     SECURE_HSTS_SECONDS = 600
     SECURE_HSTS_PRELOAD = True
@@ -53,10 +59,12 @@ if not DEBUG:
 
     USE_X_FORWARDED_HOST = True
 
+    SESSION_COOKIE_SAMESITE = 'Strict'
+
 
 ALLOWED_HOSTS = [
     '0.0.0.0',
-    '.coronavirus.data.gov.uk'
+    BASE_DOMAIN
 ]
 
 # Application definition
