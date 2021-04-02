@@ -32,17 +32,18 @@ BASE_DOMAIN = '.coronavirus.data.gov.uk'
 
 if not DEBUG:
     IS_LIVE = True
+
     SESSION_COOKIE_HTTPONLY = True
+    SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_DOMAIN = BASE_DOMAIN
+    SESSION_COOKIE_AGE = 600
+    SESSION_COOKIE_SAMESITE = 'Strict'
 
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_BROWSER_XSS_FILTER = True
 
-    SESSION_COOKIE_SECURE = True
-
     CSRF_COOKIE_SECURE = True
-    SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-
-    SESSION_COOKIE_DOMAIN = BASE_DOMAIN
     CSRF_COOKIE_HTTPONLY = BASE_DOMAIN
 
     SECURE_HSTS_SECONDS = 600
@@ -55,12 +56,15 @@ if not DEBUG:
 
     SECURE_SSL_REDIRECT = True
 
-    SESSION_COOKIE_AGE = 600
-
     USE_X_FORWARDED_HOST = True
 
-    SESSION_COOKIE_SAMESITE = 'Strict'
-
+    DISALLOWED_USER_AGENTS = [
+        re.compile(r'IE', re.IGNORECASE),
+        re.compile(r'bot', re.IGNORECASE),
+        re.compile(r'seamonkey', re.IGNORECASE),
+        re.compile(r'presto', re.IGNORECASE),
+        re.compile(r'trident', re.IGNORECASE),
+    ]
 
 ALLOWED_HOSTS = [
     '0.0.0.0',
