@@ -155,5 +155,6 @@ COPY server/config/uvicorn_worker.py           $_WORKER_CLASS_PATH
 USER app
 
 EXPOSE 5000
+EXPOSE 2222
 
 ENTRYPOINT ["/bin/bash", "/opt/entrypoint.sh"]
