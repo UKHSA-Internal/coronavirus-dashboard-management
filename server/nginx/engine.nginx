@@ -18,18 +18,19 @@ map $http_x_forwarded_host $best_host {
 
 upstream application {
 
-    server             0.0.0.0:5200;
+    server             0.0.0.0:5001;
 
 }
 
 
 server {
 
+    include            /opt/nginx/hosts.nginx;
     gzip               off;
     server_tokens      off;
     listen             5000;
     listen             [::]:5000 ipv6only=on default_server;
-    server_name        coronavirus.data.gov.uk;
+    server_name        $url_location;
     keepalive_timeout  65s;
     resolver_timeout   30s;
     uwsgi_read_timeout 60s;
