@@ -33,28 +33,29 @@ BASE_DOMAIN = '.coronavirus.data.gov.uk'
 if not DEBUG:
     IS_LIVE = True
 
-    SESSION_COOKIE_HTTPONLY = True
-    SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-    SESSION_COOKIE_SECURE = True
-    SESSION_COOKIE_DOMAIN = BASE_DOMAIN
-    SESSION_COOKIE_AGE = 600
-    SESSION_COOKIE_SAMESITE = 'Strict'
+    # SESSION_COOKIE_HTTPONLY = True
+    # SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+    # SESSION_COOKIE_SECURE = True
+    # SESSION_COOKIE_DOMAIN = BASE_DOMAIN
+    # SESSION_COOKIE_AGE = 600
+    # SESSION_COOKIE_SAMESITE = 'Strict'
+    #
+    # SECURE_CONTENT_TYPE_NOSNIFF = True
+    # SECURE_BROWSER_XSS_FILTER = True
+    #
+    # CSRF_COOKIE_SECURE = True
+    # CSRF_COOKIE_HTTPONLY = BASE_DOMAIN
+    #
+    # SECURE_HSTS_SECONDS = 600
+    # SECURE_HSTS_PRELOAD = True
+    # SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    #
+    #
+    # SECURE_REFERRER_POLICY = 'same-origin'
 
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_BROWSER_XSS_FILTER = True
-
-    CSRF_COOKIE_SECURE = True
-    CSRF_COOKIE_HTTPONLY = BASE_DOMAIN
-
-    SECURE_HSTS_SECONDS = 600
-    SECURE_HSTS_PRELOAD = True
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    # SECURE_SSL_REDIRECT = True
 
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-    SECURE_REFERRER_POLICY = 'same-origin'
-
-    SECURE_SSL_REDIRECT = True
 
     USE_X_FORWARDED_HOST = True
 
@@ -147,7 +148,7 @@ DB_NAME = getenv("Postgres_Db", "")
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django_multitenant.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'SCHEMA': 'covid19',
         'DISABLE_SERVER_SIDE_CURSORS': False,
         'USER': db_creds.get("USER", DB_USER),
