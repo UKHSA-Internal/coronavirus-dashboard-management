@@ -6,14 +6,7 @@ services:
     restart: always
     volumes:
       - ./app/:/app/app/
-      - ./server/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
-      - ./server/gunicorn_conf.py:/gunicorn_conf.py
-#      - ./app/static/dist/application.css:/app/app/static/application.css
-#      - ./app/static/images:/app/static/images
-#      - ./app/static/govuk-frontend:/app/static/govuk-frontend
-      - ./server/upload.nginx:/etc/nginx/conf.d/upload.conf
-      - ./server/engine.nginx:/etc/nginx/conf.d/engine.conf
-      - ./server/uvicorn_worker.py:/app/app/uvicorn_worker.py
+      - ./server/config/uvicorn_worker.py:/app/app/uvicorn_worker.py
     ports:
       - 5000:5000
     env_file:
