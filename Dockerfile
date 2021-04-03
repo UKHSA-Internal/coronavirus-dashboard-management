@@ -13,69 +13,147 @@ RUN npm run build
 RUN rm -rf node_modules
 
 
-FROM python:3.9.2-buster
+FROM python:3.9-buster
 LABEL maintainer="Pouria Hadjibagheri <Pouria.Hadjibagheri@phe.gov.uk>"
 
 # Gunicorn binding port
-ENV GUNICORN_PORT 5000
+ENV GUNICORN_PORT 5001
 
-#COPY server/install-nginx.sh          /install-nginx.sh
-#
-#RUN bash /install-nginx.sh
-#RUN rm /etc/nginx/conf.d/default.conf
+ENV PYTHONPATH            /app/app
+ENV CSS_PATH              $PYTHON_PATH/static_private/css/
+ENV DEFAULT_MODULE_NAME   administration.asgi
 
-RUN apt-get update                                                   && \
-    apt-get upgrade -y --no-install-recommends --no-install-suggests && \
-    rm -rf /var/lib/apt/lists/*
+# ----------------------------------------------------------------------------------------
+# Startup scripts - copied from `./server/startup/`
+# ----------------------------------------------------------------------------------------
+ENV ENTRYPOINT             entrypoint.sh
+ENV START_GUNICORN         start-gunicorn.sh
+ENV RELOAD                 start-reload.sh
 
+# ----------------------------------------------------------------------------------------
+# Configurations - copied from `./server/config/`
+# ----------------------------------------------------------------------------------------
+ENV GUNICORN_CONF         gunicorn_conf.py
+ENV SUPERVISOR_CONF       supervisord.conf
+# Do not include `.py` extension for Uvicorn
+ENV UVICORN_CONF          uvicorn_worker
 
+# ----------------------------------------------------------------------------------------
+# Supervisor configurations
+# ----------------------------------------------------------------------------------------
+ENV _RUNTIME_CONF_PATH     /opt
+ENV _SUPERVISOR_PATH       $_RUNTIME_CONF_PATH/supervisor
+ENV _SUPERVISOR_CONF_FILE  $_SUPERVISOR_PATH/$SUPERVISOR_CONF
+
+# ----------------------------------------------------------------------------------------
+# Uvicorn configurations
+# ----------------------------------------------------------------------------------------
+# Uvicorn worker class
+ENV _WORKER_CLASS_NAME     APIUvicornWorker
+# Import path
+ENV _WORKER_CLASS          $UVICORN_CONF.$_WORKER_CLASS_NAME
+ENV _WORKER_CLASS_PATH     $PYTHONPATH/$UVICORN_CONF.py
+
+# ----------------------------------------------------------------------------------------
+# Gunicorn config
+# ----------------------------------------------------------------------------------------
+ENV _GUNICORN_CONF         $_RUNTIME_CONF_PATH/gunicorn/$GUNICORN_CONF
+ENV _START_GUNICORN        $_RUNTIME_CONF_PATH/gunicorn/$START_GUNICORN
+
+# ----------------------------------------------------------------------------------------
+# Ngnix configurations - copied from `./server/ngnix/`
+# ----------------------------------------------------------------------------------------
+ENV _NGINX_RUNTIME_NAME   hosts.nginx
+ENV _NGINX_BASE_PATH      /etc/nginx
+ENV _NGINX_BASE_CONF      $_NGINX_BASE_PATH/conf.d
+ENV _NGINX_RUNTIME_CONF   $_RUNTIME_CONF_PATH/nginx/$_NGINX_RUNTIME_NAME
+
+# ----------------------------------------------------------------------------------------
+# Installation scripts - copied from `./server/installation/`
+# ----------------------------------------------------------------------------------------
+ENV _INSTALLATION         $_RUNTIME_CONF_PATH/installation        
+ENV _NGINX_INSTALLATION   $_INSTALLATION/install-nginx.sh
+
+# ----------------------------------------------------------------------------------------
+# Prestart scripts - copied from `./server/prestart/`
+# ----------------------------------------------------------------------------------------
+ENV PRESTART_INITIATOR     prestart.sh
+
+ENV _CUSTOM_PRESTART_PATH  $_RUNTIME_CONF_PATH/prestart
+ENV _PRESTART_SCRIPT       $_CUSTOM_PRESTART_PATH/$PRESTART_INITIATOR
+
+# Adding user + group
 RUN addgroup --system --gid 102 app                                  && \
     adduser  --system --disabled-login --ingroup app                    \
              --no-create-home --home /nonexistent                       \
              --gecos "app user" --shell /bin/false --uid 102 app
 
-# Install Supervisord
-RUN apt-get update                             && \
-    apt-get upgrade -y --no-install-recommends && \
+# Updating the OS + installing supervisor
+RUN apt-get update                                                   && \
+    apt-get upgrade -y --no-install-recommends --no-install-suggests && \
+    apt-get install -qy build-essential --no-install-recommends      && \
+    apt-get install -y --no-install-recommends supervisor            && \
     rm -rf /var/lib/apt/lists/*
 
-#COPY server/base.nginx               ./nginx.conf
-#COPY server/upload.nginx              /etc/nginx/conf.d/upload.conf
-#COPY server/engine.nginx              /etc/nginx/conf.d/engine.conf
+# Installing Nginx
+COPY server/installation/install-nginx.sh   $_NGINX_INSTALLATION
 
-COPY ./requirements.txt               /app/requirements.txt
+RUN bash $_NGINX_INSTALLATION             && \
+    rm /etc/nginx/conf.d/default.conf
 
-RUN python3 -m pip install --no-cache-dir -U pip                      && \
-    python3 -m pip install --no-cache-dir setuptools                  && \
-    python3 -m pip install -U --no-cache-dir -r /app/requirements.txt && \
-    rm /app/requirements.txt
+# Installing Python requirements
+COPY ./requirements.txt                     $_INSTALLATION/requirements.txt
 
-# Gunicorn config / entrypoint
-COPY server/gunicorn_conf.py        /gunicorn_conf.py
-COPY server/start-gunicorn.sh       /start-gunicorn.sh
-RUN chmod +x /start-gunicorn.sh
-#COPY ./start-reload.sh /start-reload.sh
-#RUN chmod +x /start-reload.sh
+RUN python3 -m pip install --no-cache-dir -U pip                                && \
+    python3 -m pip install --no-cache-dir setuptools                            && \
+    python3 -m pip install -U --no-cache-dir -r $_INSTALLATION/requirements.txt
 
-# Custom Supervisord config
-#COPY server/supervisord.conf          /etc/supervisor/conf.d/supervisord.conf
+# Nginx configurations
+COPY server/nginx/base.nginx                $_NGINX_BASE_PATH/nginx.conf
+COPY server/nginx/upload.nginx              $_NGINX_BASE_CONF/upload.conf
+COPY server/nginx/engine.nginx              $_NGINX_BASE_CONF/engine.conf
+COPY server/nginx/hosts.nginx               $_NGINX_RUNTIME_CONF
+
+# Gunicorn configurations
+COPY server/config/$GUNICORN_CONF           $_GUNICORN_CONF
+COPY server/startup/start-gunicorn.sh       $_START_GUNICORN
+RUN chmod +x $_START_GUNICORN
+
+# Supervisor configurations
+COPY server/config/$SUPERVISOR_CONF         $_SUPERVISOR_CONF_FILE
 
 # Main service entrypoint - launches supervisord
-#COPY server/entrypoint.sh             /entrypoint.sh
-#RUN chmod +x /entrypoint.sh
+COPY server/startup/entrypoint.sh           $_RUNTIME_CONF_PATH/$ENTRYPOINT
+RUN chgrp app $_RUNTIME_CONF_PATH/$ENTRYPOINT
+RUN chmod g+x $_RUNTIME_CONF_PATH/$ENTRYPOINT
 
+# Launch scripts
+COPY server/prestart/                       $_CUSTOM_PRESTART_PATH/
+RUN chgrp app $_CUSTOM_PRESTART_PATH
+RUN chmod +x $_PRESTART_SCRIPT
+RUN mkdir -p /app/app
 
-WORKDIR /app
+RUN mkdir -p /run/supervisord/                      && \
+    mkdir -p $_RUNTIME_CONF_PATH/log/               && \
+    mkdir -p $_RUNTIME_CONF_PATH/gunicorn/          && \
+    mkdir -p $_RUNTIME_CONF_PATH/nginx/cache/       && \
+    chgrp -R app /var/cache/nginx/                  && \
+    chmod -R g+rw /var/cache/nginx/                 && \
+    chgrp -R app /app/                              && \
+    chmod -R g+r /app/                              && \
+    chgrp -R app $_RUNTIME_CONF_PATH/               && \
+    chmod -R g+wr $_RUNTIME_CONF_PATH/
 
-COPY app/                                      /app/app/
-COPY server/uvicorn_worker.py                  /app/app/uvicorn_worker.py
-COPY --from=builder /app/static_private/css    /app/app/static_private/css/
-#RUN chown -R app /app
+RUN rm -rf $_INSTALLATION
 
-ENV PYTHONPATH /app/app
+# Copying built styles
+COPY app/                                      $PYTHONPATH/
+COPY --from=builder /app/static_private/css    $CSS_PATH
+COPY server/config/uvicorn_worker.py           $_WORKER_CLASS_PATH
+
 
 USER app
 
 EXPOSE 5000
 
-ENTRYPOINT ["/start-gunicorn.sh"]
+ENTRYPOINT ["/bin/bash", "/opt/entrypoint.sh"]
