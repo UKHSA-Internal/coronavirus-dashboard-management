@@ -1,4 +1,5 @@
 from django.contrib import admin
+from .healthcheck import run_healthcheck
 from django.urls import path, re_path, include
 
 admin.site.site_header = 'Coronavirus Dashboard - Admin'  # default: "Django Administration"
@@ -9,4 +10,5 @@ admin.site.site_title = 'Coronavirus Dashboard - Admin'   # default: "Django sit
 urlpatterns = [
     path('', admin.site.urls),
     re_path(r'^markdownx/', include('markdownx.urls')),
+    re_path(r'^healthcheck/?', run_healthcheck),
 ]
