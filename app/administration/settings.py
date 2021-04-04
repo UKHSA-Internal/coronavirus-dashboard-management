@@ -59,6 +59,7 @@ if not DEBUG:
 
     USE_X_FORWARDED_HOST = True
 
+
 DISALLOWED_USER_AGENTS = [
     re.compile(r'IE', re.IGNORECASE),
     re.compile(r'bot', re.IGNORECASE),
@@ -67,10 +68,12 @@ DISALLOWED_USER_AGENTS = [
     re.compile(r'trident', re.IGNORECASE),
 ]
 
+
 ALLOWED_HOSTS = [
     '0.0.0.0',
     BASE_DOMAIN
 ]
+
 
 # Application definition
 
