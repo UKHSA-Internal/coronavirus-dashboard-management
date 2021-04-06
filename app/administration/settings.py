@@ -205,7 +205,7 @@ PASSWORD_HASHERS = [
 #     lambda envelope: envelope.tags.update({'ai.cloud.role': CLOUD_ROLE_NAME})
 # )
 
-EXPORTER = AzureExporter(instrumentation_key=INSTRUMENTATION_KEY_RAW)
+EXPORTER = AzureExporter(connection_string=INSTRUMENTATION_KEY)
 EXPORTER.add_telemetry_processor(
     lambda envelope: envelope.tags.update({'ai.cloud.role': CLOUD_ROLE_NAME})
 )
