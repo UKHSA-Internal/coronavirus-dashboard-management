@@ -16,7 +16,7 @@ Contributors:  Pouria Hadjibagheri
 # 3rd party:
 
 # Internal: 
-from .trancer import *
+from .tracer import *
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Header

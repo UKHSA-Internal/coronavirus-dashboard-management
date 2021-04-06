@@ -147,7 +147,6 @@ class TraceRequestMiddleware(MiddlewareMixin):
     """Saves the request in thread local"""
 
     def __init__(self, get_response=None):
-        super().__init__(get_response)
         settings = getattr(django.conf.settings, 'OPENCENSUS', {})
         settings = settings.get('TRACE', {})
 
@@ -173,7 +172,7 @@ class TraceRequestMiddleware(MiddlewareMixin):
         if django.VERSION >= (2,):  # pragma: NO COVER
             connection.execute_wrappers.append(_trace_db_call)
 
-
+        super().__init__(get_response)
 
     def process_request(self, request):
         """Called on each request, before Django decides which view to execute.
