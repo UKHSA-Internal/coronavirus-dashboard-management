@@ -8,6 +8,10 @@
 from django.utils.translation import gettext as _
 from django.db import models
 
+from django_multitenant import mixins as mt_mixins
+from django_multitenant import models as mt_models
+from django_multitenant import fields as mt_fields
+
 # Internal: 
 from .data import MetricReference
 from .fields import VarCharField

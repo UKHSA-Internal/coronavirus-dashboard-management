@@ -5,6 +5,7 @@ from django.contrib import admin
 from ...models.metric_docs import MetricAsset, MetricAssetToMetric
 from ...models.data import MetricReference
 from ..generic_admin import GuardedAdmin
+from ..mixins import ProdOnlyOps
 
 
 __all__ = [
@@ -19,7 +20,7 @@ class MetricInlineAdmin(admin.TabularInline):
 
 
 @admin.register(MetricAsset)
-class MetricAssetAdmin(GuardedAdmin):
+class MetricAssetAdmin(ProdOnlyOps, GuardedAdmin):
     search_fields = ('label',)
     readonly_fields = ['id']
     inlines = (MetricInlineAdmin,)

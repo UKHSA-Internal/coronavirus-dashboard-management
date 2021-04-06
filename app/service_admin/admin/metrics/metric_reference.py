@@ -15,6 +15,7 @@ from ..generic_admin import GuardedAdmin
 # from django_multitenant.
 
 from django_object_actions import DjangoObjectActions
+from ..mixins import ProdOnlyOps
 
 
 __all__ = [
@@ -144,7 +145,7 @@ def metric_tags(obj):
 
 
 @admin.register(MetricReference)
-class MetricReferenceAdmin(DjangoObjectActions, GuardedAdmin):
+class MetricReferenceAdmin(ProdOnlyOps, DjangoObjectActions, GuardedAdmin):
     search_fields = ('metric',)
     actions = [
         release_selected,

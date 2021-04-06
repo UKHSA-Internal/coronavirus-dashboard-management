@@ -10,7 +10,7 @@ from django.contrib import admin
 # Internal:
 from ..generic_admin import GuardedAdmin
 from ...models import MetricETLReference
-
+from ..mixins import ProdOnlyOps
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 __all__ = [
@@ -19,7 +19,7 @@ __all__ = [
 
 
 @admin.register(MetricETLReference)
-class MetricETLReferenceAdmin(GuardedAdmin):
+class MetricETLReferenceAdmin(ProdOnlyOps, GuardedAdmin):
     search_fields = ('metric',)
     list_per_page = 100
     ordering = ('metric',)

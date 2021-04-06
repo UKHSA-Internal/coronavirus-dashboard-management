@@ -4,6 +4,7 @@ from django.contrib import admin
 
 from ..models.data import AreaReference
 from .generic_admin import GuardedAdmin
+from .mixins import ProdOnlyOps
 
 
 __all__ = [
@@ -12,7 +13,7 @@ __all__ = [
 
 
 @admin.register(AreaReference)
-class AreaReferenceAdmin(GuardedAdmin):
+class AreaReferenceAdmin(ProdOnlyOps, GuardedAdmin):
     search_fields = ('area_type', 'area_name', 'area_code')
     list_per_page = 100
     ordering = ('area_name', 'area_type')

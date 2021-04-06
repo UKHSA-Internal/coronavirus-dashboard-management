@@ -10,6 +10,7 @@ from django.contrib import admin
 # Internal: 
 from ...models.page import Page
 from ..generic_admin import GuardedAdmin
+from ..mixins import ProdOnlyOps
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -20,7 +21,7 @@ __all__ = [
 
 
 @admin.register(Page)
-class PageAdmin(GuardedAdmin):
+class PageAdmin(ProdOnlyOps, GuardedAdmin):
     search_fields = [
         'title',
         'uri'

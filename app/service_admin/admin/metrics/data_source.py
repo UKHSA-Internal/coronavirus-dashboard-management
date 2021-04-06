@@ -4,6 +4,7 @@ from django.contrib import admin
 
 from ...models.metric_docs import MetricDataSource
 from ..generic_admin import GuardedAdmin
+from ..mixins import ProdOnlyOps
 
 
 __all__ = [
@@ -12,7 +13,7 @@ __all__ = [
 
 
 @admin.register(MetricDataSource)
-class MetricDataSourceAdmin(GuardedAdmin):
+class MetricDataSourceAdmin(ProdOnlyOps, GuardedAdmin):
     search_fields = ('label',)
 
     fieldsets = (

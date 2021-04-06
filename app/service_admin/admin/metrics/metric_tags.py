@@ -10,6 +10,8 @@ from ..generic_admin import GuardedAdmin
 
 from django_object_actions import DjangoObjectActions
 
+from ..mixins import ProdOnlyOps
+
 
 __all__ = [
     'TagAdmin'
@@ -70,7 +72,7 @@ class FilterByReleaseStatus(admin.SimpleListFilter):
 
 
 @admin.register(Tag)
-class TagAdmin(GuardedAdmin):
+class TagAdmin(ProdOnlyOps, GuardedAdmin):
     search_fields = ('tag',)
     # actions = [
     #     release_selected,

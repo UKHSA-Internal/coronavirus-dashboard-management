@@ -5,6 +5,7 @@ from django.contrib import admin
 from ...models.announcement import Announcement
 from ...models.page import Page
 from ..generic_admin import GuardedAdmin
+from ..mixins import ProdOnlyOps
 
 
 __all__ = [
@@ -22,7 +23,7 @@ class PageTagsInlineAdmin(admin.TabularInline):
 
 
 @admin.register(Announcement)
-class AnnouncementAdmin(GuardedAdmin):
+class AnnouncementAdmin(ProdOnlyOps, GuardedAdmin):
     readonly_fields = [
         'id'
     ]

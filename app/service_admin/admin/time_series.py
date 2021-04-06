@@ -9,6 +9,8 @@ from ..models.data import TimeSeries, ReleaseReference, MetricReference, AreaRef
 from .generic_admin import GuardedAdmin
 from django.conf import settings
 from django_admin_json_editor.admin import JSONEditorWidget
+from .mixins import ProdOnlyOps
+
 
 __all__ = [
     'TimeSeriesAdmin'
@@ -193,7 +195,7 @@ def dynamic_schema(obj):
 
 
 @admin.register(TimeSeries)
-class TimeSeriesAdmin(GuardedAdmin):
+class TimeSeriesAdmin(ProdOnlyOps, GuardedAdmin):
     search_fields = (
         'area_id__area_name',
         'area_id__area_type',

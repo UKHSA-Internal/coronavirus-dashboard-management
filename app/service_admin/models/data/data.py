@@ -1,19 +1,10 @@
-# Tracking file by folder pattern:  migrations
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
-from django.db import models, connection
-# from datetime import timedelta
+
+from django.db import models
 from django.utils.translation import gettext as _
 from django.utils import timezone
 from ..fields import VarCharField
 from django_multitenant import mixins as mt_mixins
 from django_multitenant import models as mt_models
-from django_multitenant import fields as mt_fields
 
 
 class TenantManager(mt_models.TenantManagerMixin, models.Manager):
