@@ -69,10 +69,12 @@ DISALLOWED_USER_AGENTS = [
 ]
 
 
+# Delegated to the server
 ALLOWED_HOSTS = [
-    '0.0.0.0',
-    BASE_DOMAIN,
-    getenv("WEBSITE_HOSTNAME")
+    '*'
+    # '0.0.0.0',
+    # BASE_DOMAIN,
+    # getenv("WEBSITE_HOSTNAME")
 ]
 
 
