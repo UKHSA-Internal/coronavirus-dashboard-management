@@ -55,7 +55,7 @@ SPAN_THREAD_LOCAL_KEY = 'django_span'
 EXCLUDELIST_PATHS = 'EXCLUDELIST_PATHS'
 EXCLUDELIST_HOSTNAMES = 'EXCLUDELIST_HOSTNAMES'
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('django')
 
 
 class _DjangoMetaWrapper(object):
@@ -274,3 +274,15 @@ class TraceRequestMiddleware(MiddlewareMixin):
             log.error('Failed to trace request', exc_info=True)
         finally:
             return response
+
+    def __call__(self, request):
+        try:
+            return super().__call__(request)
+        except Exception as err:
+            log.exception(err, exc_info=True)
+
+    async def __acall__(self, request):
+        try:
+            return await super().__acall__(request)
+        except Exception as err:
+            log.exception(err, exc_info=True)
