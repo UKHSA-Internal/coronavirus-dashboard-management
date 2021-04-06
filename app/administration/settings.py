@@ -71,7 +71,8 @@ DISALLOWED_USER_AGENTS = [
 
 ALLOWED_HOSTS = [
     '0.0.0.0',
-    BASE_DOMAIN
+    BASE_DOMAIN,
+    getenv("WEBSITE_HOSTNAME")
 ]
 
 
@@ -151,7 +152,7 @@ DB_NAME = getenv("Postgres_Db", "")
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django_multitenant.backends.postgresql',
         'SCHEMA': 'covid19',
         'DISABLE_SERVER_SIDE_CURSORS': False,
         'USER': db_creds.get("USER", DB_USER),
@@ -159,7 +160,6 @@ DATABASES = {
         'HOST': db_creds.get("HOST", DB_HOST),
         'NAME': db_creds.get("NAME", DB_NAME),
         'OPTIONS': {
-            'sslmode': 'require',
             'options': '-c search_path=public,covid19',
         }
     }
@@ -298,3 +298,4 @@ AZURE_OVERWRITE_FILES = True
 AZURE_LOCATION = "admin"
 AZURE_CONTAINER = "static"
 AZURE_CACHE_CONTROL = "public, max-age=600, s-maxage=1800"
+# AZURE_CUSTOM_DOMAIN = getenv("URL_LOCATION")
