@@ -11,34 +11,40 @@ from .generic_admin import GuardedAdmin
 
 from django_object_actions import DjangoObjectActions
 
+from django.conf import settings
+from service_admin.utils.presets import ServiceName
+
 
 __all__ = [
     'ReleaseReferenceAdmin'
 ]
 
 
-def release_selected_for_testing(modeladmin, request, queryset):
+SERVICE_NAME = getattr(ServiceName, settings.ENVIRONMENT)
+
+# def release_selected_for_testing(modeladmin, request, queryset):
+#     queryset.update(released=True)
+#     update_timestamps(env="TEST")
+#
+#
+# release_selected_for_testing.short_description = "Release selected deployments on Tulip"
+#
+#
+# def release_selected_for_development(modeladmin, request, queryset):
+#     queryset.update(released=True)
+#     update_timestamps(env="DEVELOPMENT")
+#
+#
+# release_selected_for_testing.short_description = "Release selected deployments on Daisy"
+#
+
+
+def release_selected(modeladmin, request, queryset):
     queryset.update(released=True)
-    update_timestamps(env="TEST")
+    update_timestamps()
 
 
-release_selected_for_testing.short_description = "Release selected deployments on Tulip"
-
-
-def release_selected_for_development(modeladmin, request, queryset):
-    queryset.update(released=True)
-    update_timestamps(env="DEVELOPMENT")
-
-
-release_selected_for_testing.short_description = "Release selected deployments on Daisy"
-
-
-def release_selected_for_staging(modeladmin, request, queryset):
-    queryset.update(released=True)
-    update_timestamps(env="STAGING")
-
-
-release_selected_for_testing.short_description = "Release selected deployments on Snowdrop"
+release_selected.short_description = f"Release selected deployments on {SERVICE_NAME.capitalize()}"
 
 
 class FilterByReleaseCategory(admin.SimpleListFilter):
@@ -101,12 +107,12 @@ class ReleaseReferenceAdmin(DjangoObjectActions, GuardedAdmin):
     search_fields = ('label',)
     list_per_page = 20
     readonly_fields = ["category"]
-    actions = [release_selected_for_testing]
+    actions = [release_selected]
     list_filter = [
         FilterByReleaseStatus,
         FilterByReleaseCategory
     ]
-    changelist_actions = ('publish_latest_data',)
+    # changelist_actions = ('publish_latest_data',)
     list_display = [
         'formatted_release_time',
         'category',
@@ -134,5 +140,5 @@ class ReleaseReferenceAdmin(DjangoObjectActions, GuardedAdmin):
     formatted_release_time.admin_order_field = 'timestamp'
     formatted_release_time.short_description = 'release time'
 
-    def publish_latest_data(self, request, queryset):
-        pass
+    # def publish_latest_data(self, request, queryset):
+    #     pass
