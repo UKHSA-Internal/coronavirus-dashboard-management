@@ -10,7 +10,7 @@ opencensus-ext-azure
 opencensus-ext-logging
 opencensus-ext-requests
 opencensus-ext-django
-opencensus-ext-postgresql
+git+git://github.com/xenatisch/opencensus-python.git#subdirectory=contrib/opencensus-ext-postgresql
 gunicorn
 uvicorn[standard]
 django-storages[azure]
