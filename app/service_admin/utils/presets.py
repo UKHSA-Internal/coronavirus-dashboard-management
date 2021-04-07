@@ -12,7 +12,8 @@ from dataclasses import dataclass
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 __all__ = [
-    'Environment'
+    'Environment',
+    'ServiceName'
 ]
 
 
@@ -21,3 +22,10 @@ class Environment:
     DEVELOPMENT = "DEVELOPMENT"
     STAGING = "STAGING"
     PRODUCTION = "PRODUCTION"
+
+
+@dataclass()
+class ServiceName:
+    DEVELOPMENT = "daisy"
+    STAGING = "snowdrop"
+    PRODUCTION = "tulip"
