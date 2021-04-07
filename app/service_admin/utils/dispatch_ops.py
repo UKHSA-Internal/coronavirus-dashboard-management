@@ -24,8 +24,8 @@ UPLOAD_KWS = dict(
 )
 
 
-def update_timestamps(env):
-    conn_str = getenv(f"DeploymentBlobStorage_{env}")
+def update_timestamps():
+    conn_str = getenv(f"DeploymentBlobStorage")
 
     UPLOAD_KWS["connection_string"] = conn_str
 
