@@ -58,6 +58,8 @@ if not DEBUG:
 
     USE_X_FORWARDED_HOST = True
 
+    AZURE_CUSTOM_DOMAIN = getenv("URL_LOCATION")
+
 
 DISALLOWED_USER_AGENTS = [
     re.compile(r'IE', re.IGNORECASE),
@@ -299,4 +301,3 @@ AZURE_OVERWRITE_FILES = True
 AZURE_LOCATION = "admin"
 AZURE_CONTAINER = "static"
 AZURE_CACHE_CONTROL = "public, max-age=600, s-maxage=1800"
-# AZURE_CUSTOM_DOMAIN = getenv("URL_LOCATION")
