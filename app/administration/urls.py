@@ -8,7 +8,7 @@ admin.site.site_title = 'Coronavirus Dashboard - Admin'   # default: "Django sit
 
 
 urlpatterns = [
-    path('', admin.site.urls),
-    re_path(r'^markdownx/', include('markdownx.urls')),
     re_path(r'^healthcheck/?', run_healthcheck),
+    re_path(r'^markdownx/', include('markdownx.urls')),
+    path('', admin.site.urls),
 ]
