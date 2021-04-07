@@ -304,9 +304,14 @@ class AzureStorage(BaseStorage):
             #     self.azure_container, name, permission=BlobSasPermissions.READ, expiry=self._expire_at(expire))
             make_blob_url_kwargs['sas_token'] = sas_token
 
-            return self.custom_service.get_blob_client(filepath_to_uri(name)).url + f"?{sas_token}"
+            response = self.custom_service.get_blob_client(filepath_to_uri(name)).url + f"?{sas_token}"
+        else:
+            response = self.custom_service.get_blob_client(filepath_to_uri(name)).url
 
-        return self.custom_service.get_blob_client(filepath_to_uri(name)).url
+        if self.custom_domain:
+            return response.replace(self.custom_service.primary_hostname, self.custom_domain)
+
+        return response
 
     def _get_content_settings_parameters(self, name, content=None):
         params = {}
