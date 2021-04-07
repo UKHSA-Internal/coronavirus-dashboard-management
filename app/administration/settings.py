@@ -58,7 +58,7 @@ if not DEBUG:
 
     USE_X_FORWARDED_HOST = True
 
-    AZURE_CUSTOM_DOMAIN = getenv("URL_LOCATION")
+    AZURE_CUSTOM_DOMAIN = getenv("URL_LOCATION") + '/public'
 
 
 DISALLOWED_USER_AGENTS = [
