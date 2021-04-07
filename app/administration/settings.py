@@ -161,9 +161,9 @@ DATABASES = {
         'PASSWORD': db_creds.get("PASSWORD", DB_PASSWORD),
         'HOST': db_creds.get("HOST", DB_HOST),
         'NAME': db_creds.get("NAME", DB_NAME),
-        'OPTIONS': {
-            'options': '-c search_path=public,covid19',
-        }
+        # 'OPTIONS': {
+        #     'options': '-c search_path=public,covid19',
+        # }
     }
 }
 
