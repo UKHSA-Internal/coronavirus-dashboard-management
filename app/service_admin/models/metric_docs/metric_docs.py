@@ -37,6 +37,7 @@ class MetricAsset(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = 'covid19\".\"metric_asset'
 
 
@@ -64,6 +65,7 @@ class MetricAssetToMetric(mt_mixins.TenantModelMixin, models.Model):
     objects = TenantManager()
 
     class Meta:
+        managed = False
         db_table = 'covid19\".\"metric_asset_to_metric'
 
 
