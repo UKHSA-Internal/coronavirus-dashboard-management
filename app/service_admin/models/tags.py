@@ -51,6 +51,7 @@ class Tag(mt_mixins.TenantModelMixin, models.Model):
         return self.tag
 
     class Meta:
+        managed = False
         db_table = 'covid19"."tag'
         verbose_name = _("Tag")
         verbose_name_plural = _("Tags")
@@ -93,6 +94,7 @@ class MetricTag(mt_mixins.TenantModelMixin, models.Model):
         return self.tag.tag
 
     class Meta:
+        managed = False
         db_table = 'covid19"."metric_tag'
         unique_together = [
             ('tag', 'id')
