@@ -32,6 +32,10 @@ $govuk-breakpoints: (
 $primary-colour: #1d70b8;
 $govuk-secondary-text-colour: #6B7276;
 
+@media (prefers-color-scheme: dark) {
+  background:  white;
+}
+
 // GOVUK Frontend
 @import '../node_modules/govuk-frontend/govuk/all';
 @import '../node_modules/govuk-frontend/govuk/components/table';
