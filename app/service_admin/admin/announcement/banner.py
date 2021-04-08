@@ -22,6 +22,15 @@ class PageTagsInlineAdmin(admin.TabularInline):
     extra = 3
 
 
+class AreaInlineAdmin(admin.TabularInline):
+    model = Announcement.areas.through
+    # can_delete = False
+    # formset = BaselineMultiTenantFormset
+    # readonly_fields = ['id']
+    # exclude = ['id']
+    extra = 5
+
+
 @admin.register(Announcement)
 class AnnouncementAdmin(ProdOnlyOps, GuardedAdmin):
     readonly_fields = [
@@ -29,12 +38,14 @@ class AnnouncementAdmin(ProdOnlyOps, GuardedAdmin):
     ]
 
     list_display = [
+        "type",
         "appear_by_update",
         "disappear_by_update",
-        "date"
+        "date",
+        "released"
     ]
 
-    inlines = [PageTagsInlineAdmin]
+    inlines = [PageTagsInlineAdmin, AreaInlineAdmin]
 
     fieldsets = (
         (
@@ -42,7 +53,9 @@ class AnnouncementAdmin(ProdOnlyOps, GuardedAdmin):
             {
                 'fields': (
                     'id',
+                    'type',
                     ('appear_by_update', 'disappear_by_update', 'date'),
+                    'released',
                     'body'
                 ),
             },
