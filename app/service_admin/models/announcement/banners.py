@@ -26,11 +26,23 @@ __all__ = [
 
 
 class Announcement(models.Model):
+    type_choices = [
+        ("BANNER", _("Banner")),
+        ("LOG", _("Log")),
+    ]
+
     id = models.UUIDField(
         verbose_name=_("unique ID"),
         primary_key=True,
         editable=False,
         default=generate_unique_id
+    )
+    type = VarCharField(
+        verbose_name=_("announcement type"),
+        null=False,
+        blank=False,
+        max_length=10,
+        choices=type_choices
     )
     appear_by_update = models.DateField(
         verbose_name=_("appear by update"),
@@ -49,10 +61,23 @@ class Announcement(models.Model):
         null=True,
         blank=False
     )
+    released = models.BooleanField(
+        verbose_name=_("released"),
+        null=False,
+        blank=False,
+        default=False
+    )
     pages = models.ManyToManyField(
         Page,
+        related_name='page_announcements',
         through="BannerPage",
         through_fields=["announcement", "page"]
+    )
+    areas = models.ManyToManyField(
+        AreaReference,
+        related_name='area_announcements',
+        through="BannerArea",
+        through_fields=["announcement", "area"]
     )
     # relative_urls = models.ManyToManyField(PageURI)
     # applicable_areas = models.ManyToManyField(
@@ -63,10 +88,22 @@ class Announcement(models.Model):
     body = MarkdownxField(
         verbose_name=_("body"),
         blank=False,
-        max_length=200
+        max_length=250
+    )
+    heading = MarkdownxField(
+        verbose_name=_("heading"),
+        null=True,
+        max_length=120,
+        help_text=_("Log heading - only used when announcement type is set to \"log\".")
+    )
+    details = MarkdownxField(
+        verbose_name=_("details"),
+        null=True,
+        help_text=_("Additional information - only used when announcement type is set to \"log\".")
     )
 
     class Meta:
+        managed = False
         db_table = 'covid19"."announcement'
         verbose_name = _("Announcement")
 
@@ -82,8 +119,31 @@ class BannerPage(models.Model):
     page = models.ForeignKey(Page, on_delete=models.CASCADE)
 
     class Meta:
+        managed = False
         db_table = 'covid19"."banner_page'
         verbose_name = _("banner page")
+
+
+class BannerArea(models.Model):
+    id = models.UUIDField(
+        verbose_name=_("unique ID"),
+        primary_key=True,
+        editable=False,
+        default=generate_unique_id
+    )
+    announcement = models.ForeignKey(Announcement, on_delete=models.CASCADE)
+    area = models.ForeignKey(
+        AreaReference,
+        db_column='area',
+        to_field='unique_ref',
+        on_delete=models.CASCADE,
+        limit_choices_to=~models.Q(area_type__icontains="msoa")
+    )
+
+    class Meta:
+        managed = False
+        db_table = 'covid19"."banner_area'
+        verbose_name = _("banner area")
 
 
 # class BannerArea(models.Model):
