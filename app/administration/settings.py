@@ -4,7 +4,7 @@ from opencensus.trace import config_integration
 
 from pathlib import Path
 from sys import stdout
-from os import getenv
+from os import getenv, environ
 import re
 
 
@@ -13,9 +13,15 @@ config_integration.trace_integrations(['logging'])
 config_integration.trace_integrations(['requests'])
 
 
-db_cstr = getenv("POSTGRES_CONNECTION_STRING")
-
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+# with open(BASE_DIR.parent.joinpath(".env.dev")) as f:
+#     for key, value in re.findall(r"^(.+?)=(.*)$", f.read(), re.MULTILINE):
+#         environ[key] = value
+
+
+db_cstr = getenv("POSTGRES_CONNECTION_STRING")
 
 
 ENVIRONMENT = getenv("API_ENV")
@@ -37,7 +43,7 @@ if not DEBUG:
     SESSION_EXPIRE_AT_BROWSER_CLOSE = True
     SESSION_COOKIE_SECURE = True
     SESSION_COOKIE_DOMAIN = BASE_DOMAIN
-    SESSION_COOKIE_AGE = 600
+    SESSION_COOKIE_AGE = 1800
     SESSION_COOKIE_SAMESITE = 'Strict'
 
     SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -46,7 +52,7 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
     CSRF_COOKIE_HTTPONLY = BASE_DOMAIN
 
-    SECURE_HSTS_SECONDS = 600
+    SECURE_HSTS_SECONDS = 1800
     SECURE_HSTS_PRELOAD = True
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
@@ -58,7 +64,7 @@ if not DEBUG:
 
     USE_X_FORWARDED_HOST = True
 
-    AZURE_CUSTOM_DOMAIN = getenv("URL_LOCATION") + '/public'
+    AZURE_CUSTOM_DOMAIN = getenv("URL_LOCATION", "") + '/public'
 
 
 DISALLOWED_USER_AGENTS = [
