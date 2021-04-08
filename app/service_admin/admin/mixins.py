@@ -22,7 +22,7 @@ __all__ = [
 
 class ProdOnlyAdd:
     def has_add_permission(self, request):
-        if settings.ENVIRONMENT != Environment.PRODUCTION:
+        if settings.ENVIRONMENT != Environment.PRODUCTION and not request.user.is_superuser():
             return False
 
         return super().has_add_permission(request)
@@ -30,7 +30,7 @@ class ProdOnlyAdd:
 
 class ProdOnlyDelete:
     def has_delete_permission(self, request, obj=None):
-        if settings.ENVIRONMENT != Environment.PRODUCTION:
+        if settings.ENVIRONMENT != Environment.PRODUCTION and not request.user.is_superuser():
             return False
 
         return super().has_delete_permission(request, obj)
@@ -38,7 +38,7 @@ class ProdOnlyDelete:
 
 class ProdOnlyChange:
     def has_change_permission(self, request, obj=None):
-        if settings.ENVIRONMENT != Environment.PRODUCTION:
+        if settings.ENVIRONMENT != Environment.PRODUCTION and not request.user.is_superuser():
             return False
 
         return super().has_change_permission(request, obj)
