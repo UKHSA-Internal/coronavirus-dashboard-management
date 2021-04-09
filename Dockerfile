@@ -20,7 +20,7 @@ LABEL maintainer="Pouria Hadjibagheri <Pouria.Hadjibagheri@phe.gov.uk>"
 ENV GUNICORN_PORT 5001
 
 ENV PYTHONPATH            /app/app
-ENV CSS_PATH              $PYTHON_PATH/static_private/css/
+ENV CSS_PATH              $PYTHON_PATH/static_private/css
 ENV DEFAULT_MODULE_NAME   administration.asgi
 
 # ----------------------------------------------------------------------------------------
