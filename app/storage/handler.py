@@ -3,10 +3,12 @@
 import mimetypes
 from datetime import datetime, timedelta
 from tempfile import SpooledTemporaryFile
+from logging import getLogger
 
 from azure.common import AzureMissingResourceHttpError
 from azure.storage.blob import ContentSettings, BlobSasPermissions, generate_blob_sas
 from azure.storage.blob import ContainerClient
+from azure.core.exceptions import ResourceExistsError
 from django.core.exceptions import SuspiciousOperation
 from django.core.files.base import File
 from django.utils import timezone
@@ -19,6 +21,9 @@ from .utils import (
 
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files.storage import Storage
+
+
+logger = getLogger("django")
 
 
 class BaseStorage(Storage):
@@ -268,13 +273,17 @@ class AzureStorage(BaseStorage):
             content = content.file
 
         content.seek(0)
-        self.service.upload_blob(
-            name=name,
-            data=content.read(),
-            content_settings=ContentSettings(**params),
-            max_concurrency=self.upload_max_conn,
-            timeout=self.timeout
-        )
+        try:
+            self.service.upload_blob(
+                name=name,
+                data=content.read(),
+                content_settings=ContentSettings(**params),
+                max_concurrency=self.upload_max_conn,
+                timeout=self.timeout,
+                overwrite=self.overwrite_files
+            )
+        except ResourceExistsError():
+            logger.info(f"Blob {name} already exists and the overwrite flag is set to False.")
 
         return cleaned_name
 
