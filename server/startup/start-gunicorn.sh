@@ -9,7 +9,7 @@ python3 $PYTHONPATH/manage.py collectstatic \
           --ignore=*.ts --ignore=*.jsx --ignore=tsconfig.* \
           --ignore=npm* --ignore=._.DS_Store --ignore=_*   \
           --ignore=package.json --ignore=package-lock.json \
-          --ignore=.babelrc --ignore=*.log                 \
+          --ignore=.babelrc --ignore=*.log --ignore=*.sh   \
           --noinput &> /dev/null
 
 echo $DEFAULT_MODULE_NAME
