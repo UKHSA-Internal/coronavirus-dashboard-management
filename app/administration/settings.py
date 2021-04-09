@@ -283,7 +283,7 @@ FIRST_DAY_OF_WEEK = 1  # Monday
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = BASE_DIR.joinpath('static')
+STATIC_ROOT = BASE_DIR.joinpath('static_private')
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
