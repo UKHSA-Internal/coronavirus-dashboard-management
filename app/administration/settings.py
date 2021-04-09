@@ -66,6 +66,8 @@ if not DEBUG:
 
     AZURE_CUSTOM_DOMAIN = getenv("URL_LOCATION", "") + '/public'
 
+    AZURE_OVERWRITE_FILES = True
+
 
 DISALLOWED_USER_AGENTS = [
     re.compile(r'IE', re.IGNORECASE),
