@@ -33,8 +33,11 @@ class MetricETLReference(models.Model):
     )
     metric = models.OneToOneField(
         MetricReference,
+        to_field='metric',
+        db_column='metric_id',
         null=False,
         blank=False,
+        editable=False,
         on_delete=models.CASCADE
     )
     missing_to_zero = models.BooleanField(
@@ -74,6 +77,7 @@ class MetricETLReference(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = 'covid19"."metric_etl_reference'
         verbose_name = _("ETL Metric")
         verbose_name_plural = _("ETL Metrics")
