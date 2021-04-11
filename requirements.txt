@@ -20,3 +20,4 @@ azure-storage-common
 azure-storage-blob==12.8.0
 aiohttp
 asgiref
+azure-servicebus
