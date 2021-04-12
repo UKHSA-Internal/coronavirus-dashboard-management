@@ -26,7 +26,8 @@ TOPIC_NAME = "data-despatch"
 UPLOAD_KWS = dict(
     content_type="text/plain; charset=utf-8",
     cache="no-cache, max-age=0",
-    compressed=False
+    compressed=False,
+    connection_string=getenv(f"DeploymentBlobStorage")
 )
 
 
@@ -41,49 +42,26 @@ def update_timestamps():
             message = ServiceBusMessage("Data deployed")
             sender.send_messages(message)
 
-    # conn_str = getenv(f"DeploymentBlobStorage")
-    #
-    # UPLOAD_KWS["connection_string"] = conn_str
-    #
-    # kws = {
-    #     "path": "assets/dispatch/updated.txt",
-    #     "container": "publicdata"
-    # }
-    #
-    # with StorageClient(**kws, **UPLOAD_KWS) as client:
-    #     client.upload(datetime.utcnow().isoformat() + "Z")
-    #
-    # timestamp = datetime.utcnow().isoformat() + "5Z"
-    #
-    # paths = [
-    #     {
-    #         "value": timestamp.split("T")[0],
-    #         "path": "info/seriesDate",
-    #         "container": "pipeline"
-    #     },
-    #     {
-    #         "value": timestamp,
-    #         "path": "info/latest_available",
-    #         "container": "pipeline"
-    #     },
-    #     {
-    #         "value": timestamp,
-    #         "path": "info/latest_published",
-    #         "container": "pipeline"
-    #     },
-    #     {
-    #         "value": datetime.now().isoformat() + "Z",
-    #         "path": "assets/dispatch/website_timestamp",
-    #         "container": "publicdata"
-    #     },
-    #
-    # ]
-    #
-    # for item in paths:
-    #     kws = {**UPLOAD_KWS, **item}
-    #     value = kws.pop("value")
-    #
-    #     with StorageClient(**kws) as client:
-    #         client.upload(value)
+    timestamp = datetime.utcnow().isoformat() + "5Z"
+
+    paths = [
+        {
+            "value": timestamp.split("T")[0],
+            "path": "info/seriesDate",
+            "container": "pipeline"
+        },
+        {
+            "value": datetime.now().isoformat() + "Z",
+            "path": "assets/dispatch/website_timestamp",
+            "container": "publicdata"
+        }
+    ]
+
+    for item in paths:
+        kws = {**UPLOAD_KWS, **item}
+        value = kws.pop("value")
+
+        with StorageClient(**kws) as client:
+            client.upload(value)
 
     return True
