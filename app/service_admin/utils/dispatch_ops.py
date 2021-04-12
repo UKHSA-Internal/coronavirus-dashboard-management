@@ -42,7 +42,7 @@ def update_timestamps():
             message = ServiceBusMessage("Data deployed")
             sender.send_messages(message)
 
-    timestamp = datetime.utcnow().isoformat() + "5Z"
+    timestamp = datetime.utcnow().isoformat()  # + "5Z"
 
     paths = [
         {
@@ -51,7 +51,7 @@ def update_timestamps():
             "container": "pipeline"
         },
         {
-            "value": datetime.now().isoformat() + "Z",
+            "value": timestamp + "Z",
             "path": "assets/dispatch/website_timestamp",
             "container": "publicdata"
         }
