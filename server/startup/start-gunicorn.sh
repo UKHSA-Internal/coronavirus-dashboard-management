@@ -13,7 +13,7 @@ if [ ! -f /opt/migrated.txt ]; then
               --ignore=.babelrc --ignore=*.log --ignore=*.sh   \
               --noinput &> /dev/null
 
-    echo "migrated" &> "migrated.txt"
+    echo "migrated" &> /opt/migrated.txt
 fi
 
 
