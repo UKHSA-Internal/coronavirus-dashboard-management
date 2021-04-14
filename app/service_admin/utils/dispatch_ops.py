@@ -32,16 +32,6 @@ UPLOAD_KWS = dict(
 
 
 def update_timestamps():
-    sb_client = ServiceBusClient.from_connection_string(
-        conn_str=SB_CONNSTR,
-        logging_enable=True
-    )
-
-    with sb_client:
-        with sb_client.get_topic_sender(topic_name=TOPIC_NAME) as sender:
-            message = ServiceBusMessage("Data deployed")
-            sender.send_messages(message)
-
     timestamp = datetime.utcnow().isoformat()  # + "5Z"
 
     paths = [
@@ -63,5 +53,15 @@ def update_timestamps():
 
         with StorageClient(**kws) as client:
             client.upload(value)
+
+    sb_client = ServiceBusClient.from_connection_string(
+        conn_str=SB_CONNSTR,
+        logging_enable=True
+    )
+
+    with sb_client:
+        with sb_client.get_topic_sender(topic_name=TOPIC_NAME) as sender:
+            message = ServiceBusMessage("Data deployed")
+            sender.send_messages(message)
 
     return True
