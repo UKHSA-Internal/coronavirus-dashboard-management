@@ -44,6 +44,11 @@ def update_timestamps():
             "value": timestamp + "Z",
             "path": "assets/dispatch/website_timestamp",
             "container": "publicdata"
+        },
+        {
+            "value": timestamp + "5Z",
+            "path": "info/latest_published",
+            "container": "pipeline",
         }
     ]
 
