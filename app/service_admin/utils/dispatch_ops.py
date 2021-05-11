@@ -5,6 +5,7 @@
 # Python:
 from datetime import datetime
 from os import getenv
+from json import dumps
 
 # 3rd party:
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
@@ -21,6 +22,7 @@ __all__ = [
 
 SB_CONNSTR = getenv("SERVICEBUS_CONNECTION_STRING")
 TOPIC_NAME = "data-despatch"
+API_ENV = getenv("API_ENV")
 
 
 UPLOAD_KWS = dict(
@@ -64,9 +66,14 @@ def update_timestamps():
         logging_enable=True
     )
 
+    message = ServiceBusMessage(dumps({
+        "event": "data despatched.",
+        "environment": API_ENV,
+        "timestamp": datetime.utcnow().isoformat()
+    }))
+
     with sb_client:
         with sb_client.get_topic_sender(topic_name=TOPIC_NAME) as sender:
-            message = ServiceBusMessage("Data deployed")
             sender.send_messages(message)
 
     return True
