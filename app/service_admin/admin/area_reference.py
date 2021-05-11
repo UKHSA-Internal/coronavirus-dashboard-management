@@ -13,7 +13,7 @@ __all__ = [
 
 
 @admin.register(AreaReference)
-class AreaReferenceAdmin(ProdOnlyOps, GuardedAdmin):
+class AreaReferenceAdmin(GuardedAdmin):
     search_fields = ('area_type', 'area_name', 'area_code')
     list_per_page = 100
     ordering = ('area_name', 'area_type')
