@@ -17,7 +17,7 @@ FROM python:3.9-buster
 LABEL maintainer="Pouria Hadjibagheri <Pouria.Hadjibagheri@phe.gov.uk>"
 
 # Gunicorn binding port
-ENV GUNICORN_PORT 5001
+ENV GUNICORN_PORT 5000
 
 ENV PYTHONPATH            /app/app
 ENV CSS_PATH              $PYTHON_PATH/static_private/css
@@ -82,12 +82,6 @@ ENV PRESTART_INITIATOR     prestart.sh
 ENV _CUSTOM_PRESTART_PATH  $_RUNTIME_CONF_PATH/prestart
 ENV _PRESTART_SCRIPT       $_CUSTOM_PRESTART_PATH/$PRESTART_INITIATOR
 
-# Adding user + group
-RUN addgroup --system --gid 102 app                                  && \
-    adduser  --system --disabled-login --ingroup app                    \
-             --no-create-home --home /nonexistent                       \
-             --gecos "app user" --shell /bin/false --uid 102 app
-
 # Updating the OS + installing supervisor
 RUN apt-get update                                                   && \
     apt-get upgrade -y --no-install-recommends --no-install-suggests && \
@@ -117,32 +111,21 @@ COPY server/nginx/hosts.nginx               $_NGINX_RUNTIME_CONF
 # Gunicorn configurations
 COPY server/config/$GUNICORN_CONF           $_GUNICORN_CONF
 COPY server/startup/start-gunicorn.sh       $_START_GUNICORN
-RUN chmod +x $_START_GUNICORN
 
 # Supervisor configurations
 COPY server/config/$SUPERVISOR_CONF         $_SUPERVISOR_CONF_FILE
 
 # Main service entrypoint - launches supervisord
 COPY server/startup/entrypoint.sh           $_RUNTIME_CONF_PATH/$ENTRYPOINT
-RUN chgrp app $_RUNTIME_CONF_PATH/$ENTRYPOINT
-RUN chmod g+x $_RUNTIME_CONF_PATH/$ENTRYPOINT
 
 # Launch scripts
 COPY server/prestart/                       $_CUSTOM_PRESTART_PATH/
-RUN chgrp app $_CUSTOM_PRESTART_PATH
-RUN chmod +x $_PRESTART_SCRIPT
 RUN mkdir -p /app/app
 
 RUN mkdir -p /run/supervisord/                      && \
     mkdir -p $_RUNTIME_CONF_PATH/log/               && \
     mkdir -p $_RUNTIME_CONF_PATH/gunicorn/          && \
-    mkdir -p $_RUNTIME_CONF_PATH/nginx/cache/       && \
-    chgrp -R app /var/cache/nginx/                  && \
-    chmod -R g+rw /var/cache/nginx/                 && \
-    chgrp -R app /app/                              && \
-    chmod -R g+r /app/                              && \
-    chgrp -R app $_RUNTIME_CONF_PATH/               && \
-    chmod -R g+wr $_RUNTIME_CONF_PATH/
+    mkdir -p $_RUNTIME_CONF_PATH/nginx/cache/
 
 RUN rm -rf $_INSTALLATION
 
@@ -152,8 +135,8 @@ COPY --from=builder /app/static_private/css    $CSS_PATH
 COPY server/config/uvicorn_worker.py           $_WORKER_CLASS_PATH
 
 
-USER app
+#USER app
 
 EXPOSE 5000
 
-ENTRYPOINT ["/bin/bash", "/opt/entrypoint.sh"]
+ENTRYPOINT ["gunicorn", "-c", "opt/gunicorn/gunicorn_conf.py", "administration.asgi:app"]
