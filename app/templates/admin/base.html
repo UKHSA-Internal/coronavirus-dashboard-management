@@ -5,6 +5,10 @@
 <title>{% block title %}{% endblock %}</title>
 <meta name="theme-color" content="#000000" />
 <meta name="color-scheme" content="light">
+<meta name="robots" content="noindex,nofollow" />
+<meta name="googlebot" content="noindex,nofollow" />
+<meta name="googlebot-news" content="noindex,nosnippet,nofollow" />
+<meta name="AdsBot-Google" content="noindex,nofollow" />
 <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}">
 <link rel="stylesheet" type="text/css" href="{% static "css/css/application.css" %}">
 {% if not is_popup and is_nav_sidebar_enabled %}
