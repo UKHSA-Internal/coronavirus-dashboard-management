@@ -69,13 +69,7 @@ if not DEBUG:
     AZURE_OVERWRITE_FILES = True
 
 
-DISALLOWED_USER_AGENTS = [
-    re.compile(r'IE', re.IGNORECASE),
-    re.compile(r'bot', re.IGNORECASE),
-    re.compile(r'seamonkey', re.IGNORECASE),
-    re.compile(r'presto', re.IGNORECASE),
-    re.compile(r'trident', re.IGNORECASE),
-]
+DISALLOWED_USER_AGENTS = []
 
 
 # Delegated to the server
@@ -283,7 +277,7 @@ FIRST_DAY_OF_WEEK = 1  # Monday
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = BASE_DIR.joinpath('static_private')
+# STATIC_ROOT = BASE_DIR.joinpath('static_private')
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
