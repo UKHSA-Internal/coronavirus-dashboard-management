@@ -6,10 +6,7 @@ django-markdownx
 django_multitenant
 django-admin-json-editor
 django-object-actions
-opencensus-ext-azure
 opencensus-ext-logging
-opencensus-ext-requests
-opencensus-ext-django
 git+git://github.com/xenatisch/opencensus-python.git#subdirectory=contrib/opencensus-ext-postgresql
 gunicorn
 uvicorn[standard]
@@ -21,3 +18,8 @@ azure-storage-blob==12.8.0
 aiohttp
 asgiref
 azure-servicebus
+opencensus~=0.7.12
+opencensus-ext-azure==1.0.5
+opencensus-ext-logging==0.1.0
+opencensus-ext-requests
+opencensus-ext-django==0.7.4
