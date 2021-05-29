@@ -32,10 +32,9 @@ def test_db():
 
 def test_storage():
     with StorageClient("pipeline", "info/seen") as blob_client:
-        blob = blob_client.download()
-        blob_data = blob.readall()
+        blob_client.exists()
 
-    return {"storage": f"healthy - {blob_data.decode()}"}
+    return {"storage": f"healthy"}
 
 
 @require_http_methods(["GET", "HEAD"])
