@@ -139,4 +139,4 @@ COPY server/config/uvicorn_worker.py           $_WORKER_CLASS_PATH
 
 EXPOSE 5000
 
-ENTRYPOINT ["gunicorn", "-c", "opt/gunicorn/gunicorn_conf.py", "administration.asgi:app"]
+ENTRYPOINT ["gunicorn", "-c", "opt/gunicorn/gunicorn_conf.py", "administration.wsgi:app"]
