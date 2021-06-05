@@ -86,9 +86,6 @@ secure_scheme_headers = {
 }
 
 
-worker_class = getenv("_WORKER_CLASS")
-
-
 # For debugging and testing
 log_data = {
     "loglevel": loglevel,
@@ -104,7 +101,6 @@ log_data = {
     "use_max_workers": use_max_workers,
     "secure_scheme_headers": secure_scheme_headers,
     "proxy_protocol": proxy_protocol,
-    "worker_class": worker_class,
     "host": host,
     "port": port,
 }

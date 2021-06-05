@@ -10,6 +10,7 @@ from functools import reduce
 # 3rd party:
 from django.db import connection
 from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
 
 # Internal:
 from storage import StorageClient
@@ -31,12 +32,12 @@ def test_db():
 
 def test_storage():
     with StorageClient("pipeline", "info/seen") as blob_client:
-        blob = blob_client.download()
-        blob_data = blob.readall()
+        blob_client.exists()
 
-    return {"storage": f"healthy - {blob_data.decode()}"}
+    return {"storage": f"healthy"}
 
 
+@require_http_methods(["GET", "HEAD"])
 def run_healthcheck(request):
     response = {
         **test_db(),

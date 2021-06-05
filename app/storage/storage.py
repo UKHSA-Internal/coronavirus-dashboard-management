@@ -291,6 +291,16 @@ class StorageClient:
         "container", "path", "target", "url",
         name="account_name",
         dep_type="_name",
+        action="exists",
+        operation="HEAD"
+    )
+    def exists(self):
+        return self.client.exists()
+
+    @trace_method_operation(
+        "container", "path", "target", "url",
+        name="account_name",
+        dep_type="_name",
         action="list",
         operation="GET"
     )
