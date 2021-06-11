@@ -28,12 +28,13 @@ ENVIRONMENT = getenv("API_ENV")
 INSTRUMENTATION_KEY_RAW = getenv("APPINSIGHTS_INSTRUMENTATIONKEY", "")
 INSTRUMENTATION_KEY = f'InstrumentationKey={INSTRUMENTATION_KEY_RAW}'
 CLOUD_ROLE_NAME = getenv("WEBSITE_SITE_NAME", "Administration")
+CLOUD_INSTANCE_ID = getenv("WEBSITE_INSTANCE_ID", "local")
 
 SECRET_KEY = getenv("DJANGO_SECRET_KEY")
 
 DEBUG = getenv("IS_DEV", "0") == "1"
 
-BASE_DOMAIN = '.coronavirus.data.gov.uk'
+BASE_DOMAIN = f"greenhouse.{getenv('URL_LOCATION')}"
 
 
 if not DEBUG:
@@ -45,6 +46,7 @@ if not DEBUG:
     SESSION_COOKIE_DOMAIN = BASE_DOMAIN
     SESSION_COOKIE_AGE = 1800
     SESSION_COOKIE_SAMESITE = 'Strict'
+    SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_BROWSER_XSS_FILTER = True
@@ -65,8 +67,6 @@ if not DEBUG:
     USE_X_FORWARDED_HOST = True
 
     AZURE_CUSTOM_DOMAIN = getenv("URL_LOCATION", "") + '/public'
-
-    AZURE_OVERWRITE_FILES = True
 
 
 DISALLOWED_USER_AGENTS = []
@@ -212,7 +212,10 @@ PASSWORD_HASHERS = [
 
 EXPORTER = AzureExporter(connection_string=INSTRUMENTATION_KEY)
 EXPORTER.add_telemetry_processor(
-    lambda envelope: envelope.tags.update({'ai.cloud.role': CLOUD_ROLE_NAME})
+    lambda envelope: envelope.tags.update({
+        'ai.cloud.role': CLOUD_ROLE_NAME,
+        'ai.cloud.roleInstance': CLOUD_INSTANCE_ID
+    })
 )
 
 OPENCENSUS = {
