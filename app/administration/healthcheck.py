@@ -11,6 +11,7 @@ from functools import reduce
 from django.db import connection
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.cache import cache_page
 
 # Internal:
 from storage import StorageClient
@@ -24,7 +25,7 @@ __all__ = [
 
 def test_db():
     with connection.cursor() as conn:
-        conn.execute("SELECT NOW() AS timestamp;")
+        conn.execute("SELECT 1 AS timestamp;")
         response = conn.fetchone()
 
     return {"db": f"healthy - {response[0]}"}
@@ -38,6 +39,7 @@ def test_storage():
 
 
 @require_http_methods(["GET", "HEAD"])
+@cache_page(60)
 def run_healthcheck(request):
     response = {
         **test_db(),
