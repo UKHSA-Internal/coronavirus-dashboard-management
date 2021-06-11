@@ -126,6 +126,7 @@ class ReleaseReferenceAdmin(DjangoObjectActions, GuardedAdmin):
             None,
             {
                 'fields': (
+                    'id',
                     'timestamp',
                     'released',
                     'category'
