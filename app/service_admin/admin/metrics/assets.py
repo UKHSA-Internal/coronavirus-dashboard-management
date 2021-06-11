@@ -22,8 +22,13 @@ class MetricInlineAdmin(admin.TabularInline):
 @admin.register(MetricAsset)
 class MetricAssetAdmin(ProdOnlyOps, GuardedAdmin):
     search_fields = ('label',)
-    readonly_fields = ['id']
+    readonly_fields = ['id', 'last_modified']
     inlines = (MetricInlineAdmin,)
+    list_display = [
+        'label',
+        'released',
+        'last_modified',
+    ]
 
     fieldsets = (
         (
@@ -31,7 +36,9 @@ class MetricAssetAdmin(ProdOnlyOps, GuardedAdmin):
             {
                 'fields': (
                     'id',
+                    'last_modified',
                     'label',
+                    'released',
                     'body'
                 ),
             },
