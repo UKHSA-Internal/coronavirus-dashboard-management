@@ -29,7 +29,9 @@ class MetricAsset(models.Model):
         primary_key=True,
         default=generate_unique_id
     )
+    last_modified = models.DateTimeField(verbose_name=_("last modified"), auto_now=True, null=False)
     label = VarCharField(max_length=255, null=False, blank=False)
+    released = models.BooleanField(verbose_name=_("released"), default=False, null=False)
     body = MarkdownxField(null=False, blank=False)
     metric = models.ManyToManyField(
         MetricReference,
@@ -46,6 +48,8 @@ class MetricAssetToMetric(mt_mixins.TenantModelMixin, models.Model):
         ('ABSTRACT', _("Abstract")),
         ('DESCRIPTION', _("Description")),
         ('METHODOLOGY', _("Methodology")),
+        ('NOTICE', _("Notice")),
+        ('SOURCE', _("Source")),
     ]
 
     id = VarCharField(
