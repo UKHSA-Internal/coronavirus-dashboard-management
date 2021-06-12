@@ -39,7 +39,7 @@ def test_storage():
 
 
 @require_http_methods(["GET", "HEAD"])
-@cache_page(60)
+@cache_page(90)
 def run_healthcheck(request):
     response = {
         **test_db(),
