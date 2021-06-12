@@ -30,7 +30,7 @@ __license__ = "MIT"
 __version__ = "0.0.1"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-workers_per_core_str = getenv("WORKERS_PER_CORE", "1")
+workers_per_core_str = getenv("WORKERS_PER_CORE", "2")
 max_workers_str = getenv("MAX_WORKERS")
 use_max_workers = None
 
@@ -66,8 +66,8 @@ accesslog_var = getenv("ACCESS_LOG", "-")
 use_accesslog = accesslog_var or None
 errorlog_var = getenv("ERROR_LOG", "-")
 use_errorlog = errorlog_var or None
-graceful_timeout_str = getenv("GRACEFUL_TIMEOUT", "120")
-timeout_str = getenv("TIMEOUT", "120")
+graceful_timeout_str = getenv("GRACEFUL_TIMEOUT", "10")
+timeout_str = getenv("TIMEOUT", "30")
 keepalive_str = getenv("KEEP_ALIVE", "5")
 
 # Gunicorn config variables
