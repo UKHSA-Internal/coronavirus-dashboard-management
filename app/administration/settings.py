@@ -260,26 +260,27 @@ LOGGING = {
 }
 
 
-CACHES = {
-    "default": {
-        "BACKEND": "redis_cache.ShardedRedisCache",
-        "LOCATION": f'{getenv("AZURE_REDIS_HOST")}:{getenv("AZURE_REDIS_PORT")}',
-        "OPTIONS": {
-            "PASSWORD": getenv("AZURE_REDIS_PASSWORD"),
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            'CONNECTION_POOL_CLASS': 'redis.BlockingConnectionPool',
-            'CONNECTION_POOL_CLASS_KWARGS': {
-                'max_connections': 10,
-                'timeout': 10,
+if not DEBUG:
+    CACHES = {
+        "default": {
+            "BACKEND": "redis_cache.ShardedRedisCache",
+            "LOCATION": f'{getenv("AZURE_REDIS_HOST")}:{getenv("AZURE_REDIS_PORT")}',
+            "OPTIONS": {
+                "PASSWORD": getenv("AZURE_REDIS_PASSWORD"),
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                'CONNECTION_POOL_CLASS': 'redis.BlockingConnectionPool',
+                'CONNECTION_POOL_CLASS_KWARGS': {
+                    'max_connections': 10,
+                    'timeout': 10,
+                },
+                'SERIALIZER_CLASS': 'redis_cache.serializers.PickleSerializer',
+                'SERIALIZER_CLASS_KWARGS': {
+                    'pickle_version': -1
+                },
             },
-            'SERIALIZER_CLASS': 'redis_cache.serializers.PickleSerializer',
-            'SERIALIZER_CLASS_KWARGS': {
-                'pickle_version': -1
-            },
-        },
-        "KEY_PREFIX": "admin"
+            "KEY_PREFIX": "admin"
+        }
     }
-}
 
 
 # Internationalization
