@@ -2,7 +2,7 @@
 
 from django.contrib import admin
 
-from ...models.announcement import Announcement
+from ...models.announcement import Announcement, BannerTag
 from ...models.page import Page
 from ..generic_admin import GuardedAdmin
 from ..mixins import ProdOnlyOps
@@ -31,6 +31,15 @@ class AreaInlineAdmin(admin.TabularInline):
     extra = 5
 
 
+class AnnouncementTagsInlineAdmin(admin.TabularInline):
+    model = BannerTag
+    # can_delete = False
+    # formset = BaselineMultiTenantFormset
+    # readonly_fields = ['id']
+    # exclude = ['id']
+    extra = 1
+
+
 @admin.register(Announcement)
 class AnnouncementAdmin(ProdOnlyOps, GuardedAdmin):
     readonly_fields = [
@@ -45,7 +54,7 @@ class AnnouncementAdmin(ProdOnlyOps, GuardedAdmin):
         "released"
     ]
 
-    inlines = [PageTagsInlineAdmin, AreaInlineAdmin]
+    inlines = [AnnouncementTagsInlineAdmin, PageTagsInlineAdmin, AreaInlineAdmin]
 
     fieldsets = (
         (
@@ -56,7 +65,9 @@ class AnnouncementAdmin(ProdOnlyOps, GuardedAdmin):
                     'type',
                     ('appear_by_update', 'disappear_by_update', 'date'),
                     'released',
-                    'body'
+                    'heading',
+                    'body',
+                    'details',
                 ),
             },
         ),
