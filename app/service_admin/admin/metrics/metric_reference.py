@@ -19,7 +19,8 @@ from ..mixins import ProdOnlyOps
 
 
 __all__ = [
-    'MetricReferenceAdmin'
+    'MetricReferenceAdmin',
+    'TagsInlineAdmin'
 ]
 
 
@@ -122,11 +123,11 @@ class FilterBySourceMetricStatus(admin.SimpleListFilter):
 #         # set_object_tenant(obj, obj.)
 
 
-class MetricTagsInlineAdmin(admin.TabularInline):
+class TagsInlineAdmin(admin.TabularInline):
     model = MetricTag
-    # can_delete = False
+    can_delete = False
     # formset = BaselineMultiTenantFormset
-    # readonly_fields = ['id']
+    readonly_fields = ['id']
     # exclude = ['id']
     extra = 1
 
@@ -165,7 +166,7 @@ class MetricReferenceAdmin(ProdOnlyOps, DjangoObjectActions, GuardedAdmin):
         'released',
         metric_tags
     ]
-    inlines = (MetricTagsInlineAdmin,)
+    inlines = (TagsInlineAdmin,)
     changelist_actions = ('migrate_to_snowdrop', 'migrate_to_daisy')
 
     def migrate_to_snowdrop(self, request, queryset):
