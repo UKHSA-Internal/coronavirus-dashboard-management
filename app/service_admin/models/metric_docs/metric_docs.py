@@ -43,7 +43,7 @@ class MetricAsset(models.Model):
         db_table = 'covid19\".\"metric_asset'
 
 
-class MetricAssetToMetric(mt_mixins.TenantModelMixin, models.Model):
+class MetricAssetToMetric(models.Model):
     ASSET_TYPES = [
         ('ABSTRACT', _("Abstract")),
         ('DESCRIPTION', _("Description")),
@@ -58,15 +58,15 @@ class MetricAssetToMetric(mt_mixins.TenantModelMixin, models.Model):
         primary_key=True,
         default=generate_unique_id
     )
-    # metric = models.ForeignKey(MetricReference, to_field='metric', on_delete=models.CASCADE)
-    # asset = models.ForeignKey(MetricAsset, on_delete=models.CASCADE)
-    metric = mt_fields.TenantForeignKey(MetricReference, on_delete=models.CASCADE)
-    asset = mt_fields.TenantForeignKey(MetricAsset, on_delete=models.CASCADE)
+    metric = models.ForeignKey(MetricReference, to_field='metric', on_delete=models.CASCADE)
+    asset = models.ForeignKey(MetricAsset, on_delete=models.CASCADE)
+    # metric = mt_fields.TenantForeignKey(MetricReference, on_delete=models.CASCADE)
+    # asset = mt_fields.TenantForeignKey(MetricAsset, on_delete=models.CASCADE)
     asset_type = VarCharField(max_length=50, choices=ASSET_TYPES, db_index=True)
 
-    tenant_id = 'metric_id'
+    # tenant_id = 'metric_id'
 
-    objects = TenantManager()
+    # objects = TenantManager()
 
     class Meta:
         managed = False
