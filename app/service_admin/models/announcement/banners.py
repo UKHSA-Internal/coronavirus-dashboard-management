@@ -13,6 +13,7 @@ from markdownx.models import MarkdownxField
 
 # Internal:
 from ..data import AreaReference
+from ..tags import Tag
 # from ..shared_models import PageURI
 from ..fields import VarCharField
 from ...utils.default_generators import generate_unique_id
@@ -21,7 +22,8 @@ from ..page import Page
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 __all__ = [
-    'Announcement'
+    'Announcement',
+    'BannerTag'
 ]
 
 
@@ -101,11 +103,38 @@ class Announcement(models.Model):
         null=True,
         help_text=_("Additional information - only used when announcement type is set to \"log\".")
     )
+    announcement_tags = models.ManyToManyField(
+        'Tag',
+        verbose_name=_("tags"),
+        related_name="tag_announcements",
+        through="BannerTag",
+        through_fields=["announcement", "tag"]
+    )
 
     class Meta:
         managed = False
         db_table = 'covid19"."announcement'
         verbose_name = _("Announcement")
+
+
+class BannerTag(models.Model):
+    id = models.UUIDField(
+        verbose_name=_("unique ID"),
+        primary_key=True,
+        editable=False,
+        default=generate_unique_id
+    )
+    announcement = models.ForeignKey(Announcement, on_delete=models.CASCADE)
+    tag = models.ForeignKey(
+        Tag,
+        on_delete=models.CASCADE,
+        limit_choices_to={"association": "LOGS"}
+    )
+
+    class Meta:
+        managed = False
+        db_table = 'covid19"."banner_tag'
+        verbose_name = _("banner tag")
 
 
 class BannerPage(models.Model):

@@ -3,7 +3,6 @@
 from django.contrib import admin
 
 from ...models.metric_docs import MetricAsset, MetricAssetToMetric
-from ...models.data import MetricReference
 from ..generic_admin import GuardedAdmin
 from ..mixins import ProdOnlyOps
 
@@ -14,7 +13,7 @@ __all__ = [
 
 
 class MetricInlineAdmin(admin.TabularInline):
-    model = MetricAsset.metric.through
+    model = MetricAssetToMetric
     can_delete = False
     readonly_fields = ['id']
 
@@ -44,6 +43,3 @@ class MetricAssetAdmin(ProdOnlyOps, GuardedAdmin):
             },
         ),
     )
-
-
-
