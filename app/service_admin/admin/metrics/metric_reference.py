@@ -2,17 +2,14 @@
 
 from django.contrib import admin
 from django.utils.translation import gettext as _
-from django.core.serializers import serialize
 from json import dumps
 from django.utils.safestring import mark_safe
-from django.forms import BaseInlineFormSet
-from django_multitenant.utils import set_current_tenant
 
-from ...models.tags import MetricTag, Tag
+from ...models.tags import MetricTag
+from ...models.metric_docs import MetricAssetToMetric
 
 from ...models.data import MetricReference
 from ..generic_admin import GuardedAdmin
-# from django_multitenant.
 
 from django_object_actions import DjangoObjectActions
 from ..mixins import ProdOnlyOps
@@ -128,7 +125,6 @@ class TagsInlineAdmin(admin.TabularInline):
     can_delete = False
     # formset = BaselineMultiTenantFormset
     readonly_fields = ['id']
-    # exclude = ['id']
     extra = 1
 
 
@@ -143,6 +139,19 @@ def as_tag(text):
 def metric_tags(obj):
     tag_ids = obj.tags.through.objects.filter(metric=obj.metric).all()
     return mark_safe(str.join("", [as_tag(tag) for tag in tag_ids]))
+
+
+class MetricAssetInlineAdmin(admin.TabularInline):
+    model = MetricAssetToMetric
+    can_delete = False
+    readonly_fields = ['id']
+    fields = [
+        "asset",
+        "asset_type",
+        "order",
+        "id"
+    ]
+    extra = 10
 
 
 @admin.register(MetricReference)
@@ -166,7 +175,10 @@ class MetricReferenceAdmin(ProdOnlyOps, DjangoObjectActions, GuardedAdmin):
         'released',
         metric_tags
     ]
-    inlines = (TagsInlineAdmin,)
+    inlines = (
+        TagsInlineAdmin,
+        MetricAssetInlineAdmin
+    )
     changelist_actions = ('migrate_to_snowdrop', 'migrate_to_daisy')
 
     def migrate_to_snowdrop(self, request, queryset):
@@ -175,9 +187,6 @@ class MetricReferenceAdmin(ProdOnlyOps, DjangoObjectActions, GuardedAdmin):
     def migrate_to_daisy(self, request, queryset):
         print(dumps(list(queryset.values("metric", "metric_name", "released"))))
         print(dumps(queryset.values_list("metric", "metric_name", "released")))
-
-    # def save_form(self, request, form, change):
-    #     print(form.is_valid())
 
     fieldsets = (
         (
@@ -189,7 +198,6 @@ class MetricReferenceAdmin(ProdOnlyOps, DjangoObjectActions, GuardedAdmin):
                     'metric_name',
                     'source_metric',
                     'released',
-                    # 'tags'
                 ),
             },
         ),
