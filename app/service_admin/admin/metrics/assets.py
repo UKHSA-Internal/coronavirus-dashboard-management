@@ -8,21 +8,15 @@ from ..mixins import ProdOnlyOps
 
 
 __all__ = [
-    'MetricAssetAdmin'
+    'MetricAssetAdmin',
+    'MetricAsset'
 ]
-
-
-class MetricInlineAdmin(admin.TabularInline):
-    model = MetricAssetToMetric
-    can_delete = False
-    readonly_fields = ['id']
 
 
 @admin.register(MetricAsset)
 class MetricAssetAdmin(ProdOnlyOps, GuardedAdmin):
     search_fields = ('label',)
     readonly_fields = ['id', 'last_modified']
-    inlines = (MetricInlineAdmin,)
     list_display = [
         'label',
         'released',

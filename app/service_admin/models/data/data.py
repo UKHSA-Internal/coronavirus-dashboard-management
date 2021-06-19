@@ -67,6 +67,7 @@ class MetricReference(models.Model):
     metric = VarCharField(unique=True, max_length=120, null=False, blank=False)
     metric_name = VarCharField(unique=True, max_length=150, null=True, blank=False)
     tags = models.ManyToManyField('Tag', through='MetricTag', through_fields=['metric', 'tag'])
+    assets = models.ManyToManyField('MetricAsset', through='MetricAssetToMetric')
     source_metric = models.BooleanField(
         null=False,
         blank=False,
