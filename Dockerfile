@@ -3,9 +3,9 @@ LABEL maintainer="Pouria Hadjibagheri <Pouria.Hadjibagheri@phe.gov.uk>"
 
 WORKDIR /app/static_private
 
-COPY ./app/static_private/css           /app/static_private/css
+COPY ./app/static_private/           /app/static_private/
 
-WORKDIR /app/static_private/css
+WORKDIR /app/static_private/
 RUN rm -rf node_modules
 RUN npm install
 RUN npm rebuild node-sass
