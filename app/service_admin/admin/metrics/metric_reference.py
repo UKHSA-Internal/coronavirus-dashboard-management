@@ -128,11 +128,12 @@ class TagsInlineAdmin(admin.TabularInline):
 
 
 def as_tag(text):
-    return (
-        '<span class="table-tag" style="margin-right: 2px">' +
-        str(text).strip().title().replace(" ", "&nbsp;") +
-        '</span>'
-    )
+    return (f'''\
+<span class="table-tag" \
+ style="margin-right: 2px; margin-bottom: 2px; font-size: x-small;">\
+{str(text).strip().title().replace(" ", "&nbsp;")}\
+</span>\
+''')
 
 
 def metric_tags(obj):
@@ -172,6 +173,7 @@ class MetricReferenceAdmin(ProdOnlyOps, DjangoObjectActions, GuardedAdmin):
         'metric_name',
         'source_metric',
         'released',
+        'category',
         metric_tags
     ]
     inlines = (
@@ -195,8 +197,8 @@ class MetricReferenceAdmin(ProdOnlyOps, DjangoObjectActions, GuardedAdmin):
                     'id',
                     'metric',
                     'metric_name',
-                    'source_metric',
-                    'released',
+                    'category',
+                    ('source_metric', 'released'),
                 ),
             },
         ),
