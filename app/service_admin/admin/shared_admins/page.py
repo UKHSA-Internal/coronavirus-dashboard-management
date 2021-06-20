@@ -34,6 +34,7 @@ class PageAdmin(ProdOnlyOps, GuardedAdmin):
     list_display = [
         "title",
         "uri",
+        "data_category"
     ]
 
     fieldsets = (
@@ -43,6 +44,7 @@ class PageAdmin(ProdOnlyOps, GuardedAdmin):
                 'fields': (
                     'id',
                     ('title', 'uri'),
+                    'data_category',
                 ),
             },
         ),

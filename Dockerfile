@@ -21,6 +21,7 @@ ENV GUNICORN_PORT 5000
 
 ENV PYTHONPATH            /app/app
 ENV CSS_PATH              $PYTHON_PATH/static_private/css
+ENV JS_PATH              $PYTHON_PATH/static_private/js
 ENV DEFAULT_MODULE_NAME   administration.asgi
 
 # ----------------------------------------------------------------------------------------
@@ -132,6 +133,7 @@ RUN rm -rf $_INSTALLATION
 # Copying built styles
 COPY app/                                      $PYTHONPATH/
 COPY --from=builder /app/static_private/css    $CSS_PATH
+COPY --from=builder /app/static_private/js     $JS_PATH
 COPY server/config/uvicorn_worker.py           $_WORKER_CLASS_PATH
 
 

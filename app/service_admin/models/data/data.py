@@ -66,6 +66,16 @@ class MetricReference(models.Model):
     id = models.AutoField(primary_key=True)
     metric = VarCharField(unique=True, max_length=120, null=False, blank=False)
     metric_name = VarCharField(unique=True, max_length=150, null=True, blank=False)
+    category = models.ForeignKey(
+        'Page',
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="metrics_of",
+        to_field="id",
+        db_column="category",
+        limit_choices_to={'data_category': True},
+        verbose_name=_("category")
+    )
     tags = models.ManyToManyField('Tag', through='MetricTag', through_fields=['metric', 'tag'])
     assets = models.ManyToManyField('MetricAsset', through='MetricAssetToMetric')
     source_metric = models.BooleanField(

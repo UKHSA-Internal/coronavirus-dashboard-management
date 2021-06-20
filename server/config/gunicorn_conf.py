@@ -70,6 +70,8 @@ graceful_timeout_str = getenv("GRACEFUL_TIMEOUT", "10")
 timeout_str = getenv("TIMEOUT", "30")
 keepalive_str = getenv("KEEP_ALIVE", "5")
 
+reload = getenv("RELOAD", "0") == "1"
+
 # Gunicorn config variables
 loglevel = use_loglevel
 workers = web_concurrency
