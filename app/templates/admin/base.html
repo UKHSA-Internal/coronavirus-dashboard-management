@@ -10,8 +10,9 @@
 <meta name="googlebot-news" content="noindex,nosnippet,nofollow" />
 <meta name="AdsBot-Google" content="noindex,nofollow" />
 <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}">
-<link rel="stylesheet" type="text/css" href="{% static "css/css/application.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "css/dist/application.css" %}">
 {% if not is_popup and is_nav_sidebar_enabled %}
+{#<script type="text/javascript" async src="{% static "admin/js/vendor/jquery.min.js" %}"></script>#}
 {#  <link rel="stylesheet" type="text/css" href="{% static "admin/css/nav_sidebar.css" %}">#}
 {#  <script src="{% static 'admin/js/nav_sidebar.js' %}" defer></script>#}
 {% endif %}
@@ -92,5 +93,15 @@
     </div>
 </div>
 <!-- END Container -->
+<script type="application/javascript" src="{% static "js/jquery.min.js" %}"></script>
+<script type="application/javascript" src="{% static "js/select2.min.js" %}"></script>
+<script type="application/javascript">
+	$(document).ready(() => {
+	    $('.related-widget-wrapper select').not('[multiple]').each(function () { $(this).addClass("js-example-basic-single") });
+	});
+	$(document).ready(function() {
+    $('.js-example-basic-single').select2({ placeholder: "---------" });
+	});
+</script>
 </body>
 </html>
