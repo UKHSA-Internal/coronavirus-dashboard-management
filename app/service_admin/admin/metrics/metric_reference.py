@@ -163,7 +163,9 @@ class MetricReferenceAdmin(ProdOnlyOps, DjangoObjectActions, GuardedAdmin):
     ]
     list_filter = [
         FilterByReleaseStatus,
-        FilterBySourceMetricStatus
+        FilterBySourceMetricStatus,
+        'category',
+        'tags__tag'
     ]
     list_per_page = 50
 
@@ -180,14 +182,14 @@ class MetricReferenceAdmin(ProdOnlyOps, DjangoObjectActions, GuardedAdmin):
         TagsInlineAdmin,
         MetricAssetInlineAdmin
     )
-    changelist_actions = ('migrate_to_snowdrop', 'migrate_to_daisy')
-
-    def migrate_to_snowdrop(self, request, queryset):
-        queryset.update(status='p')
-
-    def migrate_to_daisy(self, request, queryset):
-        print(dumps(list(queryset.values("metric", "metric_name", "released"))))
-        print(dumps(queryset.values_list("metric", "metric_name", "released")))
+    # changelist_actions = ('migrate_to_snowdrop', 'migrate_to_daisy')
+    #
+    # def migrate_to_snowdrop(self, request, queryset):
+    #     queryset.update(status='p')
+    #
+    # def migrate_to_daisy(self, request, queryset):
+    #     print(dumps(list(queryset.values("metric", "metric_name", "released"))))
+    #     print(dumps(queryset.values_list("metric", "metric_name", "released")))
 
     fieldsets = (
         (
