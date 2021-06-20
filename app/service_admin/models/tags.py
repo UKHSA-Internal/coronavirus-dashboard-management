@@ -73,16 +73,6 @@ class MetricTag(models.Model):
         limit_choices_to={"association": "METRICS"},
         related_name='metric_of'
     )
-    # metric = models.ForeignKey(
-    #     MetricReference,
-    #     on_delete=models.CASCADE,
-    #     to_field="metric"
-    # )
-    # tag = models.ForeignKey(
-    #     Tag,
-    #     on_delete=models.CASCADE,
-    #     limit_choices_to={"association": "METRICS"}
-    # )
 
     def __str__(self):
         return self.tag.tag
