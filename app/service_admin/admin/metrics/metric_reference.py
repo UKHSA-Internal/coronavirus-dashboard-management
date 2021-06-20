@@ -122,7 +122,6 @@ class FilterBySourceMetricStatus(admin.SimpleListFilter):
 
 class TagsInlineAdmin(admin.TabularInline):
     model = MetricTag
-    can_delete = False
     # formset = BaselineMultiTenantFormset
     readonly_fields = ['id']
     extra = 1
