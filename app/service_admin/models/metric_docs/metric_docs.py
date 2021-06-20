@@ -63,7 +63,8 @@ class MetricAssetToMetric(models.Model):
         managed = False
         db_table = 'covid19\".\"metric_asset_to_metric'
         unique_together = (
-            ("metric", "asset", "order")
+            ("metric", "asset", "order"),
+            ("metric", "asset")
         )
         verbose_name = _("asset association")
         ordering = ("metric", "asset", "order")
