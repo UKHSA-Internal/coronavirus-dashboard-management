@@ -30,7 +30,7 @@ class TenantManager(mt_models.TenantManagerMixin, models.Manager):
     pass
 
 
-class Tag(mt_mixins.TenantModelMixin, models.Model):
+class Tag(models.Model):
     ASSOCIATION_CHOICES = [
         ("METRICS", _("Metrics")),
         ("LOGS", _("Logs")),
@@ -44,9 +44,6 @@ class Tag(mt_mixins.TenantModelMixin, models.Model):
     association = VarCharField(max_length=30, null=False, blank=False, choices=ASSOCIATION_CHOICES)
     tag = VarCharField(max_length=40, null=False, blank=False)
 
-    tenant_id = 'id'
-    objects = TenantManager()
-
     def __str__(self):
         return self.tag
 
@@ -57,20 +54,20 @@ class Tag(mt_mixins.TenantModelMixin, models.Model):
         verbose_name_plural = _("Tags")
 
 
-class MetricTag(mt_mixins.TenantModelMixin, models.Model):
+class MetricTag(models.Model):
     id = models.UUIDField(
         verbose_name=_("unique ID"),
         primary_key=True,
         editable=False,
         default=generate_unique_id
     )
-    metric = mt_fields.TenantForeignKey(
+    metric = models.ForeignKey(
         MetricReference,
         on_delete=models.CASCADE,
         to_field="metric",
         related_name='tag_of'
     )
-    tag = mt_fields.TenantForeignKey(
+    tag = models.ForeignKey(
         Tag,
         on_delete=models.CASCADE,
         limit_choices_to={"association": "METRICS"},
@@ -87,9 +84,6 @@ class MetricTag(mt_mixins.TenantModelMixin, models.Model):
     #     limit_choices_to={"association": "METRICS"}
     # )
 
-    tenant_id = 'id'
-    objects = TenantManager()
-
     def __str__(self):
         return self.tag.tag
 
@@ -97,6 +91,7 @@ class MetricTag(mt_mixins.TenantModelMixin, models.Model):
         managed = False
         db_table = 'covid19"."metric_tag'
         unique_together = [
-            ('tag', 'id')
+            ('tag', 'id'),
+            ('metric', 'tag')
         ]
         ordering = ('metric', '-tag')
