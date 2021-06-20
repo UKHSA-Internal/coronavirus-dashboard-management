@@ -37,7 +37,6 @@ class MetricETLReference(models.Model):
         db_column='metric_id',
         null=False,
         blank=False,
-        editable=False,
         on_delete=models.CASCADE
     )
     missing_to_zero = models.BooleanField(
