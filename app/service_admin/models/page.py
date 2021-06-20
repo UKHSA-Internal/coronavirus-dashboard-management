@@ -34,10 +34,21 @@ class Page(models.Model):
         editable=False,
         default=generate_unique_id
     )
-    title = VarCharField(max_length=120, null=False, blank=False, db_index=True, unique=True)
+    title = VarCharField(
+        max_length=120,
+        null=False, blank=False,
+        db_index=True,
+        unique=True
+    )
     uri = VarCharField(
         max_length=150,
         validators=[url_validator],
+        null=False,
+        blank=False
+    )
+    data_category = models.BooleanField(
+        verbose_name=_("data category"),
+        default=False,
         null=False,
         blank=False
     )
@@ -46,5 +57,6 @@ class Page(models.Model):
         return self.title
 
     class Meta:
+        managed = False
         db_table = 'covid19"."page'
         verbose_name = _("page")
