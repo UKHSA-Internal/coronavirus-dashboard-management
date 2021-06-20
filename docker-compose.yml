@@ -13,5 +13,6 @@ services:
       - .env.dev
     environment:
       IS_DEV: 1
-      API_ENV: DEVELOPMENT
+      API_ENV: PRODUCTION
+      RELOAD: 1
       FLASK_ENV: DEVELOPMENT
