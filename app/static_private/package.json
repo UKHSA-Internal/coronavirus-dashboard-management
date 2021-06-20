@@ -5,16 +5,16 @@
   "homepage": "https://coronavirus.data.gov.uk/",
   "rootDir": ".",
   "scripts": {
-    "watch": "sass --watch ./css/index.scss:./css/application.css",
+    "watch": "sass --watch ./css/css/index.scss:./css/css/application.css",
     "build": "bash ./build.sh",
     "postbuild": "bash ./postbuild.sh"
   },
   "devDependencies": {
-    "sass": "^1.29.0",
+    "sass": "^1.35.1",
     "govuk-frontend": "^3.11.0",
-    "postcss": "^8.1.2",
-    "postcss-cli": "^8.1.0",
-    "autoprefixer": "^10.0.1",
+    "postcss": "^8.3.5",
+    "postcss-cli": "^8.3.1",
+    "autoprefixer": "^10.2.6",
     "uglifycss": "^0.0.29"
   }
 }
