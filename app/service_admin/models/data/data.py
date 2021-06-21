@@ -151,11 +151,11 @@ class ReleaseCategory(models.Model):
     PROCESS_TYPE_ENUM = [
         ('MAIN', _('Main')),
         ('MSOA', _('MSOA')),
-        ('VACCINATION', _("Vaccination")),
+        ('VACCINATION', _("Vaccinations")),
         ('AGE DEMOGRAPHICS: CASE - EVENT DATE', _("Age demographics: Cases")),
         ('AGE-DEMOGRAPHICS: DEATH28DAYS - EVENT DATE', _("Age demographics: Deaths 28 days")),
         ('AGE-DEMOGRAPHICS: VACCINATION - EVENT DATE', _("Age demographics: Vaccinations")),
-        ('MSOA: VACCINATION - EVENT DATE', _('MSOA: Vaccination')),
+        ('MSOA: VACCINATION - EVENT DATE', _('MSOA: Vaccinations')),
     ]
 
     _process_type_dict = dict(PROCESS_TYPE_ENUM)
