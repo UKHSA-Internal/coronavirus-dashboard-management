@@ -1,8 +1,12 @@
 #!/usr/bin python3
 
+from datetime import timedelta
+
 from django.contrib import admin
 from django.utils.translation import gettext as _
 from django.utils.safestring import mark_safe
+from django.utils import timezone
+from django.db.models import DateTimeField
 
 from ..utils.dispatch_ops import update_timestamps
 
@@ -102,6 +106,41 @@ class FilterByReleaseStatus(admin.SimpleListFilter):
         return queryset
 
 
+class DateTimeFilter(admin.DateFieldListFilter):
+    def __init__(self, field, request, params, model, model_admin, field_path):
+        super().__init__(field, request, params, model, model_admin, field_path)
+
+        now = timezone.now()
+        # When time zone support is enabled, convert "now" to the user's time
+        # zone so Django's definition of "Today" matches what the user expects.
+        if timezone.is_aware(now):
+            now = timezone.localtime(now)
+
+        if isinstance(field, DateTimeField):
+            today = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        else:       # field is a models.DateField
+            today = now.date()
+        tomorrow = today + timedelta(days=1)
+        yesterday = today - timedelta(days=1)
+
+        self.links = (
+            (_('Any date'), {}),
+            (_('Today'), {
+                self.lookup_kwarg_since: str(today),
+                self.lookup_kwarg_until: str(tomorrow),
+            }),
+            (_('Yesterday'), {
+                self.lookup_kwarg_since: str(yesterday),
+                self.lookup_kwarg_until: str(today),
+            }),
+            (_('Today and yesterday'), {
+                self.lookup_kwarg_since: str(yesterday),
+                self.lookup_kwarg_until: str(tomorrow),
+            }),
+            *self.links[2:]
+        )
+
+
 @admin.register(ReleaseReference)
 class ReleaseReferenceAdmin(DjangoObjectActions, GuardedAdmin):
     search_fields = ('label',)
@@ -110,9 +149,10 @@ class ReleaseReferenceAdmin(DjangoObjectActions, GuardedAdmin):
     actions = [release_selected]
     list_filter = [
         FilterByReleaseStatus,
-        FilterByReleaseCategory
+        FilterByReleaseCategory,
+        ('timestamp', DateTimeFilter)
     ]
-    # changelist_actions = ('publish_latest_data',)
+
     list_display = [
         'formatted_release_time',
         'category',
@@ -139,7 +179,7 @@ class ReleaseReferenceAdmin(DjangoObjectActions, GuardedAdmin):
         return mark_safe(obj.timestamp.strftime("%a, %d %b %Y &ndash; %H:%M:%S"))
 
     formatted_release_time.admin_order_field = 'timestamp'
-    formatted_release_time.short_description = 'release time'
+    formatted_release_time.short_description = 'receipt time'
 
     # def publish_latest_data(self, request, queryset):
     #     pass
