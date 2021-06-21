@@ -151,8 +151,11 @@ class ReleaseCategory(models.Model):
     PROCESS_TYPE_ENUM = [
         ('MAIN', _('Main')),
         ('MSOA', _('MSOA')),
-        ('DEMOGRAPHICS:DEATHS', _('Demographics: deaths')),
-        ('DEMOGRAPHICS:CASES', _('Demographics: cases')),
+        ('VACCINATION', _("Vaccination")),
+        ('AGE DEMOGRAPHICS: CASE - EVENT DATE', _("Age demographics: Cases")),
+        ('AGE-DEMOGRAPHICS: DEATH28DAYS - EVENT DATE', _("Age demographics: Deaths 28 days")),
+        ('AGE-DEMOGRAPHICS: VACCINATION - EVENT DATE', _("Age demographics: Vaccinations")),
+        ('MSOA: VACCINATION - EVENT DATE', _('MSOA: Vaccination')),
     ]
 
     release = models.OneToOneField('ReleaseReference', models.DO_NOTHING, primary_key=True, related_name='category')
@@ -184,11 +187,8 @@ class ReleaseStats(models.Model):
 
 class ReleaseReference(models.Model):
     id = models.AutoField(primary_key=True)
-    timestamp = models.DateTimeField(unique=True)
+    timestamp = models.DateTimeField(_("receipt time"), unique=True)
     released = models.BooleanField()
-
-    # def category(self):
-    #     return self.category
 
     def count(self):
         count = self.releasestats.record_count
