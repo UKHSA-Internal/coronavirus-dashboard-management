@@ -158,11 +158,13 @@ class ReleaseCategory(models.Model):
         ('MSOA: VACCINATION - EVENT DATE', _('MSOA: Vaccination')),
     ]
 
+    _process_type_dict = dict(PROCESS_TYPE_ENUM)
+
     release = models.OneToOneField('ReleaseReference', models.DO_NOTHING, primary_key=True, related_name='category')
     process_name = VarCharField(max_length=50, choices=PROCESS_TYPE_ENUM, null=False, blank=False)
 
     def __str__(self):
-        return self.process_name
+        return self._process_type_dict[self.process_name]
 
     class Meta:
         managed = False
