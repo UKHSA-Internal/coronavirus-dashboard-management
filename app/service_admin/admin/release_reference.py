@@ -144,7 +144,7 @@ class DateTimeFilter(admin.DateFieldListFilter):
 @admin.register(ReleaseReference)
 class ReleaseReferenceAdmin(DjangoObjectActions, GuardedAdmin):
     search_fields = ('label',)
-    list_per_page = 20
+    list_per_page = 30
     readonly_fields = ["category"]
     actions = [release_selected]
     list_filter = [
@@ -154,6 +154,7 @@ class ReleaseReferenceAdmin(DjangoObjectActions, GuardedAdmin):
     ]
 
     list_display = [
+        'id',
         'formatted_release_time',
         'category',
         'released',
@@ -161,12 +162,15 @@ class ReleaseReferenceAdmin(DjangoObjectActions, GuardedAdmin):
         'difference'
     ]
 
+    list_display_links = [
+        'formatted_release_time'
+    ]
+
     fieldsets = (
         (
             None,
             {
                 'fields': (
-                    'id',
                     'timestamp',
                     'released',
                     'category'
