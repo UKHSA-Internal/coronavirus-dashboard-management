@@ -4,7 +4,7 @@ from ..fields import VarCharField
 from ..data import MetricReference
 from ...utils.default_generators import generate_unique_id
 from markdownx.models import MarkdownxField
-
+from uuid import uuid4
 from django_multitenant import models as mt_models
 
 
@@ -48,23 +48,22 @@ class MetricAssetToMetric(models.Model):
         ('SOURCE', _("Source")),
     ]
 
-    id = VarCharField(
+    id = models.UUIDField(
         verbose_name=_("unique ID"),
-        max_length=36,
         primary_key=True,
-        default=generate_unique_id
+        editable=False,
+        default=uuid4
     )
     metric = models.ForeignKey(MetricReference, to_field='metric', on_delete=models.CASCADE)
     asset = models.ForeignKey(MetricAsset, on_delete=models.CASCADE)
-    asset_type = VarCharField(max_length=50, choices=ASSET_TYPES, db_index=True)
-    order = models.PositiveIntegerField(verbose_name=_("order"), null=True, db_index=True)
+    asset_type = VarCharField(max_length=50, choices=ASSET_TYPES)
+    order = models.PositiveIntegerField(verbose_name=_("order"), null=True)
 
     class Meta:
         managed = False
         db_table = 'covid19\".\"metric_asset_to_metric'
-        unique_together = (
-            ("metric", "asset", "order"),
-            ("metric", "asset")
-        )
+        # unique_together = (
+        #     ("id", "asset"),
+        # )
         verbose_name = _("asset association")
         ordering = ("metric", "asset", "order")
