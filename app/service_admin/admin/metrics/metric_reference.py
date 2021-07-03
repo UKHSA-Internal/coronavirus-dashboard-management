@@ -125,6 +125,10 @@ class TagsInlineAdmin(admin.TabularInline):
     # formset = BaselineMultiTenantFormset
     readonly_fields = ['id']
     extra = 1
+    fields = [
+        "tag",
+        "id"
+    ]
 
 
 def as_tag(text):
@@ -143,7 +147,6 @@ def metric_tags(obj):
 
 class MetricAssetInlineAdmin(admin.TabularInline):
     model = MetricAssetToMetric
-    can_delete = False
     readonly_fields = ['id']
     fields = [
         "asset",
@@ -156,7 +159,7 @@ class MetricAssetInlineAdmin(admin.TabularInline):
 
 @admin.register(MetricReference)
 class MetricReferenceAdmin(ProdOnlyOps, DjangoObjectActions, GuardedAdmin):
-    search_fields = ('metric',)
+    search_fields = ('metric', 'metric_name')
     actions = [
         release_selected,
         withhold_selected
