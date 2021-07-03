@@ -16,6 +16,7 @@ from django_multitenant import mixins as mt_mixins
 from .fields import VarCharField
 from .data import MetricReference
 from ..utils.default_generators import generate_unique_id
+from uuid import uuid4
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -39,7 +40,7 @@ class Tag(models.Model):
         verbose_name=_("unique ID"),
         primary_key=True,
         editable=False,
-        default=generate_unique_id
+        default=uuid4
     )
     association = VarCharField(max_length=30, null=False, blank=False, choices=ASSOCIATION_CHOICES)
     tag = VarCharField(max_length=40, null=False, blank=False)
@@ -59,7 +60,7 @@ class MetricTag(models.Model):
         verbose_name=_("unique ID"),
         primary_key=True,
         editable=False,
-        default=generate_unique_id
+        default=uuid4
     )
     metric = models.ForeignKey(
         MetricReference,
