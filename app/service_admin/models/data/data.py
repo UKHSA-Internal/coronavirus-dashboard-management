@@ -76,7 +76,7 @@ class MetricReference(models.Model):
         limit_choices_to={'data_category': True},
         verbose_name=_("category")
     )
-    tags = models.ManyToManyField('Tag', through='MetricTag', through_fields=['metric', 'tag'])
+    tags = models.ManyToManyField('Tag', through='MetricTag')
     assets = models.ManyToManyField('MetricAsset', through='MetricAssetToMetric')
     source_metric = models.BooleanField(
         null=False,
