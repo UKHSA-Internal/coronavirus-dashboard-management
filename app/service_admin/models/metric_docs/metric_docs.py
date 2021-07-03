@@ -59,6 +59,9 @@ class MetricAssetToMetric(models.Model):
     asset_type = VarCharField(max_length=50, choices=ASSET_TYPES)
     order = models.PositiveIntegerField(verbose_name=_("order"), null=True)
 
+    def __str__(self):
+        return f"{self.metric.metric}: {self.asset.label}"
+
     class Meta:
         managed = False
         db_table = 'covid19\".\"metric_asset_to_metric'
