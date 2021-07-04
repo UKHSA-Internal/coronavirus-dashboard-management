@@ -6,6 +6,7 @@ from ...utils.default_generators import generate_unique_id
 from markdownx.models import MarkdownxField
 from uuid import uuid4
 from django_multitenant import models as mt_models
+from django_multitenant.fields import TenantForeignKey
 
 
 __all__ = [
@@ -65,8 +66,9 @@ class MetricAssetToMetric(models.Model):
     class Meta:
         managed = False
         db_table = 'covid19\".\"metric_asset_to_metric'
-        # unique_together = (
-        #     ("id", "asset"),
-        # )
+        unique_together = (
+            ("metric", "asset"),
+            ("metric", "asset_type", "order")
+        )
         verbose_name = _("asset association")
         ordering = ("metric", "asset", "order")
