@@ -79,12 +79,14 @@ class MetricReference(models.Model):
     tags = models.ManyToManyField('Tag', through='MetricTag')
     assets = models.ManyToManyField('MetricAsset', through='MetricAssetToMetric')
     source_metric = models.BooleanField(
+        verbose_name=_("source"),
         null=False,
         blank=False,
         default=False,
         help_text=_("The metric is present in the source data.")
     )
     released = models.BooleanField()
+    deprecated = models.DateField(verbose_name=_("deprecated"), null=True)
 
     def __str__(self):
         return self.metric

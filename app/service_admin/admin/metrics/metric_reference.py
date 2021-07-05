@@ -179,6 +179,7 @@ class MetricReferenceAdmin(ProdOnlyOps, DjangoObjectActions, GuardedAdmin):
         'source_metric',
         'released',
         'category',
+        'deprecated',
         metric_tags
     ]
     inlines = (
