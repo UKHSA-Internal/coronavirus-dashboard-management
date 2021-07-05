@@ -205,6 +205,7 @@ class MetricReferenceAdmin(ProdOnlyOps, DjangoObjectActions, GuardedAdmin):
                     'metric_name',
                     'category',
                     ('source_metric', 'released'),
+                    'deprecated',
                 ),
             },
         ),
