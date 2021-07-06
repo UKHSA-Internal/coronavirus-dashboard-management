@@ -7,6 +7,7 @@ from uuid import uuid4
 
 # 3rd party:
 from django.db import models
+from django.utils.translation import gettext as _
 
 from markdownx.models import MarkdownxField
 
@@ -25,13 +26,18 @@ __all__ = [
 class ChangeLog(models.Model):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
     date = models.DateField(null=False)
-    expiry = models.DateField(null=True)
-    heading = VarCharField(max_length=150)
+    expiry = models.DateField(
+        null=True,
+        blank=True,
+        help_text=_("Only use when the log entry is only applicable for a limited period.")
+    )
+    heading = VarCharField(max_length=150, blank=False, null=False)
     body = MarkdownxField(null=False, blank=False)
-    details = MarkdownxField(null=True)
+    details = MarkdownxField(null=True, blank=True)
     high_priority = models.BooleanField(null=False, default=False)
     type = models.ForeignKey(
-        'Tag', null=False,
+        'Tag',
+        null=False,
         limit_choices_to={"association": "CHANGE LOGS"},
         on_delete=models.CASCADE
     )
@@ -52,6 +58,7 @@ class ChangeLogToMetric(models.Model):
     log = models.ForeignKey('ChangeLog', on_delete=models.CASCADE)
     metric = models.ForeignKey(
         'MetricReference',
+        to_field='metric',
         on_delete=models.CASCADE,
         limit_choices_to={"deprecated__isnull": True}
     )
