@@ -29,7 +29,7 @@ class ChangeLog(models.Model):
     expiry = models.DateField(
         null=True,
         blank=True,
-        help_text=_("Only use when the log entry is only applicable for a limited period.")
+        help_text=_("Only use when the log entry is applicable for a limited period.")
     )
     heading = VarCharField(max_length=150, blank=False, null=False)
     body = MarkdownxField(null=False, blank=False)
