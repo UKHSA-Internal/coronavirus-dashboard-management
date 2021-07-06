@@ -18,12 +18,16 @@ __all__ = [
 
 
 class ChangeLogMetricsAdmin(admin.TabularInline):
+    verbose_name = "Metric association"
+    verbose_name_plural = "Metric associations"
     model = ChangeLog.metrics.through
     readonly_fields = ['id']
     extra = 5
 
 
 class ChangeLogPagesAdmin(admin.TabularInline):
+    verbose_name = "Page association"
+    verbose_name_plural = "Page associations"
     model = ChangeLog.pages.through
     readonly_fields = ['id']
     extra = 1
