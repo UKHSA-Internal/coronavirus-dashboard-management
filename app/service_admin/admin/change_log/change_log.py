@@ -35,6 +35,10 @@ class ChangeLogPagesAdmin(admin.TabularInline):
 
 @admin.register(ChangeLog)
 class ChangeLogAdmin(admin.ModelAdmin):
+    search_fields = [
+        'heading'
+    ]
+
     readonly_fields = [
         'id'
     ]
