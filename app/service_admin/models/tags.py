@@ -34,7 +34,7 @@ class TenantManager(mt_models.TenantManagerMixin, models.Manager):
 class Tag(models.Model):
     ASSOCIATION_CHOICES = [
         ("METRICS", _("Metrics")),
-        ("LOGS", _("Logs")),
+        ("CHANGE LOGS", _("Change Logs")),
     ]
     id = models.UUIDField(
         verbose_name=_("unique ID"),
