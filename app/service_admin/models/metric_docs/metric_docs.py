@@ -6,7 +6,6 @@ from ...utils.default_generators import generate_unique_id
 from markdownx.models import MarkdownxField
 from uuid import uuid4
 from django_multitenant import models as mt_models
-from django_multitenant.fields import TenantForeignKey
 
 
 __all__ = [
