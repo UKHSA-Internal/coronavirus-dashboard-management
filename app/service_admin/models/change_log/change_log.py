@@ -3,6 +3,7 @@
 # Imports
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Python:
+from uuid import uuid4
 
 # 3rd party:
 from django.db import models
@@ -22,7 +23,7 @@ __all__ = [
 
 
 class ChangeLog(models.Model):
-    id = models.UUIDField(primary_key=True, editable=False)
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
     date = models.DateField(null=False)
     expiry = models.DateField(null=True)
     heading = VarCharField(max_length=150)
@@ -47,7 +48,7 @@ class ChangeLog(models.Model):
 
 
 class ChangeLogToMetric(models.Model):
-    id = models.UUIDField(primary_key=True, editable=False)
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
     log = models.ForeignKey('ChangeLog', on_delete=models.CASCADE)
     metric = models.ForeignKey(
         'MetricReference',
@@ -68,7 +69,7 @@ class ChangeLogToMetric(models.Model):
 
 
 class ChangeLogToPage(models.Model):
-    id = models.UUIDField(primary_key=True, editable=False)
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
     log = models.ForeignKey('ChangeLog', on_delete=models.CASCADE)
     page = models.ForeignKey(
         'Page',
