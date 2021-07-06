@@ -168,7 +168,7 @@ class MetricReferenceAdmin(ProdOnlyOps, DjangoObjectActions, GuardedAdmin):
         FilterByReleaseStatus,
         FilterBySourceMetricStatus,
         'category',
-        'tags__tag'
+        ('tags', admin.RelatedOnlyFieldListFilter)
     ]
     list_per_page = 50
 
