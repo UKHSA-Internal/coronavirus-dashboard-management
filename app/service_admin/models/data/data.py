@@ -86,7 +86,7 @@ class MetricReference(models.Model):
         help_text=_("The metric is present in the source data.")
     )
     released = models.BooleanField()
-    deprecated = models.DateField(verbose_name=_("deprecated"), null=True)
+    deprecated = models.DateField(verbose_name=_("deprecated"), null=True, blank=True)
 
     def __str__(self):
         return self.metric
