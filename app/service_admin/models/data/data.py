@@ -30,8 +30,19 @@ class AreaPriorities(models.Model):
 
 
 class AreaReference(models.Model):
+    area_type_choices = (
+        ('overview', _('Overview')),
+        ('nation', _('Nation')),
+        ('region', _('Region')),
+        ('nhsRegion', _('NHS Region')),
+        ('nhsTrust', _('NHS Trust')),
+        ('utla', _('UTLA')),
+        ('ltla', _('LTLA')),
+        ('msoa', _('MSOA')),
+    )
+
     id = models.AutoField(primary_key=True, unique=True)
-    area_type = VarCharField(max_length=15, null=False, blank=False)
+    area_type = VarCharField(max_length=15, null=False, blank=False, choices=area_type_choices)
     area_code = VarCharField(max_length=12, null=False, blank=False)
     area_name = VarCharField(max_length=120, null=False, blank=False)
     unique_ref = VarCharField(max_length=26, null=False, blank=False, unique=True)
