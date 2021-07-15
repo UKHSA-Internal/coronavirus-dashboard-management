@@ -78,9 +78,11 @@ class TagAdmin(ProdOnlyOps, GuardedAdmin):
     #     release_selected,
     #     withhold_selected
     # ]
-    # list_filter = [
-    #     FilterByReleaseStatus
-    # ]
+
+    list_filter = [
+        "association"
+    ]
+
     list_per_page = 300
 
     readonly_fields = ['id']
