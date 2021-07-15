@@ -96,12 +96,9 @@
 <script type="application/javascript" src="{% static "js/jquery.min.js" %}"></script>
 <script type="application/javascript" src="{% static "js/select2.min.js" %}"></script>
 <script type="application/javascript">
-	$(document).ready(() => {
-	    $('.related-widget-wrapper select').not('[multiple]').each(function () { $(this).addClass("js-example-basic-single") });
-	});
-	$(document).ready(function() {
-    $('.js-example-basic-single').select2({ placeholder: "---------" });
-	});
+		$(document).ready(() => {
+		    $('.related-widget-wrapper select').not('[multiple]').select2({ placeholder: "---------" });
+		});
 </script>
 </body>
 </html>
