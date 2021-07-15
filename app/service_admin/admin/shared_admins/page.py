@@ -31,6 +31,10 @@ class PageAdmin(ProdOnlyOps, GuardedAdmin):
         'id'
     ]
 
+    list_filter = [
+        'data_category'
+    ]
+
     list_display = [
         "title",
         "uri",
