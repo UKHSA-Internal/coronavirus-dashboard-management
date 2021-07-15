@@ -35,14 +35,16 @@ class ChangeLog(models.Model):
     body = MarkdownxField(null=False, blank=False)
     details = MarkdownxField(null=True, blank=True)
     high_priority = models.BooleanField(null=False, default=False)
+    display_banner = models.BooleanField(null=False, default=False)
     type = models.ForeignKey(
         'Tag',
         null=False,
         limit_choices_to={"association": "CHANGE LOGS"},
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='log_pages'
     )
-    metrics = models.ManyToManyField('Tag', through='ChangeLogToMetric')
-    pages = models.ManyToManyField('Page', through='ChangeLogToPage')
+    metrics = models.ManyToManyField('MetricReference', through='ChangeLogToMetric', related_name='log_metrics')
+    pages = models.ManyToManyField('Page', through='ChangeLogToPage', related_name='log_pages')
 
     def __str__(self):
         return self.heading
@@ -80,8 +82,7 @@ class ChangeLogToPage(models.Model):
     log = models.ForeignKey('ChangeLog', on_delete=models.CASCADE)
     page = models.ForeignKey(
         'Page',
-        on_delete=models.CASCADE,
-        limit_choices_to={"data_category": True}
+        on_delete=models.CASCADE
     )
 
     def __str__(self):
