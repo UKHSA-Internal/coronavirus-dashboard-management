@@ -22,7 +22,7 @@ class ChangeLogMetricsAdmin(admin.TabularInline):
     verbose_name_plural = "Metric associations"
     model = ChangeLog.metrics.through
     readonly_fields = ['id']
-    extra = 5
+    extra = 10
 
 
 class ChangeLogPagesAdmin(admin.TabularInline):
@@ -30,7 +30,7 @@ class ChangeLogPagesAdmin(admin.TabularInline):
     verbose_name_plural = "Page associations"
     model = ChangeLog.pages.through
     readonly_fields = ['id']
-    extra = 1
+    extra = 5
 
 
 @admin.register(ChangeLog)
@@ -60,7 +60,7 @@ class ChangeLogAdmin(admin.ModelAdmin):
                 'fields': (
                     'id',
                     'type',
-                    'high_priority',
+                    ('display_banner', 'high_priority'),
                     ('date', 'expiry'),
                     'heading',
                     'body',
