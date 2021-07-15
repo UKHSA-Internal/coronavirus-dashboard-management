@@ -23,6 +23,11 @@ class MetricAssetAdmin(ProdOnlyOps, GuardedAdmin):
         'last_modified',
     ]
 
+    list_filter = [
+        'released',
+        'last_modified'
+    ]
+
     fieldsets = (
         (
             None,
