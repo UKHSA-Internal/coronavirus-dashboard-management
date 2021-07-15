@@ -23,6 +23,9 @@ class AreaReferenceAdmin(GuardedAdmin):
         'area_type',
         'area_code',
     ]
+    list_filter = [
+        'area_type'
+    ]
 
     fieldsets = (
         (
