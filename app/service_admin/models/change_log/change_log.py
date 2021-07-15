@@ -46,6 +46,40 @@ class ChangeLog(models.Model):
     metrics = models.ManyToManyField('MetricReference', through='ChangeLogToMetric', related_name='log_metrics')
     pages = models.ManyToManyField('Page', through='ChangeLogToPage', related_name='log_pages')
 
+    colours = {
+        "new feature": {
+            "background": "#CCE2D8",
+            "text": "#005A30"
+        },
+        "new metric": {
+            "background": "#BFE3E0",
+            "text": "#10403C"
+        },
+        "change to metric": {
+            "background": "#FFF7BF",
+            "text": "#594D00"
+        },
+        "update": {
+            "background": "#FCD6C3",
+            "text": "#6E3619"
+        },
+        "new content": {
+            "background": "#DBD5E9",
+            "text": "#3D2375"
+        },
+        "data issue": {
+            "background": "#EEEFEF",
+            "text": "#383F43"
+        },
+        "other": {
+            "background": "#D2E2F1",
+            "text": "#144E81"
+        },
+    }
+
+    def get_type_colours(self):
+        return self.colours.get(self.type.tag, dict())
+
     def __str__(self):
         return self.heading
 
