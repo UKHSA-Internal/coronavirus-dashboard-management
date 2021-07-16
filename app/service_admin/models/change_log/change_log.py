@@ -10,6 +10,7 @@ from django.db import models
 from django.utils.translation import gettext as _
 
 from markdownx.models import MarkdownxField
+from regex_field.fields import RegexField
 
 # Internal: 
 from ..fields import VarCharField
@@ -49,11 +50,12 @@ class ChangeLog(models.Model):
         related_name='log_metrics',
         blank=True
     )
-    area = models.ManyToManyField(
-        verbose_name=_("areas"),
-        to='AreaReference',
-        related_name='log_areas',
-        blank=True
+    area = RegexField(
+        verbose_name=_("area code"),
+        max_length=128,
+        null=True,
+        blank=True,
+        help_text=_("Regular expressions pattern to match area code of associated areas")
     )
     pages = models.ManyToManyField(
         'Page',
