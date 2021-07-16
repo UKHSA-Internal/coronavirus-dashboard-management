@@ -60,7 +60,14 @@ class ChangeLogAdmin(admin.ModelAdmin):
         ('type', admin.RelatedOnlyFieldListFilter),
     ]
 
-    inlines = [ChangeLogPagesAdmin, ChangeLogMetricsAdmin]
+    filter_horizontal = [
+        'area'
+    ]
+
+    inlines = [
+        ChangeLogPagesAdmin,
+        ChangeLogMetricsAdmin
+    ]
 
     fieldsets = (
         (
@@ -72,11 +79,26 @@ class ChangeLogAdmin(admin.ModelAdmin):
                     ('display_banner', 'high_priority'),
                     ('date', 'expiry'),
                     'heading',
-                    'body',
-                    'details',
                 ),
             },
         ),
+        (
+            "Log content",
+            {
+                "fields": (
+                    "body",
+                    "details"
+                )
+            }
+        ),
+        (
+            "Area associations",
+            {
+                "fields": (
+                    'area',
+                )
+            }
+        )
     )
 
     @admin.display(
