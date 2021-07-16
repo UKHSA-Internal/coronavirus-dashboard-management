@@ -43,8 +43,24 @@ class ChangeLog(models.Model):
         on_delete=models.CASCADE,
         related_name='log_pages'
     )
-    metrics = models.ManyToManyField('MetricReference', through='ChangeLogToMetric', related_name='log_metrics')
-    pages = models.ManyToManyField('Page', through='ChangeLogToPage', related_name='log_pages')
+    metrics = models.ManyToManyField(
+        'MetricReference',
+        through='ChangeLogToMetric',
+        related_name='log_metrics',
+        blank=True
+    )
+    area = models.ManyToManyField(
+        verbose_name=_("areas"),
+        to='AreaReference',
+        related_name='log_areas',
+        blank=True
+    )
+    pages = models.ManyToManyField(
+        'Page',
+        through='ChangeLogToPage',
+        related_name='log_pages',
+        blank=True
+    )
 
     colours = {
         "new feature": {
