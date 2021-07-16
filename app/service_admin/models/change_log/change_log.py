@@ -8,6 +8,7 @@ from uuid import uuid4
 # 3rd party:
 from django.db import models
 from django.utils.translation import gettext as _
+from django.contrib.postgres.fields import ArrayField
 
 from markdownx.models import MarkdownxField
 from regex_field.fields import RegexField
@@ -25,6 +26,26 @@ __all__ = [
 
 
 class ChangeLog(models.Model):
+    area_choices = (
+        ("overview::^K.*$", _("UK Only")),
+        ("nation::^E92000001$", _("England [Nation]")),
+        ("region::^E.*$", _("England [region]")),
+        ("utla::^E.*$", _("England [UTLA]")),
+        ("ltla::^E.*$", _("England [LTLA]")),
+        ("msoa::^E.*$", _("England [MSOA]")),
+        ("nation::^S92000003$", _("Scotland [Nation]")),
+        ("utla::^S.*$", _("Scotland [UTLA]")),
+        ("ltla::^S.*$", _("Scotland [LTLA]")),
+        ("nation::^N92000002$", _("Northern Ireland [Nation]")),
+        ("utla::^S.*$", _("Northern Ireland [UTLA]")),
+        ("ltla::^S.*$", _("Northern Ireland [LTLA]")),
+        ("nation::^W.*$", _("Wales [Nation]")),
+        ("utla::^W.*$", _("Wales [UTLA]")),
+        ("ltla::^W.*$", _("Wales [LTLA]")),
+        ("nhsRegion::^.*$", _("All NHS regions")),
+        ("nhsTrust::^.*$", _("All NHS trusts")),
+    )
+
     id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
     date = models.DateField(null=False)
     expiry = models.DateField(
@@ -50,12 +71,14 @@ class ChangeLog(models.Model):
         related_name='log_metrics',
         blank=True
     )
-    area = RegexField(
-        verbose_name=_("area code"),
-        max_length=128,
-        null=True,
-        blank=True,
-        help_text=_("Regular expressions pattern to match area code of associated areas")
+    area = ArrayField(
+        base_field=models.CharField(
+            max_length=50,
+            choices=area_choices
+        ),
+        choices=area_choices,
+        blank=False,
+        null=True
     )
     pages = models.ManyToManyField(
         'Page',
