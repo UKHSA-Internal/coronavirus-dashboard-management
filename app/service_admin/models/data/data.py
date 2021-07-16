@@ -48,7 +48,7 @@ class AreaReference(models.Model):
     unique_ref = VarCharField(max_length=26, null=False, blank=False, unique=True)
 
     def __str__(self):
-        return f"{self.area_name} [{self.area_type.upper()}]"
+        return self.area_code
 
     class Meta:
         managed = False
@@ -58,7 +58,7 @@ class AreaReference(models.Model):
             ('area_type', 'area_code'),
         )
         verbose_name = _("area")
-        ordering = ['area_type', '-area_name']
+        ordering = ['area_type', 'area_code']
 
 
 class GeoReference(models.Model):
