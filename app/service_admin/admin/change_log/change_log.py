@@ -6,6 +6,7 @@
 
 # 3rd party:
 from django.contrib import admin
+from django import forms
 from django.utils.safestring import mark_safe
 
 # Internal: 
@@ -34,6 +35,19 @@ class ChangeLogPagesAdmin(admin.TabularInline):
     extra = 5
 
 
+class ChangeLogAdminFrom(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['area'].widget.choices = self.fields['area'].choices[1:]
+
+    class Meta:
+        model = ChangeLog
+        widgets = {
+          'area': forms.SelectMultiple(choices=ChangeLog.area_choices)
+        }
+        fields = '__all__'
+
+
 @admin.register(ChangeLog)
 class ChangeLogAdmin(admin.ModelAdmin):
     search_fields = [
@@ -60,9 +74,7 @@ class ChangeLogAdmin(admin.ModelAdmin):
         ('type', admin.RelatedOnlyFieldListFilter),
     ]
 
-    filter_horizontal = [
-        'area'
-    ]
+    form = ChangeLogAdminFrom
 
     inlines = [
         ChangeLogPagesAdmin,
