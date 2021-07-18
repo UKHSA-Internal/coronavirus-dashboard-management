@@ -6,46 +6,18 @@
 
 # 3rd party:
 from django.contrib import admin
-from django import forms
 from django.utils.safestring import mark_safe
 
 # Internal: 
-from ...models.change_log import ChangeLog
+from service_admin.models.change_log import ChangeLog
+from .forms import ChangeLogAdminFrom
+from .inlines import ChangeLogPagesAdmin, ChangeLogMetricsAdmin
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 __all__ = [
     'ChangeLogAdmin'
 ]
-
-
-class ChangeLogMetricsAdmin(admin.TabularInline):
-    verbose_name = "Metric association"
-    verbose_name_plural = "Metric associations"
-    model = ChangeLog.metrics.through
-    readonly_fields = ['id']
-    extra = 10
-
-
-class ChangeLogPagesAdmin(admin.TabularInline):
-    verbose_name = "Page association"
-    verbose_name_plural = "Page associations"
-    model = ChangeLog.pages.through
-    readonly_fields = ['id']
-    extra = 5
-
-
-class ChangeLogAdminFrom(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['area'].widget.choices = self.fields['area'].choices[1:]
-
-    class Meta:
-        model = ChangeLog
-        widgets = {
-          'area': forms.SelectMultiple(choices=ChangeLog.area_choices)
-        }
-        fields = '__all__'
 
 
 @admin.register(ChangeLog)
