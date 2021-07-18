@@ -2,42 +2,19 @@
 
 from django.contrib import admin
 
-from ...models.announcement import Announcement, BannerTag
-from ...models.page import Page
-from ..generic_admin import GuardedAdmin
-from ..mixins import ProdOnlyOps
+from service_admin.models.announcement import Announcement
+from service_admin.admin.generic_admin import GuardedAdmin
+from service_admin.admin.mixins import ProdOnlyOps
+
+from .inlines import (
+    AnnouncementTagsInlineAdmin, PageTagsInlineAdmin,
+    AreaInlineAdmin
+)
 
 
 __all__ = [
     'AnnouncementAdmin'
 ]
-
-
-class PageTagsInlineAdmin(admin.TabularInline):
-    model = Announcement.pages.through
-    # can_delete = False
-    # formset = BaselineMultiTenantFormset
-    # readonly_fields = ['id']
-    # exclude = ['id']
-    extra = 3
-
-
-class AreaInlineAdmin(admin.TabularInline):
-    model = Announcement.areas.through
-    # can_delete = False
-    # formset = BaselineMultiTenantFormset
-    # readonly_fields = ['id']
-    # exclude = ['id']
-    extra = 5
-
-
-class AnnouncementTagsInlineAdmin(admin.TabularInline):
-    model = BannerTag
-    # can_delete = False
-    # formset = BaselineMultiTenantFormset
-    # readonly_fields = ['id']
-    # exclude = ['id']
-    extra = 1
 
 
 @admin.register(Announcement)
@@ -54,7 +31,11 @@ class AnnouncementAdmin(ProdOnlyOps, GuardedAdmin):
         "released"
     ]
 
-    inlines = [AnnouncementTagsInlineAdmin, PageTagsInlineAdmin, AreaInlineAdmin]
+    inlines = [
+        AnnouncementTagsInlineAdmin,
+        PageTagsInlineAdmin,
+        AreaInlineAdmin
+    ]
 
     fieldsets = (
         (
