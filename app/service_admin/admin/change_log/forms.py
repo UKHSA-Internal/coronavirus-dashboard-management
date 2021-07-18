@@ -23,7 +23,7 @@ class ChangeLogAdminFrom(forms.ModelForm):
 
         choice_dict = dict(ChangeLog.area_choices)
         initial = list()
-        if 'instance' in kwargs:
+        if 'instance' in kwargs and hasattr(kwargs['instance'], 'area'):
             initial = [(choice_dict[item], item) for item in kwargs['instance'].area]
 
         self.fields['area'] = forms.MultipleChoiceField(
