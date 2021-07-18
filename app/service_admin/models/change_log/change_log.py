@@ -27,7 +27,7 @@ __all__ = [
 
 class ChangeLog(models.Model):
     area_choices = (
-        ("overview::^K.*$", _("UK Only")),
+        ("overview::^K.*$", _("UK [Overview]")),
         ("nation::^E92000001$", _("England [Nation]")),
         ("region::^E.*$", _("England [region]")),
         ("utla::^E.*$", _("England [UTLA]")),
@@ -37,8 +37,8 @@ class ChangeLog(models.Model):
         ("utla::^S.*$", _("Scotland [UTLA]")),
         ("ltla::^S.*$", _("Scotland [LTLA]")),
         ("nation::^N92000002$", _("Northern Ireland [Nation]")),
-        ("utla::^S.*$", _("Northern Ireland [UTLA]")),
-        ("ltla::^S.*$", _("Northern Ireland [LTLA]")),
+        ("utla::^N.*$", _("Northern Ireland [UTLA]")),
+        ("ltla::^N.*$", _("Northern Ireland [LTLA]")),
         ("nation::^W.*$", _("Wales [Nation]")),
         ("utla::^W.*$", _("Wales [UTLA]")),
         ("ltla::^W.*$", _("Wales [LTLA]")),
@@ -54,9 +54,27 @@ class ChangeLog(models.Model):
         help_text=_("Only use when the log entry is applicable for a limited period.")
     )
     heading = VarCharField(max_length=150, blank=False, null=False)
-    body = MarkdownxField(null=False, blank=False)
-    details = MarkdownxField(null=True, blank=True)
-    high_priority = models.BooleanField(null=False, default=False)
+    body = MarkdownxField(
+        null=False,
+        blank=False,
+        help_text=_(
+            "Markdown enabled. Keep as short as possible when 'High priority' "
+            "option is checked."
+        )
+    )
+    details = MarkdownxField(
+        null=True,
+        blank=True,
+        help_text=_("Markdown enabled.")
+    )
+    high_priority = models.BooleanField(
+        null=False,
+        default=False,
+        help_text=_(
+            "Includes the 'Body' in the banner. Only effective when"
+            " 'Display banner' option is checked."
+        )
+    )
     display_banner = models.BooleanField(null=False, default=False)
     type = models.ForeignKey(
         'Tag',
@@ -76,9 +94,9 @@ class ChangeLog(models.Model):
             max_length=50,
             choices=area_choices
         ),
-        choices=area_choices,
         blank=False,
-        null=True
+        null=True,
+        help_text=_("Hold CTRL / CMD to select or deselect multiple items.")
     )
     pages = models.ManyToManyField(
         'Page',
