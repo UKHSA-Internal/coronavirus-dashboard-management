@@ -6,6 +6,7 @@
 
 # 3rd party:
 from django.contrib import admin
+from reversion.admin import VersionAdmin
 
 # Internal: 
 from ...models.page import Page
@@ -21,7 +22,7 @@ __all__ = [
 
 
 @admin.register(Page)
-class PageAdmin(ProdOnlyOps, GuardedAdmin):
+class PageAdmin(ProdOnlyOps, VersionAdmin, GuardedAdmin):
     search_fields = [
         'title',
         'uri'

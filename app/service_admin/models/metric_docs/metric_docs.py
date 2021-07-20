@@ -6,6 +6,7 @@ from ...utils.default_generators import generate_unique_id
 from markdownx.models import MarkdownxField
 from uuid import uuid4
 from django_multitenant import models as mt_models
+from reversion import register as versioned
 
 
 __all__ = [
@@ -18,6 +19,7 @@ class TenantManager(mt_models.TenantManagerMixin, models.Manager):
     pass
 
 
+@versioned()
 class MetricAsset(models.Model):
     id = VarCharField(
         verbose_name=_("unique ID"),
@@ -39,6 +41,7 @@ class MetricAsset(models.Model):
         ordering = ("label",)
 
 
+@versioned()
 class MetricAssetToMetric(models.Model):
     ASSET_TYPES = [
         ('ABSTRACT', _("Abstract")),

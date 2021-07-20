@@ -7,6 +7,7 @@
 # 3rd party:
 from django.contrib import admin
 from django.utils.safestring import mark_safe
+from reversion.admin import VersionAdmin
 
 # Internal: 
 from service_admin.models.change_log import ChangeLog
@@ -21,7 +22,7 @@ __all__ = [
 
 
 @admin.register(ChangeLog)
-class ChangeLogAdmin(admin.ModelAdmin):
+class ChangeLogAdmin(VersionAdmin):
     search_fields = [
         'heading'
     ]

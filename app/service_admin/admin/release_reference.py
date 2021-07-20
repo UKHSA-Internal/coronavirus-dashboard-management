@@ -7,6 +7,7 @@ from django.utils.translation import gettext as _
 from django.utils.safestring import mark_safe
 from django.utils import timezone
 from django.db.models import DateTimeField
+from reversion.admin import VersionAdmin
 
 from ..utils.dispatch_ops import update_timestamps
 
@@ -142,7 +143,7 @@ class DateTimeFilter(admin.DateFieldListFilter):
 
 
 @admin.register(ReleaseReference)
-class ReleaseReferenceAdmin(DjangoObjectActions, GuardedAdmin):
+class ReleaseReferenceAdmin(VersionAdmin, DjangoObjectActions, GuardedAdmin):
     search_fields = ('label',)
     list_per_page = 30
     readonly_fields = ["category"]

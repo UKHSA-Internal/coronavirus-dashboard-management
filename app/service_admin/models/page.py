@@ -8,6 +8,7 @@ from django.utils.translation import gettext as _
 
 # 3rd party:
 from django.db import models
+from reversion import register as versioned
 
 # Internal: 
 from ..utils.default_generators import generate_unique_id
@@ -27,6 +28,7 @@ def url_validator(value):
     return False
 
 
+@versioned()
 class Page(models.Model):
     id = models.UUIDField(
         verbose_name=_("unique ID"),

@@ -4,11 +4,12 @@ from django.contrib import admin
 from django.utils.translation import gettext as _
 from json import dumps
 from django.utils.safestring import mark_safe
+from reversion.admin import VersionAdmin
 
-from ...models.tags import MetricTag
-from ...models.metric_docs import MetricAssetToMetric
+from service_admin.models.tags import MetricTag
+from service_admin.models.metric_docs import MetricAssetToMetric
 
-from ...models.data import MetricReference
+from service_admin.models.data import MetricReference
 from ..generic_admin import GuardedAdmin
 
 from django_object_actions import DjangoObjectActions
@@ -158,7 +159,7 @@ class MetricAssetInlineAdmin(admin.TabularInline):
 
 
 @admin.register(MetricReference)
-class MetricReferenceAdmin(ProdOnlyOps, DjangoObjectActions, GuardedAdmin):
+class MetricReferenceAdmin(ProdOnlyOps, VersionAdmin, DjangoObjectActions, GuardedAdmin):
     search_fields = ('metric', 'metric_name')
     actions = [
         release_selected,

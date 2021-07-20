@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.utils.translation import gettext as _
 from django.core.serializers import serialize
 from json import dumps
+from reversion.admin import VersionAdmin
 
 from ...models.tags import Tag
 from ..generic_admin import GuardedAdmin
@@ -72,7 +73,7 @@ class FilterByReleaseStatus(admin.SimpleListFilter):
 
 
 @admin.register(Tag)
-class TagAdmin(ProdOnlyOps, GuardedAdmin):
+class TagAdmin(ProdOnlyOps, GuardedAdmin, VersionAdmin):
     search_fields = ('tag',)
     # actions = [
     #     release_selected,

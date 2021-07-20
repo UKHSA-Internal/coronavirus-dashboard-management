@@ -11,7 +11,7 @@ from django.utils.translation import gettext as _
 from django.contrib.postgres.fields import ArrayField
 
 from markdownx.models import MarkdownxField
-from regex_field.fields import RegexField
+from reversion import register as versioned
 
 # Internal: 
 from ..fields import VarCharField
@@ -25,6 +25,7 @@ __all__ = [
 ]
 
 
+@versioned()
 class ChangeLog(models.Model):
     area_choices = (
         ("overview::^K.*$", _("UK [Overview]")),
@@ -148,6 +149,7 @@ class ChangeLog(models.Model):
         ordering = ('-date',)
 
 
+@versioned()
 class ChangeLogToMetric(models.Model):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
     log = models.ForeignKey('ChangeLog', on_delete=models.CASCADE)
@@ -170,6 +172,7 @@ class ChangeLogToMetric(models.Model):
         ordering = ('log', 'metric')
 
 
+@versioned()
 class ChangeLogToPage(models.Model):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
     log = models.ForeignKey('ChangeLog', on_delete=models.CASCADE)

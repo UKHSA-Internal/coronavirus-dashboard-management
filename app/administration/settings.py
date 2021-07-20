@@ -93,7 +93,8 @@ INSTALLED_APPS = [
     'guardian',
     'service_admin',
     'markdownx',
-    'django_admin_json_editor'
+    'django_admin_json_editor',
+    'reversion'
 ]
 
 MIDDLEWARE = [

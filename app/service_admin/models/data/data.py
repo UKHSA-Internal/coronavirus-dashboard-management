@@ -5,6 +5,7 @@ from django.utils import timezone
 from ..fields import VarCharField
 from django_multitenant import mixins as mt_mixins
 from django_multitenant import models as mt_models
+from reversion import register as versioned
 
 
 class TenantManager(mt_models.TenantManagerMixin, models.Manager):
@@ -29,6 +30,7 @@ class AreaPriorities(models.Model):
         ]
 
 
+@versioned()
 class AreaReference(models.Model):
     area_type_choices = (
         ('overview', _('Overview')),
@@ -73,6 +75,7 @@ class GeoReference(models.Model):
         db_table = 'covid19\".\"geo_reference'
 
 
+@versioned()
 class MetricReference(models.Model):
     id = models.AutoField(primary_key=True)
     metric = VarCharField(unique=True, max_length=120, null=False, blank=False)
@@ -160,6 +163,7 @@ class ProcessingStatus(models.Model):
         db_table = 'covid19\".\"processing_status'
 
 
+@versioned()
 class ReleaseCategory(models.Model):
     PROCESS_TYPE_ENUM = [
         ('MAIN', _('Main')),
@@ -185,6 +189,7 @@ class ReleaseCategory(models.Model):
         unique_together = (('release', 'process_name'),)
 
 
+@versioned()
 class ReleaseStats(models.Model):
     release = models.OneToOneField(
         'ReleaseReference',
@@ -200,6 +205,7 @@ class ReleaseStats(models.Model):
         verbose_name_plural = _("Release statistics")
 
 
+@versioned()
 class ReleaseReference(models.Model):
     id = models.AutoField(primary_key=True)
     timestamp = models.DateTimeField(_("receipt time"), unique=True)

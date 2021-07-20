@@ -11,6 +11,7 @@ from django.utils.translation import gettext as _
 from django_multitenant import fields as mt_fields
 from django_multitenant import models as mt_models
 from django_multitenant import mixins as mt_mixins
+from reversion import register as versioned
 
 # Internal: 
 from .fields import VarCharField
@@ -31,6 +32,7 @@ class TenantManager(mt_models.TenantManagerMixin, models.Manager):
     pass
 
 
+@versioned()
 class Tag(models.Model):
     ASSOCIATION_CHOICES = [
         ("METRICS", _("Metrics")),
@@ -55,6 +57,7 @@ class Tag(models.Model):
         verbose_name_plural = _("Tags")
 
 
+@versioned()
 class MetricTag(models.Model):
     id = models.UUIDField(
         verbose_name=_("unique ID"),
