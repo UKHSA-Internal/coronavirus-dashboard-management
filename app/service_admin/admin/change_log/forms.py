@@ -24,7 +24,10 @@ class ChangeLogAdminFrom(forms.ModelForm):
         choice_dict = dict(ChangeLog.area_choices)
         initial = list()
         if 'instance' in kwargs and hasattr(kwargs['instance'], 'area'):
-            initial = [(choice_dict[item], item) for item in kwargs['instance'].area]
+            try:
+                initial = [(choice_dict[item], item) for item in kwargs['instance'].area]
+            except TypeError:
+                pass
 
         self.fields['area'] = forms.MultipleChoiceField(
             initial=initial,
