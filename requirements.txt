@@ -25,3 +25,4 @@ opencensus-ext-requests
 opencensus-ext-django==0.7.4
 django-redis-cache
 django-regex-field
+django-reversion
