@@ -27,6 +27,28 @@
 	.current-model{
 			border-left: 10px solid #d0d0d0 !important;
   }
+	.textstats {
+			display: flex;
+			max-width: 50em;
+			font-size: medium;
+	}
+	.textstats > dl {
+			display: grid;
+			grid-auto-columns: 1fr auto;
+			grid-row-gap: .2rem;
+			grid-column-gap: .5rem;
+	}
+	.textstats > dl > dt {
+			grid-column: 1;
+			display: block;
+      margin: 0;
+  }
+	.textstats > dl > dd {
+			grid-column: 2;
+			display: block;
+			margin: 0;
+			min-width: 30em;
+	}
 </style>
 </head>
 {% load i18n %}
@@ -103,6 +125,44 @@
 <script type="application/javascript">
 		$(document).ready(() => {
 		    $('.related-widget-wrapper select').not('[multiple]').select2({ placeholder: "---------" });
+		});
+		$(document).ready(() => {
+		    $('.markdownx').each(function () {
+
+				    const dataElms = $(`<div class="textstats">
+	<dl>
+		<dt>Estimated school grade:</dt>
+		<dd><span class="school-grade"></span><dd>
+		<dt>Reading (Flesch) score:</dt>
+		<dd><div><span class="flesch-score"></span>&nbsp;&mdash;&nbsp;Difficulty:&nbsp;<span class="flesch-level"></span></div><dd>
+	</dl>
+</div>`);
+				    dataElms.insertAfter(this);
+
+				    if ( $(this).children(".markdownx-editor").text() !== "" ) {
+                $.post(
+                    "/textstats",
+		                JSON.stringify({ payload: $(this).children(".markdownx-editor").text() }),
+                ).done(function (data) {
+                    dataElms.find(".school-grade").text(data.estimated_school_grade);
+                    dataElms.find(".flesch-score").text(data.flesch_score);
+                    dataElms.find(".flesch-level").text(data.flesch_level);
+                }, "json");
+            }
+
+		    });
+
+		    $('.markdownx-editor').change(function () {
+		        const thisElm = $(this);
+		        const content = thisElm.text();
+		        const textstats = thisElm.parent().next(".textstats");
+
+				    $.post("/textstats", JSON.stringify({ payload: content })).done(function (data) {
+						    textstats.find(".school-grade").text(data.estimated_school_grade);
+						    textstats.find(".flesch-score").text(data.flesch_score);
+						    textstats.find(".flesch-level").text(data.flesch_level);
+				    }, "json");
+		    });
 		});
 </script>
 </body>
