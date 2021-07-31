@@ -169,6 +169,7 @@ class ReleaseCategory(models.Model):
         ('MAIN', _('Main')),
         ('MSOA', _('MSOA')),
         ('VACCINATION', _("Vaccinations")),
+        ('POSITIVITY & PEOPLE TESTED', _("Positivity & People Tested")),
         ('AGE DEMOGRAPHICS: CASE - EVENT DATE', _("Age demographics: Cases")),
         ('AGE-DEMOGRAPHICS: DEATH28DAYS - EVENT DATE', _("Age demographics: Deaths 28 days")),
         ('AGE-DEMOGRAPHICS: VACCINATION - EVENT DATE', _("Age demographics: Vaccinations")),
