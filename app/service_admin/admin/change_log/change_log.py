@@ -23,6 +23,8 @@ __all__ = [
 
 @admin.register(ChangeLog)
 class ChangeLogAdmin(VersionAdmin):
+    list_per_page = 20
+
     search_fields = [
         'heading'
     ]
