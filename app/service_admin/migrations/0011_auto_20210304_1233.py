@@ -4,6 +4,7 @@ from django.db import migrations, models
 import markdownx.models
 import service_admin.models.fields
 import service_admin.models.announcement.banners
+from uuid import uuid4
 
 
 class Migration(migrations.Migration):
@@ -43,7 +44,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='YellowBanner',
             fields=[
-                ('id', service_admin.models.fields.VarCharField(default=service_admin.models.announcement.banners.generate_unique_id, max_length=36, primary_key=True, serialize=False)),
+                ('id', service_admin.models.fields.VarCharField(default=uuid4, max_length=36, primary_key=True, serialize=False)),
                 ('appear_by_update', models.DateField(verbose_name='appear by update')),
                 ('disappear_by_update', models.DateField(verbose_name='disappear by update')),
                 ('date', models.DateField(null=True, verbose_name='date')),
@@ -53,6 +54,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'yellow banner',
                 'db_table': 'covid19"."yellow_banner',
+                "manged": False
             },
         ),
         migrations.RunSQL(

@@ -27,7 +27,6 @@ class Migration(migrations.Migration):
                 ('relative_urls', models.ManyToManyField(to='service_admin.PageURI')),
             ],
             options={
-                'verbose_name': 'yellow banner',
                 'db_table': 'covid19"."announcement',
             },
         ),

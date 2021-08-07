@@ -66,6 +66,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'banner page',
                 'db_table': 'covid19"."banner_page',
+                'managed': False
             },
         ),
         migrations.RunSQL(

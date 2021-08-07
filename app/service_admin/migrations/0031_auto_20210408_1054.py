@@ -15,10 +15,6 @@ class Migration(migrations.Migration):
             options={'managed': False, 'verbose_name': 'Announcement'},
         ),
         migrations.AlterModelOptions(
-            name='bannerpage',
-            options={'managed': False, 'verbose_name': 'banner page'},
-        ),
-        migrations.AlterModelOptions(
             name='metricasset',
             options={'managed': False},
         ),
