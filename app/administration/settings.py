@@ -330,3 +330,6 @@ AZURE_OVERWRITE_FILES = True
 AZURE_LOCATION = "admin"
 AZURE_CONTAINER = "static"
 AZURE_CACHE_CONTROL = "public, max-age=600, s-maxage=1800"
+
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
