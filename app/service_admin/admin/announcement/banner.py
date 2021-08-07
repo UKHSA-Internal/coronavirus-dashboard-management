@@ -3,13 +3,9 @@
 from django.contrib import admin
 
 from service_admin.models.announcement import Announcement
-from service_admin.admin.generic_admin import GuardedAdmin
 from service_admin.admin.mixins import ProdOnlyOps
 
-from .inlines import (
-    AnnouncementTagsInlineAdmin, PageTagsInlineAdmin,
-    AreaInlineAdmin
-)
+from reversion.admin import VersionAdmin
 
 
 __all__ = [
@@ -18,23 +14,27 @@ __all__ = [
 
 
 @admin.register(Announcement)
-class AnnouncementAdmin(ProdOnlyOps, GuardedAdmin):
+class AnnouncementAdmin(VersionAdmin, ProdOnlyOps):
+    list_per_page = 20
+
     readonly_fields = [
         'id'
     ]
 
     list_display = [
-        "type",
-        "appear_by_update",
-        "disappear_by_update",
+        "launch",
+        "expire",
         "date",
-        "released"
+        "deploy_with_release",
+        "remove_with_release"
     ]
 
-    inlines = [
-        AnnouncementTagsInlineAdmin,
-        PageTagsInlineAdmin,
-        AreaInlineAdmin
+    list_filter = [
+        ('launch', admin.DateFieldListFilter),
+        ('expire', admin.DateFieldListFilter),
+        ('date', admin.DateFieldListFilter),
+        ('deploy_with_release', admin.BooleanFieldListFilter),
+        ('remove_with_release', admin.BooleanFieldListFilter),
     ]
 
     fieldsets = (
@@ -43,12 +43,11 @@ class AnnouncementAdmin(ProdOnlyOps, GuardedAdmin):
             {
                 'fields': (
                     'id',
-                    'type',
-                    ('appear_by_update', 'disappear_by_update', 'date'),
-                    'released',
-                    'heading',
+                    'launch',
+                    'expire',
+                    "date",
+                    ('deploy_with_release', 'remove_with_release'),
                     'body',
-                    'details',
                 ),
             },
         ),
