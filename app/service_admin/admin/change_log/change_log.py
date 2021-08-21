@@ -30,7 +30,8 @@ class ChangeLogAdmin(VersionAdmin):
     ]
 
     readonly_fields = [
-        'id'
+        'id',
+        'timestamp_created'
     ]
 
     list_display = [
@@ -61,7 +62,7 @@ class ChangeLogAdmin(VersionAdmin):
             None,
             {
                 'fields': (
-                    'id',
+                    ('id', 'timestamp_created'),
                     'type',
                     ('display_banner', 'high_priority'),
                     ('date', 'expiry'),
