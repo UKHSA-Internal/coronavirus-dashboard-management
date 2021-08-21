@@ -99,6 +99,12 @@ class ChangeLog(models.Model):
         null=True,
         help_text=_("Hold CTRL / CMD to select or deselect multiple items.")
     )
+    timestamp_created = models.DateTimeField(
+        verbose_name=_("Created on"),
+        auto_created=True,
+        editable=False,
+        null=False
+    )
     pages = models.ManyToManyField(
         'Page',
         through='ChangeLogToPage',
