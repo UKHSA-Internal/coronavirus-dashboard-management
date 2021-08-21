@@ -190,8 +190,8 @@ class ReleaseReferenceAdmin(VersionAdmin, DjangoObjectActions, GuardedAdmin):
     def average_ts(self, obj):
 
         file_path = (
-            'https://daisy.coronavirus.data.gov.uk/public/assets/greenhouse'
-            f'/releases/{obj.category.process_name}/{obj.timestamp:%Y-%m-%d}.png'
+            '/public/assets/greenhouse/releases'
+            f'/{obj.category.process_name}/{obj.timestamp:%Y-%m-%d}.png'
         )
 
         return mark_safe(f'<img src="{file_path}" loading="lazy" width="180"/>')
