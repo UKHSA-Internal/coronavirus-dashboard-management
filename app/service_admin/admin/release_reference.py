@@ -1,10 +1,12 @@
 #!/usr/bin python3
 
 from datetime import timedelta
+import re
 
 from django.contrib import admin
 from django.utils.translation import gettext as _
 from django.utils.safestring import mark_safe
+from django.templatetags.static import static
 from django.utils import timezone
 from django.db.models import DateTimeField
 from reversion.admin import VersionAdmin
@@ -189,12 +191,18 @@ class ReleaseReferenceAdmin(VersionAdmin, DjangoObjectActions, GuardedAdmin):
 
     def average_ts(self, obj):
 
-        file_path = (
-            '/public/assets/greenhouse/releases'
-            f'/{obj.category.process_name}/{obj.timestamp:%Y-%m-%d}.png'
+        file_path = static(
+            re.sub(
+                r"[:\s'\"]+",
+                "_",
+                f'releases/{obj.category.process_name}/{obj.timestamp:%Y-%m-%d}.png'
+            )
         )
 
-        return mark_safe(f'<img src="{file_path}" loading="lazy" width="180"/>')
+        return mark_safe(
+            f'<img src="{file_path}" loading="lazy" width="180" '
+            f'style="margin-top: -10px; margin-bottom: -10px;"/>'
+        )
 
     average_ts.admin_order_field = 'Relative receipt time'
     average_ts.short_description = 'Relative receipt time'
