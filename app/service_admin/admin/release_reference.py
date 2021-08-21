@@ -193,7 +193,7 @@ class ReleaseReferenceAdmin(VersionAdmin, DjangoObjectActions, GuardedAdmin):
 
         file_path = static(
             re.sub(
-                r"[:\s'\"]+",
+                r"[:\s'\"&]+",
                 "_",
                 f'releases/{obj.category.process_name}/{obj.timestamp:%Y-%m-%d}.png'
             )
