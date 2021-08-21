@@ -103,5 +103,5 @@ class Announcement(models.Model):
         ]
         ordering = [
             "-launch",
-            "expire"
+            "-expire"
         ]
