@@ -157,6 +157,7 @@ class ReleaseReferenceAdmin(VersionAdmin, DjangoObjectActions, GuardedAdmin):
     list_display = [
         'id',
         'formatted_release_time',
+        'average_ts',
         'category',
         'released',
         'count',
@@ -186,5 +187,14 @@ class ReleaseReferenceAdmin(VersionAdmin, DjangoObjectActions, GuardedAdmin):
     formatted_release_time.admin_order_field = 'timestamp'
     formatted_release_time.short_description = 'receipt time'
 
-    # def publish_latest_data(self, request, queryset):
-    #     pass
+    def average_ts(self, obj):
+
+        file_path = (
+            'https://daisy.coronavirus.data.gov.uk/public/assets/greenhouse'
+            f'/releases/{obj.category.process_name}/{obj.timestamp:%Y-%m-%d}.png'
+        )
+
+        return mark_safe(f'<img src="{file_path}" loading="lazy" width="180"/>')
+
+    average_ts.admin_order_field = 'Relative receipt time'
+    average_ts.short_description = 'Relative receipt time'
