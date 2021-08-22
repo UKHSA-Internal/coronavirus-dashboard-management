@@ -101,7 +101,7 @@ class ChangeLog(models.Model):
     )
     timestamp_created = models.DateTimeField(
         verbose_name=_("Created on"),
-        auto_created=True,
+        auto_now_add=True,
         editable=False,
         null=False
     )
