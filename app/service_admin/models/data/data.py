@@ -177,7 +177,7 @@ class ReleaseCategory(models.Model):
         ('AGE-DEMOGRAPHICS: DEATH28DAYS - EVENT DATE', _("Age demographics: Deaths 28 days")),
         ('AGE-DEMOGRAPHICS: VACCINATION - EVENT DATE', _("Age demographics: Vaccinations")),
         ('MSOA: VACCINATION - EVENT DATE', _('MSOA: Vaccinations')),
-        ('Healthcare', _('HEALTHCARE')),
+        ('HEALTHCARE', _('Healthcare')),
     ]
 
     _process_type_dict = dict(PROCESS_TYPE_ENUM)
