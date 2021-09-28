@@ -15,19 +15,19 @@ RUN yarn run build
 RUN rm -rf node_modules
 
 
-FROM node:14-buster-slim AS cms
-LABEL maintainer="Pouria Hadjibagheri <Pouria.Hadjibagheri@phe.gov.uk>"
-
-COPY ./app/static_private/covid19-cms           /app/static_private/covid19-cms
-
-WORKDIR /app/static_private/covid19-cms
-RUN rm -rf node_modules
-RUN npm install
-RUN npm rebuild node-sass
-RUN npx browserslist@latest --update-db
-RUN yarn install
-RUN yarn run build
-RUN rm -rf node_modules
+#FROM node:14-buster-slim AS cms
+#LABEL maintainer="Pouria Hadjibagheri <Pouria.Hadjibagheri@phe.gov.uk>"
+#
+#COPY ./app/static_private/covid19-cms           /app/static_private/covid19-cms
+#
+#WORKDIR /app/static_private/covid19-cms
+#RUN rm -rf node_modules
+#RUN npm install
+#RUN npm rebuild node-sass
+#RUN npx browserslist@latest --update-db
+#RUN yarn install
+#RUN yarn run build
+#RUN rm -rf node_modules
 
 
 FROM python:3.9-buster
