@@ -39,7 +39,7 @@ ENV GUNICORN_PORT 5000
 ENV PYTHONPATH            /app/app
 ENV CSS_PATH              $PYTHON_PATH/static_private/css
 ENV JS_PATH              $PYTHON_PATH/static_private/js
-ENV DEFAULT_MODULE_NAME   administration.wsgi
+ENV DEFAULT_MODULE_NAME   administration.asgi
 
 # ----------------------------------------------------------------------------------------
 # Startup scripts - copied from `./server/startup/`
@@ -158,4 +158,4 @@ COPY server/config/uvicorn_worker.py           $_WORKER_CLASS_PATH
 
 EXPOSE 5000
 
-ENTRYPOINT ["bash", "/opt/entrypoint.sh"]
+ENTRYPOINT ["gunicorn", "-c", "opt/gunicorn/gunicorn_conf.py", "administration.wsgi:app"]
