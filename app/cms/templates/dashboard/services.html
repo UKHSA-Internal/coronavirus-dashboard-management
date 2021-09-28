@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{#{% block page_title %}Services{% endblock %}#}
+
+{% block body %}
+	<article class="contents" id="content">
+		<header>
+			<div class="banner">
+				<h3>Services</h3>
+			</div>
+		</header>
+		<div class="nested-content-main">
+			{% for item in object_list %}
+				<div class="nested-item">
+					<div class="nested-item-label">
+						<a href="{{ item.get_dashboard_url }}" rel="next">{{ item }}</a>
+					</div>
+				<div class="description">{{ item.description }}</div>
+				</div>
+			{% endfor %}
+		</div>
+	</article>
+{% endblock %}

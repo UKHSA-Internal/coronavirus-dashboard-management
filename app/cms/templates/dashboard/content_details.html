@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block page_title %}Content details{% endblock %}
+
+{% block body %}
+{#	<header>#}
+{#		<h1><small>Public Health England</small><br>Mobile Service CMS</h1>#}
+{#	</header>#}
+{#		<div class="content-details">#}
+{#			<dl>#}
+{#				<dt>Service</dt><dd>{{ section_details.service.name }}</dd>#}
+{#				<dt>Section</dt><dd>{{ section_details.name }}</dd>#}
+{#				<dt>Content</dt><dd>{{ object.label }}</dd>#}
+{#			</dl>#}
+{#		<h1>{{ section_details.service.name }}: {{ section_details.name }}</h1>#}
+{#		<h2></h2>#}
+{#		</div>#}
+
+		<article id="content"
+		         class="contents"
+		         data-api="{{ api_url }}"
+		         data-fields="{{ fields_url }}"
+						 data-contentapi="{{ contents_url }}"></article>
+{% endblock %}
+
+{% block tail %}
+	<script async src="{% static 'js/dist/content_details.min.js' %}" type="application/javascript"></script>
+{% endblock %}

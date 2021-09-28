@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+{% endblock %}
+
+{% block body %}
+	<section id="content"></section>
+{% endblock %}
+
+{% block tail %}
+	<script src="{% static 'js/dist/main.js' %}" type="application/javascript"></script>
+{% endblock %}

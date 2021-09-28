@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{##}
+{#{% block page_title %}#}
+{#		<a href="#" class="">#}
+{#		<h2>#}
+{#			<small>Services</small>#}
+{#			{{ service_name }}#}
+{#		</h2>#}
+{#	</a>#}
+{#	<a href="#" class="">#}
+{#		<h2>#}
+{#			<small>Sections</small>#}
+{#		</h2>#}
+{#	</a>#}
+{#{% endblock %}#}
+
+{% block body %}
+{#	<section>#}
+{#	<h1>{{ service_name }}</h1>#}
+{#	</section>#}
+	<article class="contents" id="content"
+	         data-api="{{ api_url }}" data-serviceapi="{{ service_api_url }}"></article>
+{% endblock %}
+
+{% block tail %}
+	<script async src="{% static 'js/dist/service_sections.min.js' %}" type="application/javascript"></script>
+{% endblock %}
