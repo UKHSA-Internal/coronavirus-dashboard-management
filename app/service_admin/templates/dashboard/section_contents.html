@@ -1,0 +1,21 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block page_title %}{{ section_details.name }}: contents{% endblock %}
+
+{% block body %}
+{#	<section>#}
+{#	<h1>{{ section_details.service.name }}</h1>#}
+{#	<h2>{{ section_details.name }}</h2>#}
+{#	</section>#}
+	<article class="contents"
+	         id="content"
+	         data-api="{{ api_url }}"
+	         data-sectionapi="{{ section_api_url }}"
+	         data-contentlistapi="{{ content_api_url }}"></article>
+{% endblock %}
+
+
+{% block tail %}
+	<script async src="{% static 'js/dist/section_contents.min.js' %}" type="application/javascript"></script>
+{% endblock %}

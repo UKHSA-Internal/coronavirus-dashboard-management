@@ -152,21 +152,21 @@ ADMIN_REORDER = (
             'service_admin.Colour',
         )
     },
-    {
-        'app': 'service_admin',
-        'label': 'CMS',
-        'models': (
-            'service_admin.Card',
-            'service_admin.Tab',
-            'service_admin.TabField',
-            'service_admin.VisualisationField',
-            'service_admin.TabulationField',
-            'service_admin.RollingAverage',
-            'service_admin.CustomFilterParameter',
-            'service_admin.Highlight',
-            'service_admin.LocationFilter',
-        )
-    }
+    # {
+    #     'app': 'service_admin',
+    #     'label': 'CMS',
+    #     'models': (
+    #         'service_admin.Card',
+    #         'service_admin.Tab',
+    #         'service_admin.TabField',
+    #         'service_admin.VisualisationField',
+    #         'service_admin.TabulationField',
+    #         'service_admin.RollingAverage',
+    #         'service_admin.CustomFilterParameter',
+    #         'service_admin.Highlight',
+    #         'service_admin.LocationFilter',
+    #     )
+    # }
 )
 
 REST_FRAMEWORK = {

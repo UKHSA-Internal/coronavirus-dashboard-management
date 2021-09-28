@@ -1,0 +1,963 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "headlineNumbers": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "caption": {
+                        "type": "string"
+                    },
+                    "valueItems": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "label": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "type": "string"
+                                },
+                                "tooltip": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "label",
+                                "value",
+                                "tooltip"
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "caption",
+                    "valueItems"
+                ]
+            }
+        },
+        "cards": {
+            "type": "object",
+            "properties": {
+                "multiAreaStatic": {
+                    "type": "object",
+                    "properties": {
+                        "heading": {
+                            "type": "string"
+                        },
+                        "cardType": {
+                            "type": "string"
+                        },
+                        "locationAware": {
+                            "type": "object",
+                            "properties": {
+                                "included": {
+                                    "type": "object",
+                                    "properties": {
+                                        "areaType": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "areaType"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "included"
+                            ]
+                        },
+                        "fullWidth": {
+                            "type": "boolean"
+                        },
+                        "abstract": {
+                            "type": "string"
+                        },
+                        "download": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "options": {
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "type": "string"
+                                },
+                                "heading": {
+                                    "type": "null"
+                                },
+                                "choices": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "required": [
+                                "type",
+                                "heading",
+                                "choices"
+                            ]
+                        },
+                        "UK total": {
+                            "type": "object",
+                            "properties": {
+                                "tabs": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "heading": {
+                                                "type": "string"
+                                            },
+                                            "tabType": {
+                                                "type": "string"
+                                            },
+                                            "colours": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "integer",
+                                                    "enum": [
+                                                        0
+                                                    ]
+                                                }
+                                            },
+                                            "params": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "key": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "areaType"
+                                                            ]
+                                                        },
+                                                        "sign": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "="
+                                                            ]
+                                                        },
+                                                        "value": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "overview"
+                                                            ]
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "key",
+                                                        "sign",
+                                                        "value"
+                                                    ]
+                                                }
+                                            },
+                                            "fields": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "label": {
+                                                            "type": "string"
+                                                        },
+                                                        "value": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "newCasesBySpecimenDate",
+                                                                "cumCasesBySpecimenDate",
+                                                                "date"
+                                                            ]
+                                                        },
+                                                        "tooltip": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": {
+                                                            "type": "string"
+                                                        },
+                                                        "rollingAverage": {
+                                                            "type": [
+                                                                "boolean",
+                                                                "object"
+                                                            ],
+                                                            "properties": {
+                                                                "window": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "clipEnd": {
+                                                                    "type": "integer"
+                                                                }
+                                                            }
+                                                        },
+                                                        "highlight": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "from": {
+                                                                    "type": "integer",
+                                                                    "enum": [
+                                                                        -4
+                                                                    ]
+                                                                },
+                                                                "to": {
+                                                                    "type": "integer",
+                                                                    "enum": [
+                                                                        0
+                                                                    ]
+                                                                },
+                                                                "colour": {
+                                                                    "type": "integer",
+                                                                    "enum": [
+                                                                        6
+                                                                    ]
+                                                                },
+                                                                "label": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "Most recent 5 days (incomplete)"
+                                                                    ]
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "from",
+                                                                "to",
+                                                                "colour",
+                                                                "label"
+                                                            ]
+                                                        },
+                                                        "colour": {
+                                                            "type": "integer"
+                                                        },
+                                                        "fill": {
+                                                            "type": "boolean"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "label",
+                                                        "value",
+                                                        "tooltip",
+                                                        "type"
+                                                    ]
+                                                }
+                                            },
+                                            "barType": {
+                                                "type": "string"
+                                            },
+                                            "filename": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "heading",
+                                            "tabType"
+                                        ]
+                                    }
+                                }
+                            },
+                            "required": [
+                                "tabs"
+                            ]
+                        },
+                        "By nation": {
+                            "type": "object",
+                            "properties": {
+                                "tabs": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "heading": {
+                                                "type": "string"
+                                            },
+                                            "tabType": {
+                                                "type": "string"
+                                            },
+                                            "barType": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "stack"
+                                                ]
+                                            },
+                                            "colours": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "integer",
+                                                    "enum": [
+                                                        0,
+                                                        9,
+                                                        3,
+                                                        10
+                                                    ]
+                                                }
+                                            },
+                                            "params": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "key": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "areaType"
+                                                            ]
+                                                        },
+                                                        "sign": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "="
+                                                            ]
+                                                        },
+                                                        "value": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "nation"
+                                                            ]
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "key",
+                                                        "sign",
+                                                        "value"
+                                                    ]
+                                                }
+                                            },
+                                            "fields": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "label": {
+                                                            "type": "string"
+                                                        },
+                                                        "value": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "newCasesBySpecimenDate",
+                                                                "cumCasesBySpecimenDate",
+                                                                "date"
+                                                            ]
+                                                        },
+                                                        "tooltip": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "Daily number of new people tested positive, resident in each nation, by specimen date",
+                                                                "Cumulative total number of people tested positive, resident in each nation, by specimen date",
+                                                                "Date the sample was taken from the person"
+                                                            ]
+                                                        },
+                                                        "type": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "bar",
+                                                                "date",
+                                                                "numeric"
+                                                            ]
+                                                        },
+                                                        "rollingAverage": {
+                                                            "type": "boolean"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "label",
+                                                        "value",
+                                                        "tooltip",
+                                                        "type"
+                                                    ]
+                                                }
+                                            },
+                                            "filename": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "heading",
+                                            "tabType"
+                                        ]
+                                    }
+                                }
+                            },
+                            "required": [
+                                "tabs"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "heading",
+                        "cardType",
+                        "locationAware",
+                        "fullWidth",
+                        "abstract",
+                        "download",
+                        "options",
+                        "UK total",
+                        "By nation"
+                    ]
+                },
+                "chart": {
+                    "type": "object",
+                    "properties": {
+                        "heading": {
+                            "type": "string"
+                        },
+                        "cardType": {
+                            "type": "string"
+                        },
+                        "locationAware": {
+                            "type": "object",
+                            "properties": {
+                                "excluded": {
+                                    "type": "object",
+                                    "properties": {
+                                        "areaType": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "areaType"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "excluded"
+                            ]
+                        },
+                        "fullWidth": {
+                            "type": "boolean"
+                        },
+                        "abstract": {
+                            "type": "string"
+                        },
+                        "download": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "tabs": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "heading": {
+                                        "type": "string"
+                                    },
+                                    "tabType": {
+                                        "type": "string"
+                                    },
+                                    "barType": {
+                                        "type": "string"
+                                    },
+                                    "fields": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "label": {
+                                                    "type": "string"
+                                                },
+                                                "value": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "newCasesBySpecimenDate",
+                                                        "cumCasesBySpecimenDate",
+                                                        "date"
+                                                    ]
+                                                },
+                                                "tooltip": {
+                                                    "type": "string"
+                                                },
+                                                "type": {
+                                                    "type": "string"
+                                                },
+                                                "colour": {
+                                                    "type": "integer"
+                                                },
+                                                "rollingAverage": {
+                                                    "type": [
+                                                        "boolean",
+                                                        "object"
+                                                    ],
+                                                    "properties": {
+                                                        "window": {
+                                                            "type": "integer"
+                                                        },
+                                                        "clipEnd": {
+                                                            "type": "integer"
+                                                        }
+                                                    }
+                                                },
+                                                "highlight": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "from": {
+                                                            "type": "integer",
+                                                            "enum": [
+                                                                -4
+                                                            ]
+                                                        },
+                                                        "to": {
+                                                            "type": "integer",
+                                                            "enum": [
+                                                                0
+                                                            ]
+                                                        },
+                                                        "colour": {
+                                                            "type": "integer",
+                                                            "enum": [
+                                                                6
+                                                            ]
+                                                        },
+                                                        "label": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "Most recent 5 days (incomplete)"
+                                                            ]
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "from",
+                                                        "to",
+                                                        "colour",
+                                                        "label"
+                                                    ]
+                                                },
+                                                "fill": {
+                                                    "type": "boolean"
+                                                }
+                                            },
+                                            "required": [
+                                                "label",
+                                                "value",
+                                                "tooltip",
+                                                "type"
+                                            ]
+                                        }
+                                    },
+                                    "filename": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "heading",
+                                    "tabType"
+                                ]
+                            }
+                        }
+                    },
+                    "required": [
+                        "heading",
+                        "cardType",
+                        "locationAware",
+                        "fullWidth",
+                        "abstract",
+                        "download",
+                        "tabs"
+                    ]
+                },
+                "recentData": {
+                    "type": "object",
+                    "properties": {
+                        "heading": {
+                            "type": "string"
+                        },
+                        "cardType": {
+                            "type": "string"
+                        },
+                        "fullWidth": {
+                            "type": "boolean"
+                        },
+                        "abstract": {
+                            "type": "string"
+                        },
+                        "download": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "tabs": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "heading": {
+                                        "type": "string"
+                                    },
+                                    "tabType": {
+                                        "type": "string"
+                                    },
+                                    "barType": {
+                                        "type": "string"
+                                    },
+                                    "fields": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "label": {
+                                                    "type": "string"
+                                                },
+                                                "value": {
+                                                    "type": "string"
+                                                },
+                                                "tooltip": {
+                                                    "type": "string"
+                                                },
+                                                "colour": {
+                                                    "type": "integer"
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "bar",
+                                                        "date",
+                                                        "numeric"
+                                                    ]
+                                                },
+                                                "rollingAverage": {
+                                                    "type": "boolean"
+                                                }
+                                            },
+                                            "required": [
+                                                "label",
+                                                "value",
+                                                "tooltip",
+                                                "type"
+                                            ]
+                                        }
+                                    },
+                                    "filename": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "heading",
+                                    "tabType"
+                                ]
+                            }
+                        }
+                    },
+                    "required": [
+                        "heading",
+                        "cardType",
+                        "fullWidth",
+                        "abstract",
+                        "download",
+                        "tabs"
+                    ]
+                },
+                "ageSexBreakdown": {
+                    "type": "object",
+                    "properties": {
+                        "heading": {
+                            "type": "string"
+                        },
+                        "caption": {
+                            "type": "string"
+                        },
+                        "cardType": {
+                            "type": "string"
+                        },
+                        "locationAware": {
+                            "type": "object",
+                            "properties": {
+                                "included": {
+                                    "type": "object",
+                                    "properties": {
+                                        "areaType": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "areaType"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "included"
+                            ]
+                        },
+                        "fullWidth": {
+                            "type": "boolean"
+                        },
+                        "abstract": {
+                            "type": "string"
+                        },
+                        "download": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "tabs": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "heading": {
+                                        "type": "string"
+                                    },
+                                    "tabType": {
+                                        "type": "string"
+                                    },
+                                    "barType": {
+                                        "type": "string"
+                                    },
+                                    "groupKey": {
+                                        "type": "string",
+                                        "enum": [
+                                            "age"
+                                        ]
+                                    },
+                                    "groupValues": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "enum": [
+                                                "value",
+                                                "rate"
+                                            ]
+                                        }
+                                    },
+                                    "requiredMetrics": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "enum": [
+                                                "femaleCases",
+                                                "maleCases"
+                                            ]
+                                        }
+                                    },
+                                    "fields": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "label": {
+                                                    "type": "string"
+                                                },
+                                                "value": {
+                                                    "type": "string"
+                                                },
+                                                "tooltip": {
+                                                    "type": "string"
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "bar",
+                                                        "string",
+                                                        "numeric"
+                                                    ]
+                                                },
+                                                "colour": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "required": [
+                                                "label",
+                                                "value",
+                                                "tooltip",
+                                                "type"
+                                            ]
+                                        }
+                                    },
+                                    "filename": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "heading",
+                                    "tabType"
+                                ]
+                            }
+                        }
+                    },
+                    "required": [
+                        "heading",
+                        "caption",
+                        "cardType",
+                        "locationAware",
+                        "fullWidth",
+                        "abstract",
+                        "download",
+                        "tabs"
+                    ]
+                },
+                "simpleTableStatic": {
+                    "type": "object",
+                    "properties": {
+                        "heading": {
+                            "type": "string"
+                        },
+                        "cardType": {
+                            "type": "string"
+                        },
+                        "fullWidth": {
+                            "type": "boolean"
+                        },
+                        "abstract": {
+                            "type": "string"
+                        },
+                        "download": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "tabs": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "heading": {
+                                        "type": "string"
+                                    },
+                                    "tabType": {
+                                        "type": "string",
+                                        "enum": [
+                                            "table",
+                                            "metadata"
+                                        ]
+                                    },
+                                    "params": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "key": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "areaType"
+                                                    ]
+                                                },
+                                                "sign": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "="
+                                                    ]
+                                                },
+                                                "value": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "key",
+                                                "sign",
+                                                "value"
+                                            ]
+                                        }
+                                    },
+                                    "latestBy": {
+                                        "type": "string",
+                                        "enum": [
+                                            "newCasesBySpecimenDateRollingRate"
+                                        ]
+                                    },
+                                    "sortBy": {
+                                        "type": "string",
+                                        "enum": [
+                                            "areaName"
+                                        ]
+                                    },
+                                    "fields": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "label": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "Area",
+                                                        "Cases",
+                                                        "Rate per 100,000 population"
+                                                    ]
+                                                },
+                                                "value": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "areaName",
+                                                        "newCasesBySpecimenDateRollingSum",
+                                                        "newCasesBySpecimenDateRollingRate"
+                                                    ]
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "string",
+                                                        "numeric"
+                                                    ]
+                                                },
+                                                "tooltip": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "",
+                                                        "Total number of people tested positive in the 7-day period ending {date}",
+                                                        "Rate of total number of people tested positive in the 7-day period per 100,000 resident population",
+                                                        "Total number of people tested positive in the week ending {date}"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "label",
+                                                "value",
+                                                "type",
+                                                "tooltip"
+                                            ]
+                                        }
+                                    },
+                                    "searchBy": {
+                                        "type": "string",
+                                        "enum": [
+                                            "areaName"
+                                        ]
+                                    },
+                                    "filename": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "heading",
+                                    "tabType"
+                                ]
+                            }
+                        }
+                    },
+                    "required": [
+                        "heading",
+                        "cardType",
+                        "fullWidth",
+                        "abstract",
+                        "download",
+                        "tabs"
+                    ]
+                }
+            },
+            "required": [
+                "multiAreaStatic",
+                "chart",
+                "recentData",
+                "ageSexBreakdown",
+                "simpleTableStatic"
+            ]
+        }
+    },
+    "required": [
+        "headlineNumbers",
+        "cards"
+    ]
+}
