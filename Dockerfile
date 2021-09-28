@@ -153,7 +153,7 @@ COPY --from=builder /app/static_private/css    $CSS_PATH
 COPY --from=builder /app/static_private/js     $JS_PATH
 COPY server/config/uvicorn_worker.py           $_WORKER_CLASS_PATH
 
-COPY --from=cms /app/static_private/covid19-cms/build  /app/frontend
+#COPY --from=cms /app/static_private/covid19-cms/build  /app/frontend
 #USER app
 
 EXPOSE 5000
