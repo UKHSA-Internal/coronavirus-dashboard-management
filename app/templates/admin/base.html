@@ -49,6 +49,27 @@
 			margin: 0;
 			min-width: 30em;
 	}
+	.fieldBox {
+			display: flex;
+			flex: 1 2 90%;
+		  flex-wrap: wrap;
+			margin-bottom: 1rem;
+	}
+	.fieldBox > * {
+			justify-self: flex-start;
+			margin-left: unset !important;
+			margin-right: 2rem;
+	}
+	.fieldBox > .help {
+			width: 100%;
+	}
+	.required {
+			border-left: 5px solid #1d70b8;
+			padding-left: 3px !important;
+	}
+	label {
+			font-weight: bold;
+	}
 </style>
 </head>
 {% load i18n %}

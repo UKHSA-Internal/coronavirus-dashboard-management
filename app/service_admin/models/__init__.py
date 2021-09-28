@@ -24,6 +24,8 @@ from .announcement import *
 from .tags import *
 from .etl_metrics import *
 from .change_log import *
+from .cms import *
+from .reports import *
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Header

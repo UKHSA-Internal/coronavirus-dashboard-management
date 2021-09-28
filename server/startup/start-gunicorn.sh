@@ -1,20 +1,20 @@
 #! /usr/bin/env sh
 set -e
 
-if [ ! -f /opt/migrated.txt ]; then
-    python3 $PYTHONPATH/manage.py collectstatic \
-              --ignore=node_modules --ignore=.sass-cache       \
-              --ignore=*.sass --ignore=*.scss --ignore=*.tsx   \
-              --ignore=gulpfile.js --ignore=start.js           \
-              --ignore=gulp                                    \
-              --ignore=*.ts --ignore=*.jsx --ignore=tsconfig.* \
-              --ignore=npm* --ignore=._.DS_Store --ignore=_*   \
-              --ignore=package.json --ignore=package-lock.json \
-              --ignore=.babelrc --ignore=*.log --ignore=*.sh   \
-              --noinput &> /dev/null
-
-    echo "migrated" &> /opt/migrated.txt
-fi
+#if [ ! -f /opt/migrated.txt ]; then
+#    python3 $PYTHONPATH/manage.py collectstatic \
+#              --ignore=node_modules --ignore=.sass-cache       \
+#              --ignore=*.sass --ignore=*.scss --ignore=*.tsx   \
+#              --ignore=gulpfile.js --ignore=start.js           \
+#              --ignore=gulp                                    \
+#              --ignore=*.ts --ignore=*.jsx --ignore=tsconfig.* \
+#              --ignore=npm* --ignore=._.DS_Store --ignore=_*   \
+#              --ignore=package.json --ignore=package-lock.json \
+#              --ignore=.babelrc --ignore=*.log --ignore=*.sh   \
+#              --noinput &> /dev/null
+#
+#    echo "migrated" &> /opt/migrated.txt
+#fi
 
 
 echo $DEFAULT_MODULE_NAME

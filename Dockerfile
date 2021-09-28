@@ -9,7 +9,24 @@ WORKDIR /app/static_private/
 RUN rm -rf node_modules
 RUN npm install
 RUN npm rebuild node-sass
-RUN npm run build
+RUN npx browserslist@latest --update-db
+RUN yarn install
+RUN yarn run build
+RUN rm -rf node_modules
+
+
+FROM node:14-buster-slim AS cms
+LABEL maintainer="Pouria Hadjibagheri <Pouria.Hadjibagheri@phe.gov.uk>"
+
+COPY ./app/static_private/covid19-cms           /app/static_private/covid19-cms
+
+WORKDIR /app/static_private/covid19-cms
+RUN rm -rf node_modules
+RUN npm install
+RUN npm rebuild node-sass
+RUN npx browserslist@latest --update-db
+RUN yarn install
+RUN yarn run build
 RUN rm -rf node_modules
 
 
@@ -22,7 +39,7 @@ ENV GUNICORN_PORT 5000
 ENV PYTHONPATH            /app/app
 ENV CSS_PATH              $PYTHON_PATH/static_private/css
 ENV JS_PATH              $PYTHON_PATH/static_private/js
-ENV DEFAULT_MODULE_NAME   administration.asgi
+ENV DEFAULT_MODULE_NAME   administration.wsgi
 
 # ----------------------------------------------------------------------------------------
 # Startup scripts - copied from `./server/startup/`
@@ -136,9 +153,9 @@ COPY --from=builder /app/static_private/css    $CSS_PATH
 COPY --from=builder /app/static_private/js     $JS_PATH
 COPY server/config/uvicorn_worker.py           $_WORKER_CLASS_PATH
 
-
+COPY --from=cms /app/static_private/covid19-cms/build  /app/frontend
 #USER app
 
 EXPOSE 5000
 
-ENTRYPOINT ["gunicorn", "-c", "opt/gunicorn/gunicorn_conf.py", "administration.wsgi:app"]
+ENTRYPOINT ["bash", "/opt/entrypoint.sh"]

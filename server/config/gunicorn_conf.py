@@ -40,7 +40,7 @@ if max_workers_str:
 web_concurrency_str = getenv("WEB_CONCURRENCY", None)
 
 host = getenv("HOST", "0.0.0.0")
-port = getenv("GUNICORN_PORT", "5000")
+port = "5001"  # getenv("GUNICORN_PORT", "5000")
 
 use_bind = getenv("BIND", f"{host}:{port}")
 use_loglevel = getenv("LOG_LEVEL", "info")
@@ -102,6 +102,7 @@ log_data = {
     "proxy_protocol": proxy_protocol,
     "host": host,
     "port": port,
+    "reload": reload
 }
 
 print(dumps(log_data))

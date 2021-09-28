@@ -23,6 +23,8 @@ from .shared_admins import *
 from .announcement import *
 from .metrics import *
 from .change_log import *
+from .cms import *
+from .reports import *
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Header

@@ -1,5 +1,5 @@
 {% load i18n %}
 {#<button class="sticky" id="toggle-nav-sidebar" aria-label="{% translate 'Toggle navigation' %}"></button>#}
-<nav class="dashboard-menu">
-  {% include 'admin/app_list.html' with app_list=available_apps show_changelinks=False %}
+<nav class="dashboard-menu govuk-!-margin-top-1">
+  {% include 'admin/app_list.html' with app_list=app_list show_changelinks=False %}
 </nav>

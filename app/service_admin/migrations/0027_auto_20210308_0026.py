@@ -56,27 +56,27 @@ class Migration(migrations.Migration):
             name='id',
             field=models.UUIDField(default=service_admin.utils.default_generators.generate_unique_id, editable=False, primary_key=True, serialize=False, verbose_name='unique ID'),
         ),
-        migrations.CreateModel(
-            name='BannerPage',
-            fields=[
-                ('id', models.UUIDField(default=service_admin.utils.default_generators.generate_unique_id, editable=False, primary_key=True, serialize=False, verbose_name='unique ID')),
-                ('announcement', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='service_admin.announcement')),
-                ('page', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='service_admin.page')),
-            ],
-            options={
-                'verbose_name': 'banner page',
-                'db_table': 'covid19"."banner_page',
-                'managed': False
-            },
-        ),
-        migrations.RunSQL(
-            "SELECT create_reference_table('covid19.banner_page')"
-        ),
-        migrations.AddField(
-            model_name='announcement',
-            name='pages',
-            field=models.ManyToManyField(through='service_admin.BannerPage', to='service_admin.Page'),
-        ),
+        # migrations.CreateModel(
+        #     name='BannerPage',
+        #     fields=[
+        #         ('id', models.UUIDField(default=service_admin.utils.default_generators.generate_unique_id, editable=False, primary_key=True, serialize=False, verbose_name='unique ID')),
+        #         ('announcement', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='service_admin.announcement')),
+        #         ('page', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='service_admin.page')),
+        #     ],
+        #     options={
+        #         'verbose_name': 'banner page',
+        #         'db_table': 'covid19"."banner_page',
+        #         'managed': False
+        #     },
+        # ),
+        # migrations.RunSQL(
+        #     "SELECT create_reference_table('covid19.banner_page')"
+        # ),
+        # migrations.AddField(
+        #     model_name='announcement',
+        #     name='pages',
+        #     field=models.ManyToManyField(through='service_admin.BannerPage', to='service_admin.Page'),
+        # ),
         migrations.RunSQL(
             "SET LOCAL citus.multi_shard_modify_mode TO 'parallel';"
         ),

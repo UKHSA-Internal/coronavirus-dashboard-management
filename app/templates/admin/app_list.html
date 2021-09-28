@@ -2,8 +2,8 @@
 
 {% if app_list %}
   {% for app in app_list %}
-    <div class="govuk-!-margin-top-2 app-{{ app.app_label }} module{% if app.app_url in request.path %} current-app{% endif %}">
-      <table>
+    <div class="govuk-!-margin-top-0 govuk-!-margin-bottom-0 app-{{ app.app_label }} module{% if app.app_url in request.path %} current-app{% endif %}">
+      <table class="govuk-!-margin-bottom-0">
         <caption>
           <a href="{{ app.app_url }}" class="section" title="{% blocktranslate with name=app.name %}Models in the {{ name }} application{% endblocktranslate %}">{{ app.name }}</a>
         </caption>

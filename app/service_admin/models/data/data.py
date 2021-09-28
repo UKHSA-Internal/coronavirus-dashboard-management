@@ -16,9 +16,12 @@ class AreaPriorities(models.Model):
     area_type = VarCharField(primary_key=True, max_length=15, null=False, blank=False)
     priority = models.DecimalField(max_digits=65535, decimal_places=65535)
 
+    def __str__(self):
+        return self.area_type
+
     class Meta:
         managed = False
-        db_table = 'covid19\".\"area_priorities'
+        db_table = 'covid19"."area_priorities'
         unique_together = (
             ('area_type', 'priority'),
         )
@@ -54,7 +57,7 @@ class AreaReference(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'covid19\".\"area_reference'
+        db_table = 'covid19"."area_reference'
         unique_together = (
             ('area_type', 'area_code'),
             ('area_type', 'area_code'),
@@ -72,7 +75,7 @@ class GeoReference(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'covid19\".\"geo_reference'
+        db_table = 'covid19"."geo_reference'
 
 
 @versioned()
@@ -107,7 +110,7 @@ class MetricReference(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'covid19\".\"metric_reference'
+        db_table = 'covid19"."metric_reference'
         verbose_name = _("metric")
 
 
@@ -129,7 +132,7 @@ class PostcodeLookup(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'covid19\".\"postcode_lookup'
+        db_table = 'covid19"."postcode_lookup'
         unique_together = (
             ('postcode', 'area'),
         )
@@ -145,7 +148,7 @@ class ProcessedFile(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'covid19\".\"processed_file'
+        db_table = 'covid19"."processed_file'
         unique_together = (
             ('file_path', 'release', 'area', 'timestamp'),
         )
@@ -160,7 +163,7 @@ class ProcessingStatus(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'covid19\".\"processing_status'
+        db_table = 'covid19"."processing_status'
 
 
 @versioned()
@@ -174,6 +177,7 @@ class ReleaseCategory(models.Model):
         ('AGE-DEMOGRAPHICS: DEATH28DAYS - EVENT DATE', _("Age demographics: Deaths 28 days")),
         ('AGE-DEMOGRAPHICS: VACCINATION - EVENT DATE', _("Age demographics: Vaccinations")),
         ('MSOA: VACCINATION - EVENT DATE', _('MSOA: Vaccinations')),
+        ('Healthcare', _('HEALTHCARE')),
     ]
 
     _process_type_dict = dict(PROCESS_TYPE_ENUM)
@@ -186,7 +190,7 @@ class ReleaseCategory(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'covid19\".\"release_category'
+        db_table = 'covid19"."release_category'
         unique_together = (('release', 'process_name'),)
 
 
@@ -201,7 +205,7 @@ class ReleaseStats(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'covid19\".\"release_stats'
+        db_table = 'covid19"."release_stats'
         verbose_name = _("Release statistic")
         verbose_name_plural = _("Release statistics")
 

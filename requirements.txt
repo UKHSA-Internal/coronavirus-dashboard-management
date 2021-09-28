@@ -27,3 +27,8 @@ django-redis-cache
 django-regex-field
 django-reversion
 textstat
+djangorestframework
+drf-nested-routers
+pyyaml
+django-filter
+django-modeladmin-reorder

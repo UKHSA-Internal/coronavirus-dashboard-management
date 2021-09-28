@@ -13,18 +13,7 @@ class Migration(migrations.Migration):
         migrations.DeleteModel(
             name='BannerArea',
         ),
-        migrations.RemoveField(
-            model_name='bannerpage',
-            name='announcement',
-        ),
-        migrations.RemoveField(
-            model_name='bannerpage',
-            name='page',
-        ),
         migrations.DeleteModel(
             name='BannerTag',
-        ),
-        migrations.DeleteModel(
-            name='BannerPage',
-        ),
+        )
     ]

@@ -41,6 +41,17 @@ server {
     access_log         /var/log/nginx/access.log  main;
     sendfile           on;
 
+    location /cms-dashboard {
+
+        alias              /app/frontend;
+        try_files          $uri $uri/ index.html;
+
+        limit_except GET POST HEAD OPTIONS {
+            deny    all;
+        }
+
+    }
+
     location / {
 
         try_files              $uri @app;
