@@ -93,4 +93,4 @@ class PrivateReport(models.Model):
     class Meta:
         managed = False
         db_table = 'covid19"."private_report'
-        verbose_name = _("Pre-release reports")
+        verbose_name = _("Pre-release report")
