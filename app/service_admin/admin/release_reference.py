@@ -13,7 +13,7 @@ from reversion.admin import VersionAdmin
 
 from ..utils.dispatch_ops import update_timestamps
 
-from ..models.data import ReleaseReference, ReleaseCategory
+from ..models.data import ReleaseReference, PROCESS_TYPE_ENUM
 from .generic_admin import GuardedAdmin
 
 from django_object_actions import DjangoObjectActions
@@ -23,7 +23,8 @@ from service_admin.utils.presets import ServiceName
 
 
 __all__ = [
-    'ReleaseReferenceAdmin'
+    'ReleaseReferenceAdmin',
+    'DateTimeFilter'
 ]
 
 
@@ -59,7 +60,7 @@ class FilterByReleaseCategory(admin.SimpleListFilter):
     parameter_name = 'category'
 
     def lookups(self, request, model_admin):
-        return ReleaseCategory.PROCESS_TYPE_ENUM
+        return PROCESS_TYPE_ENUM
 
     def queryset(self, request, queryset):
         value = self.value()
