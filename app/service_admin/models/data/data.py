@@ -161,11 +161,35 @@ class ProcessedFile(models.Model):
         null=False,
         blank=False
     )
-    file_path = models.CharField(max_length=255, null=False, blank=False, unique=True)
-    type = models.CharField(max_length=50, choices=PROCESS_TYPE_ENUM, null=False, blank=False)
-    release = models.ForeignKey('ReleaseReference', on_delete=models.CASCADE, null=True)
-    timestamp = models.DateTimeField(verbose_name="landing time")
-    process_id = models.CharField(max_length=255, null=True, blank=False)
+
+    file_path = models.CharField(
+        max_length=255,
+        null=False,
+        blank=False,
+        unique=True
+    )
+
+    type = models.CharField(
+        max_length=50,
+        choices=PROCESS_TYPE_ENUM,
+        verbose_name=_("release category"),
+        null=False,
+        blank=False
+    )
+
+    release = models.ForeignKey(
+        'ReleaseReference',
+        on_delete=models.CASCADE,
+        null=True
+    )
+
+    timestamp = models.DateTimeField(verbose_name=_("landing time"))
+
+    process_id = models.CharField(
+        max_length=255,
+        null=True,
+        blank=False
+    )
 
     class Meta:
         managed = False
