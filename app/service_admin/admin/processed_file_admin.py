@@ -47,6 +47,9 @@ class ReleaseReferenceAdmin(admin.ModelAdmin):
         return False
 
     def release_object(self, obj):
+        if obj.release is None:
+            return None
+
         link = reverse(
             f"admin:{obj._meta.app_label}_releasereference_change",
             args=(obj.release,)
