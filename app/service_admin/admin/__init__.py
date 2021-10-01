@@ -25,6 +25,7 @@ from .metrics import *
 from .change_log import *
 from .cms import *
 from .reports import *
+from .processed_file_admin import *
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Header

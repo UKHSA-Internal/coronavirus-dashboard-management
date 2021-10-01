@@ -1,4 +1,5 @@
 
+from uuid import uuid4
 from django.db import models
 from django.utils.translation import gettext as _
 from django.utils import timezone
@@ -6,6 +7,19 @@ from ..fields import VarCharField
 from django_multitenant import mixins as mt_mixins
 from django_multitenant import models as mt_models
 from reversion import register as versioned
+
+
+PROCESS_TYPE_ENUM = [
+    ('MAIN', _('Main')),
+    ('MSOA', _('MSOA')),
+    ('VACCINATION', _("Vaccinations")),
+    ('POSITIVITY & PEOPLE TESTED', _("Positivity & People Tested")),
+    ('AGE DEMOGRAPHICS: CASE - EVENT DATE', _("Age demographics: Cases")),
+    ('AGE-DEMOGRAPHICS: DEATH28DAYS - EVENT DATE', _("Age demographics: Deaths 28 days")),
+    ('AGE-DEMOGRAPHICS: VACCINATION - EVENT DATE', _("Age demographics: Vaccinations")),
+    ('MSOA: VACCINATION - EVENT DATE', _('MSOA: Vaccinations')),
+    ('HEALTHCARE', _('Healthcare')),
+]
 
 
 class TenantManager(mt_models.TenantManagerMixin, models.Manager):
@@ -139,19 +153,24 @@ class PostcodeLookup(models.Model):
 
 
 class ProcessedFile(models.Model):
-    id = models.AutoField(primary_key=True)
-    type = VarCharField(max_length=50, null=False, blank=False)
-    file_path = VarCharField(max_length=255, null=False, blank=False)
-    release = models.ForeignKey('ReleaseReference', models.DO_NOTHING)
-    area = models.ForeignKey(AreaReference, models.DO_NOTHING)
-    timestamp = models.DateTimeField()
+    id = models.UUIDField(
+        verbose_name=_("unique ID"),
+        primary_key=True,
+        default=uuid4,
+        editable=False,
+        null=False,
+        blank=False
+    )
+    file_path = models.CharField(max_length=255, null=False, blank=False, unique=True)
+    type = models.CharField(max_length=50, choices=PROCESS_TYPE_ENUM, null=False, blank=False)
+    release = models.ForeignKey('ReleaseReference', on_delete=models.CASCADE, null=True)
+    timestamp = models.DateTimeField(verbose_name="landing time")
+    process_id = models.CharField(max_length=255, null=True, blank=False)
 
     class Meta:
         managed = False
         db_table = 'covid19"."processed_file'
-        unique_together = (
-            ('file_path', 'release', 'area', 'timestamp'),
-        )
+        ordering = ("-timestamp",)
 
 
 class ProcessingStatus(models.Model):
@@ -168,18 +187,6 @@ class ProcessingStatus(models.Model):
 
 @versioned()
 class ReleaseCategory(models.Model):
-    PROCESS_TYPE_ENUM = [
-        ('MAIN', _('Main')),
-        ('MSOA', _('MSOA')),
-        ('VACCINATION', _("Vaccinations")),
-        ('POSITIVITY & PEOPLE TESTED', _("Positivity & People Tested")),
-        ('AGE DEMOGRAPHICS: CASE - EVENT DATE', _("Age demographics: Cases")),
-        ('AGE-DEMOGRAPHICS: DEATH28DAYS - EVENT DATE', _("Age demographics: Deaths 28 days")),
-        ('AGE-DEMOGRAPHICS: VACCINATION - EVENT DATE', _("Age demographics: Vaccinations")),
-        ('MSOA: VACCINATION - EVENT DATE', _('MSOA: Vaccinations')),
-        ('HEALTHCARE', _('Healthcare')),
-    ]
-
     _process_type_dict = dict(PROCESS_TYPE_ENUM)
 
     release = models.OneToOneField('ReleaseReference', models.DO_NOTHING, primary_key=True, related_name='category')

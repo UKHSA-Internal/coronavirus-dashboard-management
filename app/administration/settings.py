@@ -131,6 +131,7 @@ ADMIN_REORDER = (
         'label': 'Data',
         'models': (
             'service_admin.ReleaseReference',
+            'service_admin.ProcessedFile',
             'service_admin.TimeSeries',
         )
     },
