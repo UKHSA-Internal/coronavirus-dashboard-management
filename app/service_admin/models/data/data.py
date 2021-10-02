@@ -241,6 +241,52 @@ class ReleaseStats(models.Model):
         verbose_name_plural = _("Release statistics")
 
 
+class Despatch(models.Model):
+    id = models.AutoField(primary_key=True)
+    timestamp = models.DateTimeField(null=False, unique=True)
+    releases = models.ManyToManyField(
+        to="ReleaseReference",
+        through="DespatchToRelease",
+        related_name="despatch_of"
+    )
+
+    def __str__(self):
+        return f"{self.timestamp:%d %b %Y, %H:%M:%S}"
+
+    class Meta:
+        managed = False
+        db_table = 'covid19"."despatch'
+        ordering = ("-timestamp",)
+
+
+class DespatchToRelease(models.Model):
+    id = models.AutoField(primary_key=True)
+
+    despatch = models.ForeignKey(
+        "Despatch",
+        db_column="despatch_id",
+        to_field="id",
+        on_delete=models.CASCADE,
+        null=False
+    )
+
+    release = models.ForeignKey(
+        "ReleaseReference",
+        db_column="release_id",
+        to_field="id",
+        on_delete=models.CASCADE,
+        related_name="despatched_at",
+        null=False
+    )
+
+    class Meta:
+        managed = False
+        db_table = 'covid19"."despatch_to_release'
+        unique_together = (
+            ("despatch", "release"),
+        )
+
+
 @versioned()
 class ReleaseReference(models.Model):
     id = models.AutoField(primary_key=True)
@@ -272,7 +318,7 @@ class ReleaseReference(models.Model):
         except TypeError:
             return "0"
 
-    def difference(self):
+    def delta(self):
         today_count = int(self.count().replace(",", ""))
         previous_count = int(self.previous_count().replace(",", ""))
 

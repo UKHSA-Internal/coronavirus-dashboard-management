@@ -1,6 +1,6 @@
 #!/usr/bin python3
 
-from datetime import timedelta
+from datetime import timedelta, time
 import re
 
 from django.contrib import admin
@@ -164,7 +164,8 @@ class ReleaseReferenceAdmin(VersionAdmin, DjangoObjectActions, GuardedAdmin):
         'category',
         'released',
         'count',
-        'difference'
+        'delta',
+        'despatch_time'
     ]
 
     list_display_links = [
@@ -189,6 +190,15 @@ class ReleaseReferenceAdmin(VersionAdmin, DjangoObjectActions, GuardedAdmin):
 
     formatted_release_time.admin_order_field = 'timestamp'
     formatted_release_time.short_description = 'receipt time'
+
+    def despatch_time(self, obj):
+        try:
+            return obj.despatch_of.get()
+        except ValueError:
+            return None
+
+    despatch_time.admin_order_field = 'despatch time'
+    despatch_time.short_description = 'despatch time'
 
     def average_ts(self, obj):
 
