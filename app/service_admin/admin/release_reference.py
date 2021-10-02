@@ -1,6 +1,6 @@
 #!/usr/bin python3
 
-from datetime import timedelta, time
+from datetime import timedelta, datetime
 import re
 
 from django.contrib import admin
@@ -13,7 +13,7 @@ from reversion.admin import VersionAdmin
 
 from ..utils.dispatch_ops import update_timestamps
 
-from ..models.data import ReleaseReference, PROCESS_TYPE_ENUM
+from ..models.data import ReleaseReference, Despatch, DespatchToRelease, PROCESS_TYPE_ENUM
 from .generic_admin import GuardedAdmin
 
 from django_object_actions import DjangoObjectActions
@@ -30,26 +30,18 @@ __all__ = [
 
 SERVICE_NAME = getattr(ServiceName, settings.ENVIRONMENT)
 
-# def release_selected_for_testing(modeladmin, request, queryset):
-#     queryset.update(released=True)
-#     update_timestamps(env="TEST")
-#
-#
-# release_selected_for_testing.short_description = "Release selected deployments on Tulip"
-#
-#
-# def release_selected_for_development(modeladmin, request, queryset):
-#     queryset.update(released=True)
-#     update_timestamps(env="DEVELOPMENT")
-#
-#
-# release_selected_for_testing.short_description = "Release selected deployments on Daisy"
-#
-
 
 def release_selected(modeladmin, request, queryset):
+    timestamp = datetime.utcnow()
     queryset.update(released=True)
-    update_timestamps()
+
+    despatch = Despatch.objects.create(timestamp=timestamp)
+    DespatchToRelease.objects.bulk_create([
+        DespatchToRelease(despatch=despatch, release=release)
+        for release in queryset
+    ])
+
+    update_timestamps(timestamp)
 
 
 release_selected.short_description = f"Release selected deployments on {SERVICE_NAME.capitalize()}"

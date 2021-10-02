@@ -33,8 +33,8 @@ UPLOAD_KWS = dict(
 )
 
 
-def update_timestamps():
-    timestamp = datetime.utcnow().isoformat()  # + "5Z"
+def update_timestamps(timestamp: datetime):
+    timestamp = timestamp.isoformat()
 
     paths = [
         {
