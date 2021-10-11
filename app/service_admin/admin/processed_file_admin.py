@@ -55,13 +55,16 @@ class ReleaseReferenceAdmin(admin.ModelAdmin):
             args=(obj.release,)
         )
 
-        return mark_safe(f'<a href="{link}">{obj.release}</a>')
+        return mark_safe(f'<a href="{link}">{obj.release.id}</a>')
 
     release_object.admin_order_field = 'Release id'
     release_object.short_description = 'Release id'
 
     def released(self, obj):
-        return obj.release.released
+        try:
+            return obj.release.released
+        except AttributeError:
+            return False
 
     released.admin_order_field = 'Released'
     released.short_description = 'Released'
