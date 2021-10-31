@@ -41,12 +41,7 @@ def test_storage():
 @require_http_methods(["GET", "HEAD"])
 @cache_page(90)
 def run_healthcheck(request):
-    response = {
-        **test_db(),
-        **test_storage()
-    }
-
     if request.method == 'GET':
-        return JsonResponse(response, status=HTTPStatus.OK.real)
+        return JsonResponse({"Healthy": 1}, status=HTTPStatus.OK.real)
 
-    return JsonResponse(response, status=HTTPStatus.NO_CONTENT.real)
+    return JsonResponse({}, status=HTTPStatus.NO_CONTENT.real)
