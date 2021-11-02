@@ -11,7 +11,6 @@ from json import dumps
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
 # Internal: 
-from storage import StorageClient
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -36,31 +35,6 @@ UPLOAD_KWS = dict(
 def update_timestamps(timestamp: datetime):
     timestamp = timestamp.isoformat()
 
-    paths = [
-        {
-            "value": timestamp.split("T")[0],
-            "path": "info/seriesDate",
-            "container": "pipeline"
-        },
-        {
-            "value": timestamp + "Z",
-            "path": "assets/dispatch/website_timestamp",
-            "container": "publicdata"
-        },
-        {
-            "value": timestamp + "5Z",
-            "path": "info/latest_published",
-            "container": "pipeline",
-        }
-    ]
-
-    for item in paths:
-        kws = {**UPLOAD_KWS, **item}
-        value = kws.pop("value")
-
-        with StorageClient(**kws) as client:
-            client.upload(value)
-
     sb_client = ServiceBusClient.from_connection_string(
         conn_str=SB_CONNSTR,
         logging_enable=True
@@ -69,7 +43,8 @@ def update_timestamps(timestamp: datetime):
     message = ServiceBusMessage(dumps({
         "event": "data despatched.",
         "environment": API_ENV,
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.utcnow().isoformat(),
+        "releaseTimestamp": timestamp
     }))
 
     with sb_client:
