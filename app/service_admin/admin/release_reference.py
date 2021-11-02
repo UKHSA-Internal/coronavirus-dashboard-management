@@ -36,6 +36,9 @@ def release_selected(modeladmin, request, queryset):
     queryset.update(released=True)
 
     despatch = Despatch.objects.create(timestamp=timestamp)
+    # ToDo: This needs to be create_or_update
+    #   Also add unique_together constraint on db
+    #   Alternatively, use max in the query.
     DespatchToRelease.objects.bulk_create([
         DespatchToRelease(despatch=despatch, release=release)
         for release in queryset
