@@ -19,6 +19,7 @@ PROCESS_TYPE_ENUM = [
     ('AGE-DEMOGRAPHICS: VACCINATION - EVENT DATE', _("Age demographics: Vaccinations")),
     ('MSOA: VACCINATION - EVENT DATE', _('MSOA: Vaccinations')),
     ('HEALTHCARE', _('Healthcare')),
+    ('TESTING: MAIN', _("Testing")),
 ]
 
 
