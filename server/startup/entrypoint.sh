@@ -14,3 +14,4 @@ fi
 # Start Supervisor, with Nginx and uWSGI
 echo "Starting supervisor with '$_SUPERVISOR_CONF_FILE'"
 exec /usr/bin/supervisord -c "${_SUPERVISOR_CONF_FILE}"
+#"gunicorn", "-c", "/opt/gunicorn/gunicorn_conf.py", "administration.wsgi:app"

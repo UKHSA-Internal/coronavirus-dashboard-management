@@ -39,7 +39,7 @@ ENV GUNICORN_PORT 5000
 ENV PYTHONPATH            /app/app
 ENV CSS_PATH              $PYTHON_PATH/static_private/css
 ENV JS_PATH              $PYTHON_PATH/static_private/js
-ENV DEFAULT_MODULE_NAME   administration.asgi
+ENV DEFAULT_MODULE_NAME   administration.wsgi
 
 # ----------------------------------------------------------------------------------------
 # Startup scripts - copied from `./server/startup/`
@@ -143,7 +143,8 @@ RUN mkdir -p /app/app
 RUN mkdir -p /run/supervisord/                      && \
     mkdir -p $_RUNTIME_CONF_PATH/log/               && \
     mkdir -p $_RUNTIME_CONF_PATH/gunicorn/          && \
-    mkdir -p $_RUNTIME_CONF_PATH/nginx/cache/
+    mkdir -p $_RUNTIME_CONF_PATH/nginx/cache/       && \
+    chmod 760 $_RUNTIME_CONF_PATH/$ENTRYPOINT
 
 RUN rm -rf $_INSTALLATION
 
@@ -158,4 +159,4 @@ COPY server/config/uvicorn_worker.py           $_WORKER_CLASS_PATH
 
 EXPOSE 5000
 
-ENTRYPOINT ["gunicorn", "-c", "opt/gunicorn/gunicorn_conf.py", "administration.wsgi:app"]
+ENTRYPOINT ["/opt/entrypoint.sh"]
