@@ -23,7 +23,7 @@ class ChangeLogMetricsAdmin(TabularInline):
     verbose_name_plural = "Metric associations"
     model = ChangeLog.metrics.through
     readonly_fields = ['id']
-    extra = 10
+    extra = 20
 
 
 class ChangeLogPagesAdmin(TabularInline):
