@@ -30,8 +30,10 @@ __license__ = "MIT"
 __version__ = "0.0.1"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-workers_per_core_str = getenv("WORKERS_PER_CORE", cpu_count())
-max_workers_str = getenv("MAX_WORKERS")
+print("starting GUNICORN")
+
+workers_per_core_str = getenv("WORKERS_PER_CORE", 1)
+max_workers_str = getenv("MAX_WORKERS", cpu_count())
 use_max_workers = None
 
 if max_workers_str:
@@ -66,8 +68,8 @@ accesslog_var = getenv("ACCESS_LOG", "-")
 use_accesslog = accesslog_var or None
 errorlog_var = getenv("ERROR_LOG", "-")
 use_errorlog = errorlog_var or None
-graceful_timeout_str = getenv("GRACEFUL_TIMEOUT", "10")
-timeout_str = getenv("TIMEOUT", "30")
+graceful_timeout_str = getenv("GRACEFUL_TIMEOUT", "45")
+timeout_str = getenv("TIMEOUT", "60")
 
 reload = getenv("RELOAD", "0") == "1"
 
