@@ -3,11 +3,14 @@
 # Imports
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Python:
+from uuid import uuid4
+from datetime import datetime
 
 # 3rd party:
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from reversion.admin import VersionAdmin
+from django.utils.translation import gettext as _
 
 # Internal: 
 from service_admin.models.change_log import ChangeLog
@@ -21,6 +24,29 @@ __all__ = [
 ]
 
 
+def clone_objects(modeladmin, request, queryset):
+    for item in queryset:
+        change_log = ChangeLog(
+            date=datetime.utcnow(),
+            heading=item.heading,
+            body=item.body,
+            details=item.details,
+            high_priority=item.high_priority,
+            display_banner=item.display_banner,
+            type=item.type,
+            area=item.area
+        )
+
+        change_log.save()
+
+        change_log.metrics.add(*item.metrics.all())
+
+        change_log.pages.add(*item.pages.all())
+
+
+clone_objects.short_description = _("Duplicate entries with today's date")
+
+
 @admin.register(ChangeLog)
 class ChangeLogAdmin(VersionAdmin):
     list_per_page = 20
@@ -28,6 +54,8 @@ class ChangeLogAdmin(VersionAdmin):
     search_fields = [
         'heading'
     ]
+
+    actions = [clone_objects]
 
     readonly_fields = [
         'id',
