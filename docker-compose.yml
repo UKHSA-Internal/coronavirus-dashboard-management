@@ -9,41 +9,10 @@ services:
       - ./server/config/uvicorn_worker.py:/app/app/uvicorn_worker.py
       - ./server/nginx/engine_dev.nginx:/etc/nginx/conf.d/engine.conf
     ports:
-      - 5500:5000
+      - 5510:5000
     env_file:
       - .env.dev
     environment:
       IS_DEV: 1
       API_ENV: PRODUCTION
-      RELOAD: 1
       FLASK_ENV: DEVELOPMENT
-    networks:
-      - internal
-#    depends_on:
-#      - web-admin-frontend
-
-#  web-admin-frontend:
-#    build:
-#      context: .
-#      dockerfile: ./server/frontend/Dockerfile
-#    restart: always
-#    volumes:
-#      - ./app/static_private/covid19-cms/public:/app/covid19-cms/public
-#      - ./app/static_private/covid19-cms/src:/app/covid19-cms/src
-#      - ./app/static_private/covid19-cms/App.tsx:/app/covid19-cms/App.tsx
-#      - ./app/static_private/covid19-cms/index.scss:/app/covid19-cms/index.scss
-#      - ./app/static_private/covid19-cms/index.tsx:/app/covid19-cms/index.tsx
-#    working_dir: /app/covid19-cms
-#    stdin_open: true
-#    tty: true
-#    command: yarn run start
-#    environment:
-#      CHOKIDAR_USEPOLLING: "true"
-#    ports:
-#      - 3250:3000
-#    networks:
-#      - internal
-
-
-networks:
-  internal:
