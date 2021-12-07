@@ -1,18 +1,26 @@
-version: '3.7'
+version: '3.9'
 
 services:
   web-admin-gh:
     build: .
-    restart: always
+#    restart: always
     volumes:
       - ./app/:/app/app/
       - ./server/config/uvicorn_worker.py:/app/app/uvicorn_worker.py
-      - ./server/nginx/engine_dev.nginx:/etc/nginx/conf.d/engine.conf
+      - ./server/nginx/engine.nginx:/etc/nginx/conf.d/engine.conf
+      - ./tmp/gunicorn/:/var/log/gunicorn/
     ports:
       - 5510:5000
     env_file:
       - .env.dev
+    tmpfs:
+      /tmp
     environment:
-      IS_DEV: 1
-      API_ENV: PRODUCTION
-      FLASK_ENV: DEVELOPMENT
+      IS_DEV: "1"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 3000M
+        reservations:
+          memory: 1000M
