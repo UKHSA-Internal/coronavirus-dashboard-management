@@ -3,7 +3,7 @@
 import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
-import gm2m.fields
+# import gm2m.fields
 import uuid
 
 
@@ -210,7 +210,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='tab',
             name='fields',
-            field=gm2m.fields.GM2MField('service_admin.VisualisationField', 'service_admin.TabulationField', through='service_admin.TabField', through_fields=['tab', 'field', 'field_type', 'field_id']),
+            field=models.ManyToManyField('service_admin.VisualisationField', 'service_admin.TabulationField', through='service_admin.TabField', through_fields=['tab', 'field', 'field_type', 'field_id']),
         ),
         migrations.AddField(
             model_name='card',
