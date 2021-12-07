@@ -34,7 +34,7 @@ FROM python:3.9-buster
 LABEL maintainer="Pouria Hadjibagheri <Pouria.Hadjibagheri@phe.gov.uk>"
 
 # Gunicorn binding port
-ENV GUNICORN_PORT 5000
+ENV GUNICORN_PORT 3000
 
 ENV PYTHONPATH            /app/app
 ENV CSS_PATH              $PYTHON_PATH/static_private/css
