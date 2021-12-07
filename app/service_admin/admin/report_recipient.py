@@ -35,7 +35,7 @@ approve_recipients.short_description = f"Approve selected recipients"
 
 
 @admin.register(ReportRecipient)
-class ReportRecipientAdmin(VersionAdmin, GuardedAdmin):
+class ReportRecipientAdmin(VersionAdmin):
     search_fields = ('email',)
     readonly_fields = [
         "date_added",
@@ -43,6 +43,10 @@ class ReportRecipientAdmin(VersionAdmin, GuardedAdmin):
     ]
     actions = [
         approve_recipients
+    ]
+    list_filter = [
+        ('approved_by', admin.BooleanFieldListFilter,),
+        ('created_by', admin.RelatedOnlyFieldListFilter,),
     ]
     list_display = [
         'id',

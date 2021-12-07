@@ -53,6 +53,7 @@ class ReportRecipient(models.Model):
     created_by = models.ForeignKey(
         to=User,
         on_delete=models.CASCADE,
+        verbose_name=_("created"),
         null=False,
         related_name='recipient_added_by',
         db_column="created_by",
@@ -64,6 +65,7 @@ class ReportRecipient(models.Model):
 
     approved_by = models.ForeignKey(
         to=User,
+        verbose_name=_("approved"),
         on_delete=models.CASCADE,
         null=True,
         related_name='recipient_approved_by',
@@ -82,6 +84,9 @@ class ReportRecipient(models.Model):
     def approver(self):
         if self.approved_by is not None:
             return self.approved_by.get_full_name()
+
+    def has_been_approved(self):
+        return self.approved_by is not None
 
     class Meta:
         managed = False
