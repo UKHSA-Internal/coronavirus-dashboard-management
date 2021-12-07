@@ -32,12 +32,12 @@ __version__ = "0.0.1"
 
 print("starting GUNICORN")
 
-workers_per_core_str = getenv("WORKERS_PER_CORE", 1)
-max_workers_str = getenv("MAX_WORKERS", cpu_count())
+workers_per_core_str = "1"
+# max_workers_str = getenv("MAX_WORKERS", cpu_count())
 use_max_workers = None
 
-if max_workers_str:
-    use_max_workers = int(max_workers_str)
+# if max_workers_str:
+#     use_max_workers = int(max_workers_str)
 
 web_concurrency_str = getenv("WEB_CONCURRENCY", None)
 
@@ -46,7 +46,7 @@ port = getenv("GUNICORN_PORT", "5000")
 
 use_bind = getenv("BIND", f"{host}:{port}")
 use_loglevel = getenv("LOG_LEVEL", "info")
-JSON_LOGS = True if getenv("JSON_LOGS", "0") == "1" else False
+# JSON_LOGS = True if getenv("JSON_LOGS", "0") == "1" else False
 
 
 cores = cpu_count()
@@ -54,14 +54,14 @@ workers_per_core = float(workers_per_core_str)
 default_web_concurrency = workers_per_core * cores
 
 
-if web_concurrency_str:
-    web_concurrency = int(web_concurrency_str)
-    assert web_concurrency > 0
-else:
-    web_concurrency = max(int(default_web_concurrency), 2)
-
-    if use_max_workers:
-        web_concurrency = min(web_concurrency, use_max_workers)
+# if web_concurrency_str:
+#     web_concurrency = int(web_concurrency_str)
+#     assert web_concurrency > 0
+# else:
+#     web_concurrency = max(int(default_web_concurrency), 2)
+#
+#     if use_max_workers:
+#         web_concurrency = min(web_concurrency, use_max_workers)
 
 
 accesslog_var = getenv("ACCESS_LOG", "-")
@@ -75,7 +75,7 @@ reload = getenv("RELOAD", "0") == "1"
 
 # Gunicorn config variables
 loglevel = use_loglevel
-workers = web_concurrency
+workers = 2
 bind = use_bind
 errorlog = use_errorlog
 worker_tmp_dir = "/dev/shm"
