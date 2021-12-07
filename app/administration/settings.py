@@ -142,6 +142,7 @@ ADMIN_REORDER = (
             'service_admin.ChangeLog',
             'service_admin.Announcement',
             'service_admin.PrivateReport',
+            'service_admin.ReportRecipient',
         )
     },
     {
