@@ -26,6 +26,7 @@ from .change_log import *
 from .cms import *
 from .reports import *
 from .processed_file_admin import *
+from .report_recipient import *
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Header
