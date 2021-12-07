@@ -92,12 +92,12 @@ server {
         proxy_http_version     1.1;
 
         # websocket headers
-        proxy_set_header       Upgrade                   $http_upgrade;
-        proxy_set_header       Connection                $http_upgrade;
+#        proxy_set_header       Upgrade                   $http_upgrade;
+#        proxy_set_header       Connection                $http_upgrade;
 
         add_header             x-phe-media-type          "PHE-COVID19.v1";
         add_header             Content-Language          "en-GB";
-        add_header             Content-Security-Policy   "default-src 'self'; font-src 'self'; img-src 'self' *.data.gov.uk *.google-analytics.com data:; script-src 'unsafe-inline' *; connect-src 'self' *; style-src 'unsafe-inline' *;";
+#        add_header             Content-Security-Policy   "default-src 'self'; font-src 'self'; img-src 'self' *.data.gov.uk *.google-analytics.com data:; script-src 'unsafe-inline' *; connect-src 'self' *; style-src 'unsafe-inline' *;";
         add_header             Permissions-Policy        "geolocation=();notifications=();push=();sync-xhr=();vibrate=();fullscreen=(self);";
 
         proxy_read_timeout     86400;

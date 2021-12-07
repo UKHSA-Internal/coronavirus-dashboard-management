@@ -18,7 +18,7 @@ map $http_x_forwarded_host $best_host {
 
 upstream application {
 
-    server             0.0.0.0:5001;
+    server             0.0.0.0:3000;
 
 }
 
@@ -29,7 +29,7 @@ server {
     gzip               off;
     server_tokens      off;
     listen             5000;
-    listen             [::]:5000 ipv6only=on default_server;
+#    listen             [::]:5000 ipv6only=on default_server;
     server_name        $url_location;
     keepalive_timeout  65s;
     resolver_timeout   30s;
@@ -41,16 +41,16 @@ server {
     access_log         /var/log/nginx/access.log  main;
     sendfile           on;
 
-    location /cms-dashboard {
-
-        alias              /app/frontend;
-        try_files          $uri $uri/ index.html;
-
-        limit_except GET POST HEAD OPTIONS {
-            deny    all;
-        }
-
-    }
+#    location /cms-dashboard {
+#
+#        alias              /app/frontend;
+#        try_files          $uri $uri/ index.html;
+#
+#        limit_except GET POST HEAD OPTIONS {
+#            deny    all;
+#        }
+#
+#    }
 
     location / {
 
@@ -66,21 +66,22 @@ server {
 
         proxy_set_header       X-Forwarded-For           $proxy_add_x_forwarded_for;
         proxy_set_header       X-Forwarded-Host          $best_host;
-        # proxy_set_header       X-Forwarded-Proto         $scheme;
+        proxy_set_header       X-Forwarded-Proto         $scheme;
         proxy_set_header       Host                      $best_host;
         proxy_set_header       X-Real-IP                 $remote_addr;
+        proxy_buffering        off;
         proxy_redirect         off;
-        proxy_set_header       X-NginX-Proxy             true;
+##        proxy_set_header       X-NginX-Proxy             true;
         proxy_http_version     1.1;
 
         # websocket headers
         proxy_set_header       Upgrade                   $http_upgrade;
         proxy_set_header       Connection                $http_upgrade;
 
-        add_header             x-phe-media-type          "PHE-COVID19.v1";
+        add_header             x-ukhsa-media-type        "UKHSA-COVID19.v1";
         add_header             Content-Language          "en-GB";
-        add_header             Content-Security-Policy   "default-src 'self'; font-src 'self'; img-src 'self' *.data.gov.uk *.google-analytics.com data:; script-src 'unsafe-inline' *; connect-src 'self' *; style-src 'unsafe-inline' *;";
-        add_header             Permissions-Policy        "geolocation=();notifications=();push=();sync-xhr=();vibrate=();fullscreen=(self);";
+#        add_header             Content-Security-Policy   "default-src 'self'; font-src 'self'; img-src 'self' *.data.gov.uk *.google-analytics.com data:; script-src 'unsafe-inline' *; connect-src 'self' *; style-src 'unsafe-inline' *;";
+#        add_header             Permissions-Policy        "geolocation=();notifications=();push=();sync-xhr=();vibrate=();fullscreen=(self);";
 
         proxy_read_timeout     86400;
 
