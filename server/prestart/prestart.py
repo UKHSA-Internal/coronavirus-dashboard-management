@@ -15,7 +15,10 @@ with open(runtime_conf_path, 'r') as fp:
     config = fp.read()
 
 
-config = config.replace("${URL_LOCATION}", location)
+if getenv("IS_DEV", "0") == "1":
+    config = config.replace("${URL_LOCATION}", location)
+else:
+    config = config.replace("${URL_LOCATION}", f"greenhouse.{location}")
 
 with open(runtime_conf_path, 'w') as fp:
     print(config, file=fp)
