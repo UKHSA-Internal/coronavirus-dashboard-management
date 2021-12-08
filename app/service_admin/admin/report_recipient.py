@@ -9,8 +9,7 @@ from django.contrib import admin
 from django.core.exceptions import ValidationError
 from reversion.admin import VersionAdmin
 
-# Internal: 
-from .generic_admin import GuardedAdmin
+# Internal:
 from service_admin.models import ReportRecipient
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
