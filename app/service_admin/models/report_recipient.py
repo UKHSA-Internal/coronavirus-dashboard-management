@@ -75,6 +75,12 @@ class ReportRecipient(models.Model):
         }
     )
 
+    deactivated = models.BooleanField(
+        null=False,
+        default=False,
+        help_text=_("Deactivate current recipient")
+    )
+
     def __str__(self):
         return self.recipient
 
@@ -96,6 +102,7 @@ class ReportRecipient(models.Model):
 
         permissions = (
             ('can_approve_report_recipient', _('Can approve report recipient')),
+            ('can_deactivate_report_recipient', _('Can deactivate report recipient')),
         )
 
         constraints = (
@@ -104,3 +111,5 @@ class ReportRecipient(models.Model):
                 name="chk__rep_rec_approver_not_creator"
             ),
         )
+
+        ordering = ("recipient",)
