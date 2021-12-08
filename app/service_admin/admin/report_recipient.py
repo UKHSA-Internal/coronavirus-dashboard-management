@@ -36,7 +36,8 @@ approve_recipients.short_description = f"Approve selected recipients"
 
 @admin.register(ReportRecipient)
 class ReportRecipientAdmin(VersionAdmin):
-    search_fields = ('email',)
+    search_fields = ('recipient',)
+    list_per_page = 30
     readonly_fields = [
         "date_added",
         "id",
@@ -46,18 +47,20 @@ class ReportRecipientAdmin(VersionAdmin):
     ]
     list_filter = [
         ('approved_by', admin.BooleanFieldListFilter,),
+        ('deactivated', admin.BooleanFieldListFilter,),
         ('created_by', admin.RelatedOnlyFieldListFilter,),
     ]
     list_display = [
-        'id',
         'recipient',
         'date_added',
         'creator',
         'approver',
+        'deactivated',
+        'id',
     ]
 
     list_display_links = [
-        'id',
+        'recipient',
     ]
 
     fieldsets = (
@@ -68,6 +71,7 @@ class ReportRecipientAdmin(VersionAdmin):
                     'id',
                     'recipient',
                     'note',
+                    'deactivated',
                 ),
             },
         ),
@@ -78,6 +82,14 @@ class ReportRecipientAdmin(VersionAdmin):
         get_data['created_by'] = request.user.pk
 
         return get_data
+
+    def get_readonly_fields(self, request, obj=None):
+        fields = super().get_readonly_fields(request, obj)
+
+        if request.user.has_perm("reportrecipient.can_deactivate_report_recipient"):
+            return fields
+
+        return [*fields, "deactivated"]
 
     def save_form(self, request, form, change):
         user = request.user
@@ -94,20 +106,3 @@ class ReportRecipientAdmin(VersionAdmin):
         instance.save()
 
         return instance
-
-
-#     @admin.display(
-#         boolean=False,
-#         ordering='-type',
-#         description='Type',
-#     )
-#     def created_by(self, obj):
-#         obj.
-#         colours = obj.get_type_colours()
-#         bg_colour = colours.get("background", "transparent")
-#         text_colour = colours.get("text", "#000000")
-#         return mark_safe(f'''\
-# <span class="table-tag" \
-#  style="margin-right: 2px; margin-bottom: 2px; font-size: x-small; color: {text_colour}; background: {bg_colour}">\
-# {obj.type.tag.upper().replace(" ", "&nbsp;")}\
-# </span>''')
