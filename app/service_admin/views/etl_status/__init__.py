@@ -4,7 +4,7 @@
 <Description of the programme>
 
 Author:        Pouria Hadjibagheri <pouria.hadjibagheri@phe.gov.uk>
-Created:       22 Jul 2021
+Created:       18 Dec 2021
 License:       MIT
 Contributors:  Pouria Hadjibagheri
 """
@@ -15,9 +15,8 @@ Contributors:  Pouria Hadjibagheri
 
 # 3rd party:
 
-# Internal:
-from .api import *
-from .etl_status import *
+# Internal: 
+from .view import *
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Header

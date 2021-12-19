@@ -1,0 +1,51 @@
+{% extends "admin/base.html" %}
+{% load i18n static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block content %}
+	<div class="results">
+
+	<table id="result_list">
+		<thead>
+		<tr>
+			<th scope="col">
+				Created
+			</th>
+			<th scope="col">
+				Orchestrator
+			</th>
+			<th scope="col">
+				Last update
+			</th>
+			<th scope="col">
+				Status
+			</th>
+		</tr>
+		</thead>
+		<tbody>
+			{% for item in context %}
+				<tr>
+					<td>{{ item.created }}</td>
+					<td>{{ item.name }}</td>
+					<td>{{ item.last_update }}</td>
+					<td>
+						{% with item.status as st %}
+							<strong style="color: {% if st == 'Completed' %}#074428{% elif st == 'Failed' %}#900000{% elif st == 'Running' %}#000044{% elif st == 'Pending' %}#364049{% elif st == 'Terminated' %}#000{% else %}#ffce07{% endif %}">
+							 {{ st }}
+							</strong>
+						{% endwith %}
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	</div>
+{% endblock %}
