@@ -37,7 +37,7 @@ if not DEBUG:
     SESSION_EXPIRE_AT_BROWSER_CLOSE = True
     # SESSION_COOKIE_SECURE = True
     SESSION_COOKIE_DOMAIN = BASE_DOMAIN
-    # SESSION_COOKIE_AGE = 1800
+    SESSION_COOKIE_AGE = 7200
     # SESSION_COOKIE_SAMESITE = 'Strict'
     SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
@@ -405,6 +405,7 @@ DEFAULT_FILE_STORAGE = 'storage.handler.AzureStorage'
 STATICFILES_STORAGE = 'storage.handler.AzureStorage'
 
 
+ETL_STORAGE = getenv("ETL_STORAGE")
 AZURE_CONNECTION_STRING = getenv("DeploymentBlobStorage")
 AZURE_SSL = True
 AZURE_UPLOAD_MAX_CONN = 10
