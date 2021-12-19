@@ -1,25 +1,32 @@
 #!/usr/bin python3
 
+# Imports
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Python:
 from datetime import timedelta, datetime
 import re
 
+# 3rd party:
 from django.contrib import admin
 from django.utils.translation import gettext as _
 from django.utils.safestring import mark_safe
 from django.templatetags.static import static
 from django.utils import timezone
 from django.db.models import DateTimeField
+from django.conf import settings
+
+from azure.cosmosdb.table.tableservice import TableService
+
 from reversion.admin import VersionAdmin
-
-from ..utils.dispatch_ops import update_timestamps
-
-from ..models.data import ReleaseReference, Despatch, DespatchToRelease, PROCESS_TYPE_ENUM
-from .generic_admin import GuardedAdmin
 
 from django_object_actions import DjangoObjectActions
 
-from django.conf import settings
+# Internal:
+from service_admin.models.data import ReleaseReference, Despatch, DespatchToRelease, PROCESS_TYPE_ENUM, ProcessedFile
+from service_admin.admin.generic_admin import GuardedAdmin
 from service_admin.utils.presets import ServiceName
+from service_admin.utils.dispatch_ops import update_timestamps
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 __all__ = [
@@ -36,13 +43,14 @@ def release_selected(modeladmin, request, queryset):
     queryset.update(released=True)
 
     despatch = Despatch.objects.create(timestamp=timestamp)
-    # ToDo: This needs to be create_or_update
-    #   Also add unique_together constraint on db
-    #   Alternatively, use max in the query.
-    DespatchToRelease.objects.bulk_create([
-        DespatchToRelease(despatch=despatch, release=release)
-        for release in queryset
-    ])
+
+    new_objects = list()
+
+    for release in queryset:
+        DespatchToRelease.objects.filter(release=release).delete()
+        new_objects.append(DespatchToRelease(despatch=despatch, release=release))
+
+    DespatchToRelease.objects.bulk_create(new_objects)
 
     update_timestamps(timestamp)
 
@@ -142,6 +150,8 @@ class DateTimeFilter(admin.DateFieldListFilter):
 
 @admin.register(ReleaseReference)
 class ReleaseReferenceAdmin(VersionAdmin, DjangoObjectActions, GuardedAdmin):
+    table_obj = TableService(connection_string=settings.ETL_STORAGE)
+
     search_fields = ('label',)
     list_per_page = 30
     readonly_fields = ["category"]
@@ -157,9 +167,10 @@ class ReleaseReferenceAdmin(VersionAdmin, DjangoObjectActions, GuardedAdmin):
         'formatted_release_time',
         'average_ts',
         'category',
-        'released',
+        'etl_status',
         'count',
         'delta',
+        'released',
         'despatch_time'
     ]
 
@@ -188,8 +199,8 @@ class ReleaseReferenceAdmin(VersionAdmin, DjangoObjectActions, GuardedAdmin):
 
     def despatch_time(self, obj):
         try:
-            return obj.despatch_of.get()
-        except ValueError:
+            return obj.despatch_of.order_by("-timestamp").last()
+        except (ValueError, AttributeError):
             return None
 
     despatch_time.admin_order_field = 'despatch time'
@@ -212,3 +223,34 @@ class ReleaseReferenceAdmin(VersionAdmin, DjangoObjectActions, GuardedAdmin):
 
     average_ts.admin_order_field = 'Relative receipt time'
     average_ts.short_description = 'Relative receipt time'
+
+    def etl_status(self, obj):
+        try:
+            process_id = (
+                ProcessedFile
+                .objects
+                .filter(release=obj.id)
+                .order_by("timestamp")
+                .last()
+                .process_id
+            )
+        except AttributeError:
+            return None
+
+        data = self.table_obj.query_entities(
+            'c19dashpuketlfuncInstances',
+            filter=f"PartitionKey eq '{process_id}'",
+        )
+
+        for task in data:
+            if task.RuntimeStatus == 'Completed':
+                return mark_safe(f'<strong style="color: #074428">{task.RuntimeStatus}</strong>')
+            elif task.RuntimeStatus == 'Running':
+                return mark_safe(f'<strong style="color: #000044">{task.RuntimeStatus}</strong>')
+            elif task.RuntimeStatus == 'Failed':
+                return mark_safe(f'<strong style="color: #900000">{task.RuntimeStatus}</strong>')
+            else:
+                return task.RuntimeStatus
+
+    etl_status.admin_order_field = 'ETL Status'
+    etl_status.short_description = 'ETL Status'
