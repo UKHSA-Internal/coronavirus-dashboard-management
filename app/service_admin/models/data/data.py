@@ -252,7 +252,7 @@ class Despatch(models.Model):
     )
 
     def __str__(self):
-        return f"{self.timestamp:%d %b %Y, %H:%M:%S}"
+        return f"{self.timestamp:%H:%M:%S}"
 
     class Meta:
         managed = False
