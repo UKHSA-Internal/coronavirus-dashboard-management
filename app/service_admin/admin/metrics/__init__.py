@@ -17,10 +17,6 @@ Contributors:  Pouria Hadjibagheri
 
 # Internal: 
 from .assets import *
-# from .description import *
-# from .methodology import *
-# from .data_source import *
-# from .metric_documentation import *
 from .metric_reference import *
 from .metric_tags import *
 from .etl_metrics import *

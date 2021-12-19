@@ -133,17 +133,19 @@ class TagsInlineAdmin(admin.TabularInline):
 
 
 def as_tag(text):
-    return (f'''\
-<span class="table-tag" \
- style="margin-right: 2px; margin-bottom: 2px; font-size: x-small;">\
-{str(text).strip().title().replace(" ", "&nbsp;")}\
-</span>\
-''')
+    return (
+        '<span class="table-tag" style="font-size: x-small; padding: 2px 4px;">' +
+        str(text).strip().title().replace(" ", "&nbsp;") +
+        '</span>'
+    )
 
 
 def metric_tags(obj):
     tag_ids = obj.tags.through.objects.filter(metric=obj.metric).all()
-    return mark_safe(str.join("", [as_tag(tag) for tag in tag_ids]))
+
+    tags = str.join("", map(as_tag, tag_ids))
+
+    return mark_safe(f'<div style="display: flex; flex-wrap: wrap; grid-gap: 3px;">{tags}</div>')
 
 
 class MetricAssetInlineAdmin(admin.TabularInline):
