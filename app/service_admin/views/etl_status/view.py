@@ -38,7 +38,7 @@ class EtlView(TemplateView):
 
     def get_context_data(self, **kwargs):
         obj = self.table_obj.query_entities(
-            'c19dashpuketlfuncInstances',
+            settings.ETL_STORAGE_TABLE_NAME,
             filter="CreatedTime ge datetime'2021-12-17'",
         )
 

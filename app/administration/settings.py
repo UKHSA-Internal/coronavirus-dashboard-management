@@ -406,6 +406,7 @@ STATICFILES_STORAGE = 'storage.handler.AzureStorage'
 
 
 ETL_STORAGE = getenv("ETL_STORAGE")
+ETL_STORAGE_TABLE_NAME = f"c19dash{ENVIRONMENT[0].lower()}uketlfuncInstances"
 AZURE_CONNECTION_STRING = getenv("DeploymentBlobStorage")
 AZURE_SSL = True
 AZURE_UPLOAD_MAX_CONN = 10

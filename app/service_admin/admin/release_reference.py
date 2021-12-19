@@ -238,7 +238,7 @@ class ReleaseReferenceAdmin(VersionAdmin, DjangoObjectActions, GuardedAdmin):
             return None
 
         data = self.table_obj.query_entities(
-            'c19dashpuketlfuncInstances',
+            settings.ETL_STORAGE_TABLE_NAME,
             filter=f"PartitionKey eq '{process_id}'",
         )
 
