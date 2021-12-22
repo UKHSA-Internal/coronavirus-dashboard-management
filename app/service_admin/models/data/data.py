@@ -20,6 +20,7 @@ PROCESS_TYPE_ENUM = [
     ('MSOA: VACCINATION - EVENT DATE', _('MSOA: Vaccinations')),
     ('HEALTHCARE', _('Healthcare')),
     ('TESTING: MAIN', _("Testing")),
+    ('CASES: MAIN', _("Cases")),
 ]
 
 
