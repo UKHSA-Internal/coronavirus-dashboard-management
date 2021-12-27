@@ -3,10 +3,15 @@
 # Imports
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Python:
+from json import dumps
 
 # 3rd party:
 from django.contrib import admin
-from django.core.exceptions import ValidationError
+from django.utils.translation import gettext as _
+from django.contrib.admin.models import LogEntry, CHANGE
+from django.contrib.contenttypes.models import ContentType
+from django.contrib import messages
+
 from reversion.admin import VersionAdmin
 
 # Internal:
@@ -20,17 +25,28 @@ __all__ = [
 
 
 def approve_recipients(modeladmin, request, queryset):
-    if request.user.has_perm('reportrecipient.can_approve_report_recipient'):
+    if request.user.has_perm('service_admin.can_approve_report_recipient'):
         for item in queryset:
             if item.created_by == request.user:
-                raise ValidationError("You cannot approve a recipient added by yourself.")
+                return messages.error(request, _("You cannot approve a recipient added by yourself."))
 
         queryset.update(approved_by=request.user)
+
+        LogEntry.objects.log_action(
+            user_id=request.user.id,
+            content_type_id=ContentType.objects.get_for_model(queryset).pk,
+            object_id=queryset.id,
+            object_repr=queryset.recipient,
+            action_flag=CHANGE,
+            change_message=dumps([{
+                "changed": "recipient approved"
+            }])
+        )
     else:
-        raise ValidationError("You do not have permission to approve new recipients.")
+        return messages.error(request, _("You do not have permission to approve new recipients."))
 
 
-approve_recipients.short_description = f"Approve selected recipients"
+approve_recipients.short_description = _(f"Approve selected recipients")
 
 
 @admin.register(ReportRecipient)
@@ -85,7 +101,7 @@ class ReportRecipientAdmin(VersionAdmin):
     def get_readonly_fields(self, request, obj=None):
         fields = super().get_readonly_fields(request, obj)
 
-        if request.user.has_perm("reportrecipient.can_deactivate_report_recipient"):
+        if request.user.has_perm("service_admin.can_deactivate_report_recipient"):
             return fields
 
         return [*fields, "deactivated"]
@@ -100,7 +116,7 @@ class ReportRecipientAdmin(VersionAdmin):
             instance.created_by = data.created_by
 
             if instance.recipient != data.recipient:
-                raise ValidationError("Recipient's email cannot be modified.")
+                return messages.error(request, "Recipient's email cannot be modified.")
 
         instance.save()
 
