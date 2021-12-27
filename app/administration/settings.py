@@ -26,8 +26,8 @@ CLOUD_INSTANCE_ID = getenv("WEBSITE_INSTANCE_ID", "local")
 SECRET_KEY = getenv("DJANGO_SECRET_KEY")
 
 DEBUG = getenv("IS_DEV", "0") == "1"
-
-BASE_DOMAIN = f"greenhouse.{getenv('URL_LOCATION')}"
+URL_LOCATION = getenv('URL_LOCATION')
+BASE_DOMAIN = f"greenhouse.{URL_LOCATION}"
 
 
 if not DEBUG:
@@ -61,17 +61,19 @@ if not DEBUG:
 
     AZURE_CUSTOM_DOMAIN = getenv("URL_LOCATION", "") + '/public'
 
+    ALLOWED_HOSTS = [
+        URL_LOCATION,
+        BASE_DOMAIN,
+        f"*.{URL_LOCATION}",
+        getenv("WEBSITE_HOSTNAME"),
+    ]
+else:
+    ALLOWED_HOSTS = [
+        '*'
+    ]
 
 DISALLOWED_USER_AGENTS = []
 
-
-# Delegated to the server
-ALLOWED_HOSTS = [
-    '*'
-    # '0.0.0.0',
-    # BASE_DOMAIN,
-    # getenv("WEBSITE_HOSTNAME")
-]
 
 
 # Application definition
