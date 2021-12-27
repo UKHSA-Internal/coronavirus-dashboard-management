@@ -16,9 +16,14 @@ __all__ = [
 @admin.register(Announcement)
 class AnnouncementAdmin(VersionAdmin, ProdOnlyOps):
     list_per_page = 20
+    date_hierarchy = 'launch'
 
     readonly_fields = [
         'id'
+    ]
+
+    search_fields = [
+        "body",
     ]
 
     list_display = [
