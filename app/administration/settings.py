@@ -75,7 +75,6 @@ else:
 DISALLOWED_USER_AGENTS = []
 
 
-
 # Application definition
 INSTALLED_APPS = [
     'admin_reorder',
@@ -116,6 +115,7 @@ ADMIN_REORDER = (
         'models': (
             'auth.User',
             'auth.Group',
+            'admin.LogEntry',
         ),
     },
     {
