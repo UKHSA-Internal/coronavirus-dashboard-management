@@ -30,7 +30,7 @@ RUN rm -rf node_modules
 #RUN rm -rf node_modules
 
 
-FROM python:3.9-buster
+FROM python:3.10-bullseye
 LABEL maintainer="Pouria Hadjibagheri <Pouria.Hadjibagheri@phe.gov.uk>"
 
 # Gunicorn binding port
@@ -101,17 +101,11 @@ ENV _CUSTOM_PRESTART_PATH  $_RUNTIME_CONF_PATH/prestart
 ENV _PRESTART_SCRIPT       $_CUSTOM_PRESTART_PATH/$PRESTART_INITIATOR
 
 # Updating the OS + installing supervisor
-RUN apt-get update                                                   && \
-    apt-get upgrade -y --no-install-recommends --no-install-suggests && \
-    apt-get install -qy build-essential --no-install-recommends      && \
-    apt-get install -y --no-install-recommends supervisor            && \
+RUN apt update                                                   && \
+    apt upgrade -y --no-install-recommends --no-install-suggests && \
+    apt install -qy build-essential --no-install-recommends      && \
+    apt install -y --no-install-recommends supervisor nginx      && \
     rm -rf /var/lib/apt/lists/*
-
-# Installing Nginx
-COPY server/installation/install-nginx.sh   $_NGINX_INSTALLATION
-
-RUN bash $_NGINX_INSTALLATION             && \
-    rm /etc/nginx/conf.d/default.conf
 
 # Installing Python requirements
 COPY ./requirements.txt                     $_INSTALLATION/requirements.txt
