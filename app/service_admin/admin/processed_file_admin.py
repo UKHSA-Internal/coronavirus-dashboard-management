@@ -23,6 +23,8 @@ __all__ = [
 @admin.register(ProcessedFile)
 class ReleaseReferenceAdmin(admin.ModelAdmin):
     search_fields = ('file_path', 'type')
+    date_hierarchy = 'timestamp'
+
     list_per_page = 30
     readonly_fields = ["id", "process_id", "type", "timestamp", "release"]
     list_filter = [
