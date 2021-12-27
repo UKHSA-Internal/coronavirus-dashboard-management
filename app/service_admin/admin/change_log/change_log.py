@@ -3,13 +3,15 @@
 # Imports
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Python:
-from uuid import uuid4
 from datetime import datetime
+from json import dumps
 
 # 3rd party:
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from reversion.admin import VersionAdmin
+from django.contrib.admin.models import LogEntry, ADDITION
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext as _
 
 # Internal: 
@@ -25,9 +27,10 @@ __all__ = [
 
 
 def clone_objects(modeladmin, request, queryset):
+    now = datetime.utcnow()
     for item in queryset:
         change_log = ChangeLog(
-            date=datetime.utcnow(),
+            date=now,
             heading=item.heading,
             body=item.body,
             details=item.details,
@@ -39,9 +42,25 @@ def clone_objects(modeladmin, request, queryset):
 
         change_log.save()
 
-        change_log.metrics.add(*item.metrics.all())
+        metrics = item.metrics.all()
+        change_log.metrics.add(*metrics)
 
         change_log.pages.add(*item.pages.all())
+
+        LogEntry.objects.log_action(
+            user_id=request.user.id,
+            content_type_id=ContentType.objects.get_for_model(change_log).pk,
+            object_id=item.id,
+            object_repr=item.heading,
+            action_flag=ADDITION,
+            change_message=dumps([{
+                "category": "duplicated",
+                "duplication_of": str(item.pk),
+                "metrics_transferred": len(metrics),
+                "original_date": item.date.isoformat(),
+                "new_date": now.isoformat()
+            }])
+        )
 
 
 clone_objects.short_description = _("Duplicate entries with today's date")
@@ -49,11 +68,12 @@ clone_objects.short_description = _("Duplicate entries with today's date")
 
 @admin.register(ChangeLog)
 class ChangeLogAdmin(VersionAdmin):
-    list_per_page = 20
+    list_per_page = 50
 
     search_fields = [
         'heading'
     ]
+    date_hierarchy = 'date'
 
     actions = [clone_objects]
 
