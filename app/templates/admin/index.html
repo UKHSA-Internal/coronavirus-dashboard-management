@@ -12,6 +12,39 @@
 {% block nav-sidebar %}{% endblock %}
 
 {% block content %}
+<style>
+  .dashboard-container {
+		  display: flex;
+  }
+  .main {
+		  display: grid;
+		  grid-auto-flow: column;
+		  grid-template-columns: 3fr 1fr;
+		  grid-template-rows: auto auto;
+		  grid-column-gap: 1rem;
+  }
+  .main > h1 {
+		  grid-column: 1/-1;
+		  grid-row: 1;
+  }
+  .content-main {
+		  grid-row: 2;
+		  grid-column: 1;
+  }
+  .content-related {
+		  grid-row: 2;
+		  grid-column: 2;
+  }
+  .actionlist {
+		  display: flex;
+		  flex-direction: column;
+		  grid-row-gap: 1rem;
+  }
+  .deletelink {
+		  font-size: 13px;
+		  text-align: left;
+  }
+</style>
 <div id="content-main">
   {% include "admin/app_list.html" with app_list=app_list show_changelinks=True %}
 </div>
