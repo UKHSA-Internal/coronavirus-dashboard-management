@@ -17,11 +17,11 @@ Contributors:  Pouria Hadjibagheri
 
 # Internal: 
 from .private_report import *
+from .report_recipient import *
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Header
 __author__ = "Pouria Hadjibagheri"
 __copyright__ = "Copyright (c) 2021, Public Health England"
 __license__ = "MIT"
-__version__ = "0.0.1"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
