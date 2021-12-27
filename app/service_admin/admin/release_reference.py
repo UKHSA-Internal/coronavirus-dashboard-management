@@ -11,7 +11,7 @@ import re
 from django.contrib import admin
 from django.utils.translation import gettext as _
 from django.utils.safestring import mark_safe
-from django.contrib.admin.models import LogEntry, CHANGE
+from django.contrib.admin.models import LogEntry, CHANGE, ADDITION
 from django.contrib.contenttypes.models import ContentType
 from django.templatetags.static import static
 from django.utils import timezone
@@ -49,9 +49,20 @@ def release_selected(modeladmin, request, queryset):
     queryset.update(released=True)
 
     despatch = Despatch.objects.create(timestamp=timestamp)
+    LogEntry.objects.log_action(
+        user_id=request.user.id,
+        content_type_id=ContentType.objects.get_for_model(despatch).pk,
+        object_id=despatch.id,
+        object_repr=timestamp.isoformat(),
+        action_flag=ADDITION,
+        change_message=dumps([{
+            "category": "data despatched",
+            "timestamp": timestamp.isoformat(),
+            "released_object_ids": [str(release.id) for release in queryset]
+        }])
+    )
 
     new_objects = list()
-
     for release in queryset:
         DespatchToRelease.objects.filter(release=release).delete()
         new_objects.append(DespatchToRelease(despatch=despatch, release=release))
@@ -64,7 +75,8 @@ def release_selected(modeladmin, request, queryset):
             action_flag=CHANGE,
             change_message=dumps([{
                 "changed": "despatched",
-                "timestamp": timestamp.isoformat()
+                "timestamp": timestamp.isoformat(),
+                "despatch_object_id": str(despatch.id)
             }])
         )
 
@@ -169,6 +181,7 @@ class DateTimeFilter(admin.DateFieldListFilter):
 @admin.register(ReleaseReference)
 class ReleaseReferenceAdmin(VersionAdmin, DjangoObjectActions, GuardedAdmin):
     table_obj = TableService(connection_string=settings.ETL_STORAGE)
+    date_hierarchy = 'timestamp'
 
     search_fields = ('label',)
     list_per_page = 30
