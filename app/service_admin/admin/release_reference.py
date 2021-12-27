@@ -4,12 +4,15 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Python:
 from datetime import timedelta, datetime
+from json import dumps
 import re
 
 # 3rd party:
 from django.contrib import admin
 from django.utils.translation import gettext as _
 from django.utils.safestring import mark_safe
+from django.contrib.admin.models import LogEntry, CHANGE
+from django.contrib.contenttypes.models import ContentType
 from django.templatetags.static import static
 from django.utils import timezone
 from django.db.models import DateTimeField
@@ -22,7 +25,10 @@ from reversion.admin import VersionAdmin
 from django_object_actions import DjangoObjectActions
 
 # Internal:
-from service_admin.models.data import ReleaseReference, Despatch, DespatchToRelease, PROCESS_TYPE_ENUM, ProcessedFile
+from service_admin.models import (
+    ReleaseReference, Despatch, DespatchToRelease,
+    PROCESS_TYPE_ENUM, ProcessedFile
+)
 from service_admin.admin.generic_admin import GuardedAdmin
 from service_admin.utils.presets import ServiceName
 from service_admin.utils.dispatch_ops import update_timestamps
@@ -49,6 +55,18 @@ def release_selected(modeladmin, request, queryset):
     for release in queryset:
         DespatchToRelease.objects.filter(release=release).delete()
         new_objects.append(DespatchToRelease(despatch=despatch, release=release))
+
+        LogEntry.objects.log_action(
+            user_id=request.user.id,
+            content_type_id=ContentType.objects.get_for_model(queryset).pk,
+            object_id=queryset.id,
+            object_repr=queryset.category,
+            action_flag=CHANGE,
+            change_message=dumps([{
+                "changed": "despatched",
+                "timestamp": timestamp.isoformat()
+            }])
+        )
 
     DespatchToRelease.objects.bulk_create(new_objects)
 
