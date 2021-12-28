@@ -252,10 +252,7 @@ DATABASES = {
         'USER': db_creds.get("USER", DB_USER),
         'PASSWORD': db_creds.get("PASSWORD", DB_PASSWORD),
         'HOST': db_creds.get("HOST", DB_HOST),
-        'NAME': db_creds.get("NAME", DB_NAME),
-        # 'OPTIONS': {
-        #     'options': '-c search_path=public,covid19',
-        # }
+        'NAME': db_creds.get("NAME", DB_NAME)
     }
 }
 
