@@ -1254,6 +1254,7 @@ dmypy.json
 
 local.settings.json
 .env.dev
+.env.prod
 app/static
 
 app/static_private/css/css/application.css
