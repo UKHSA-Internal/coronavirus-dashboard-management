@@ -11,7 +11,7 @@ import re
 from django.contrib import admin
 from django.utils.translation import gettext as _
 from django.utils.safestring import mark_safe
-from django.contrib.admin.models import LogEntry, CHANGE, ADDITION
+from django.contrib.admin.models import LogEntry, CHANGE, ADDITION, DELETION
 from django.contrib.contenttypes.models import ContentType
 from django.templatetags.static import static
 from django.utils import timezone
@@ -46,37 +46,61 @@ SERVICE_NAME = getattr(ServiceName, settings.ENVIRONMENT)
 
 def release_selected(modeladmin, request, queryset):
     timestamp = datetime.utcnow()
+    time_past_the_hour = timedelta(
+        minutes=timestamp.minute,
+        seconds=timestamp.second,
+        microseconds=timestamp.microsecond
+    )
+    prev_hour = timestamp - time_past_the_hour
+    next_hour = prev_hour + timedelta(hours=1)
     queryset.update(released=True)
 
-    despatch = Despatch.objects.create(timestamp=timestamp)
+    despatch = Despatch.objects.filter(timestamp__gte=prev_hour, timestamp__lte=next_hour).first()
+    if despatch is None:
+        despatch = Despatch.objects.create(timestamp=timestamp)
+
     LogEntry.objects.log_action(
         user_id=request.user.id,
         content_type_id=ContentType.objects.get_for_model(despatch).pk,
         object_id=despatch.id,
         object_repr=timestamp.isoformat(),
         action_flag=ADDITION,
-        change_message=dumps([{
-            "category": "data despatched",
-            "timestamp": timestamp.isoformat(),
-            "released_object_ids": [str(release.id) for release in queryset]
-        }])
+        change_message=dumps([
+            {"category": "data despatched", "timestamp": timestamp.isoformat(), "released_object_id": str(release.id)}
+            for release in queryset
+        ])
     )
 
     new_objects = list()
     for release in queryset:
-        DespatchToRelease.objects.filter(release=release).delete()
+        old_releases = DespatchToRelease.objects.filter(release=release).all()
+        for item in old_releases:
+            LogEntry.objects.log_action(
+                user_id=request.user.id,
+                content_type_id=ContentType.objects.get_for_model(item).pk,
+                object_id=item.id,
+                object_repr=str(item),
+                action_flag=DELETION,
+                change_message=dumps([{
+                    "timestamp": item.release.timestamp.isoformat(),
+                    "category": item.release.category.process_name,
+                }])
+            )
+            item.delete()
+
         new_objects.append(DespatchToRelease(despatch=despatch, release=release))
 
         LogEntry.objects.log_action(
             user_id=request.user.id,
-            content_type_id=ContentType.objects.get_for_model(queryset).pk,
-            object_id=queryset.id,
-            object_repr=queryset.category,
+            content_type_id=ContentType.objects.get_for_model(release).pk,
+            object_id=release.id,
+            object_repr=str(release),
             action_flag=CHANGE,
             change_message=dumps([{
-                "changed": "despatched",
+                "description": "despatched",
                 "timestamp": timestamp.isoformat(),
-                "despatch_object_id": str(despatch.id)
+                "category": release.category.process_name,
+                "despatch_object_id": despatch.id
             }])
         )
 
@@ -136,9 +160,9 @@ class FilterByReleaseStatus(admin.SimpleListFilter):
         value = self.value()
 
         if value == 'release':
-            queryset = queryset.filter(release_id__released=True)
+            queryset = queryset.filter(released=True)
         elif value == 'pending':
-            queryset = queryset.filter(release_id__released=False)
+            queryset = queryset.filter(released=False)
 
         return queryset
 
