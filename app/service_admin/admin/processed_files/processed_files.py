@@ -10,6 +10,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 # Internal:
+from . import actions
 from service_admin.models.data import ProcessedFile
 from service_admin.admin.release_reference import DateTimeFilter
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -31,6 +32,10 @@ class ReleaseReferenceAdmin(admin.ModelAdmin):
         ('type', admin.ChoicesFieldListFilter),
         ('release__released', admin.BooleanFieldListFilter),
         ('timestamp', DateTimeFilter)
+    ]
+
+    actions = [
+        actions.resubmit_file,
     ]
 
     list_display_links = [

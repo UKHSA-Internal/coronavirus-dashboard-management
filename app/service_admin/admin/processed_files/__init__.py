@@ -4,7 +4,7 @@
 <Description of the programme>
 
 Author:        Pouria Hadjibagheri <pouria.hadjibagheri@phe.gov.uk>
-Created:       01 Mar 2021
+Created:       04 Jan 2022
 License:       MIT
 Contributors:  Pouria Hadjibagheri
 """
@@ -16,21 +16,12 @@ Contributors:  Pouria Hadjibagheri
 # 3rd party:
 
 # Internal:
-from .release_reference import *
-from .area_reference import *
-from .time_series import *
-from .shared_admins import *
-from .announcement import *
-from .metrics import *
-from .change_log import *
-from .cms import *
-from .reports import *
 from .processed_files import *
-from .action_log import *
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Header
 __author__ = "Pouria Hadjibagheri"
-__copyright__ = "Copyright (c) 2021, Public Health England"
+__copyright__ = "Copyright (c) 2022, Public Health England"
 __license__ = "MIT"
+__version__ = "2.6.10"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
