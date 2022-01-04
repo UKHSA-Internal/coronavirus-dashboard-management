@@ -30,7 +30,7 @@ def approve_recipients(modeladmin, request, queryset):
             if item.created_by == request.user:
                 return messages.error(request, _("You cannot approve a recipient added by yourself."))
 
-        queryset.update(approved_by=request.user)
+        n_updated = queryset.update(approved_by=request.user)
 
         LogEntry.objects.log_action(
             user_id=request.user.id,
@@ -42,6 +42,9 @@ def approve_recipients(modeladmin, request, queryset):
                 "changed": "recipient approved"
             }])
         )
+
+        return messages.success(request, _("Successfully approved %d recipients.") % n_updated)
+
     else:
         return messages.error(request, _("You do not have permission to approve new recipients."))
 
