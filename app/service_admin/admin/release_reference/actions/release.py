@@ -10,13 +10,17 @@ from json import dumps
 from django.utils.translation import gettext as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.admin.models import LogEntry, CHANGE, ADDITION, DELETION
+from django.forms import Form
+from django.forms import CharField, DateField, DateInput, TextInput
 from django.contrib import messages
 from django.conf import settings
+from django.core.exceptions import ValidationError
 
 # Internal: 
 from service_admin.models import Despatch, DespatchToRelease
 from service_admin.utils.dispatch_ops import update_timestamps
 from service_admin.utils.presets import ServiceName
+from .confirm_action import confirm_action
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -28,9 +32,52 @@ __all__ = [
 SERVICE_NAME = getattr(ServiceName, settings.ENVIRONMENT)
 
 
+class PostCategoryForm(Form):
+    title = _(f'Despatch selected releases to %s') % SERVICE_NAME.capitalize()
+    environment_name = CharField(
+        max_length=len(settings.ENVIRONMENT),
+        help_text="Case insensitive",
+        widget=TextInput(attrs=dict(
+            autocomplete='off'
+        ))
+    )
+    release_date = DateField(
+        help_text=(
+            "Select a date that matches the date for all "
+            "of the items you are attempting to despatch."
+        ),
+        widget=DateInput(attrs={'type': 'date'})
+    )
+
+    def __init__(self, *args, data_dates, **kwargs):
+        self.data_dates = data_dates
+        super(PostCategoryForm, self).__init__(*args, **kwargs)
+
+    def clean_environment_name(self):
+        data = self.cleaned_data['environment_name']
+
+        if data.lower() != SERVICE_NAME.lower():
+            raise ValidationError("Environment name does not match.")
+
+        return data
+
+    def clean_release_date(self):
+        data = self.cleaned_data['release_date']
+        data = f"{data:%Y-%m-%d}"
+
+        for item in self.data_dates:
+            if item != data:
+                raise ValidationError(
+                    f"The date you entered does not match the data date of '{item}'."
+                )
+
+        return data
+
+
+@confirm_action(PostCategoryForm)
 def release_selected(modeladmin, request, queryset):
     if settings.DEBUG:
-        return messages.success(request, _(f"This feature is unavailable in debug mode."))
+        return messages.error(request, _(f"This feature is unavailable in debug mode."))
 
     timestamp = datetime.utcnow()
     time_past_the_hour = timedelta(
