@@ -25,28 +25,31 @@ __all__ = [
 
 
 def approve_recipients(modeladmin, request, queryset):
-    if request.user.has_perm('service_admin.can_approve_report_recipient'):
-        for item in queryset:
-            if item.created_by == request.user:
-                return messages.error(request, _("You cannot approve a recipient added by yourself."))
+    if not request.user.has_perm('service_admin.can_approve_report_recipient'):
+        return messages.error(request, _("You do not have permission to approve new recipients."))
 
-        n_updated = queryset.update(approved_by=request.user)
+    if queryset.filter(created_by=request.user).exists():
+        return messages.error(request, _("You cannot approve a recipient added by yourself."))
+
+    n_updated = 0
+    for item in queryset:
+        item.approved_by = request.user
+        item.save()
 
         LogEntry.objects.log_action(
             user_id=request.user.id,
-            content_type_id=ContentType.objects.get_for_model(queryset).pk,
-            object_id=queryset.id,
-            object_repr=queryset.recipient,
+            content_type_id=ContentType.objects.get_for_model(item).pk,
+            object_id=item.id,
+            object_repr=item.recipient,
             action_flag=CHANGE,
             change_message=dumps([{
-                "changed": "recipient approved"
+                "description": "recipient approved"
             }])
         )
 
-        return messages.success(request, _("Successfully approved %d recipients.") % n_updated)
+        n_updated += 1
 
-    else:
-        return messages.error(request, _("You do not have permission to approve new recipients."))
+        return messages.success(request, _("Successfully approved %d recipients.") % n_updated)
 
 
 approve_recipients.short_description = _(f"Approve selected recipients")
