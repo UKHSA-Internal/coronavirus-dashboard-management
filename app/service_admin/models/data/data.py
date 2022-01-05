@@ -326,6 +326,14 @@ class ReleaseReference(models.Model):
 
         return f"{today_count - previous_count:,d}"
 
+    def confirmation(self):
+        label = f"{self.category} data received on {self.timestamp:%A, %-d %B %Y} "
+
+        if self.released:
+            label += "[ ALREADY RELEASED ]"
+
+        return {"label": label}
+
     def __str__(self):
         return f"{self.timestamp:%Y-%m-%d}"
 
