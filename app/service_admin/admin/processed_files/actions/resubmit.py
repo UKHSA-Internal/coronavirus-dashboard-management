@@ -42,7 +42,8 @@ def resubmit_file(modeladmin, request, queryset):
             now = datetime.utcnow()
             file_timestamp, __ = splitext(file_path.rsplit("_", 1)[1])
 
-            new_path = file_path.replace(file_timestamp, f"{now:%Y%m%d%H%M}")
+            # Only replace the time section of the timestamp.
+            new_path = f"{file_timestamp[:-4]}{now:%H%M}"
 
             LogEntry.objects.log_action(
                 user_id=request.user.id,
