@@ -4,6 +4,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Python:
 import re
+import logging
 
 # 3rd party:
 from django.contrib import admin
@@ -30,7 +31,11 @@ __all__ = [
 
 @admin.register(ReleaseReference)
 class ReleaseReferenceAdmin(VersionAdmin, DjangoObjectActions, GuardedAdmin):
-    table_obj = TableService(connection_string=settings.ETL_STORAGE)
+    try:
+        table_obj = TableService(connection_string=settings.ETL_STORAGE)
+    except ValueError as err:
+        logging.error(err)
+
     date_hierarchy = 'timestamp'
 
     search_fields = ('label',)
@@ -38,7 +43,8 @@ class ReleaseReferenceAdmin(VersionAdmin, DjangoObjectActions, GuardedAdmin):
     readonly_fields = ["category"]
     actions = [
         actions.release_selected,
-        actions.recalculate_selected_count
+        actions.recalculate_selected_count,
+        actions.reset_release_stats,
     ]
     list_filter = [
         list_filters.FilterByReleaseStatus,
