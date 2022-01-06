@@ -36,6 +36,7 @@ class ReleaseReferenceAdmin(admin.ModelAdmin):
 
     actions = [
         actions.resubmit_file,
+        actions.resubmit_file_for_today,
     ]
 
     list_display_links = [
