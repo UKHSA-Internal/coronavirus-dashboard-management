@@ -2,7 +2,7 @@ STATS_QUERY = """\
 INSERT INTO covid19.release_stats (release_id, record_count)
 SELECT ts.release_id AS id, COUNT(*) AS counter
 FROM covid19.time_series AS ts
-WHERE ts.partition_id = ANY(%s::VARCHAR[])
+WHERE ts.partition_id = ANY(%s::TEXT[])
   AND ts.release_id IN (
       SELECT id
       FROM covid19.release_reference AS rr
