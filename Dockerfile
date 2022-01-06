@@ -144,6 +144,10 @@ RUN rm -rf $_INSTALLATION
 
 # Copying built styles
 COPY app/                                      $PYTHONPATH/
+
+RUN rm $PYTHONPATH/simple_manage.py  && \
+    rm $PYTHONPATH/administration/simple_settings.py
+
 COPY --from=builder /app/static_private/css    $CSS_PATH
 COPY --from=builder /app/static_private/js     $JS_PATH
 COPY server/config/uvicorn_worker.py           $_WORKER_CLASS_PATH
