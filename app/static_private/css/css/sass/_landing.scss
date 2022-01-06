@@ -544,6 +544,15 @@ div.help {
       &>li.error {
         color: #d4351c !important;
       }
+      &>li.warning {
+        color: #bf6017 !important;
+      }
+      &>li.info {
+          color: #002b64 !important;
+      }
+      &>li.debug {
+          color: #3f3f3f !important;
+      }
     }
   }
 }
