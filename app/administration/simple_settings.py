@@ -194,7 +194,11 @@ PASSWORD_HASHERS = [
 # STATIC FILES
 # -------------------------------------------------------------------
 
-STATIC_ROOT = BASE_DIR.joinpath('static_private')
+STATICFILES_DIRS = [
+    BASE_DIR.joinpath('static_private').absolute(),
+]
+
+STATIC_ROOT = BASE_DIR.joinpath('static')
 STATIC_URL = "/static/"
 
 STATICFILES_FINDERS = (
