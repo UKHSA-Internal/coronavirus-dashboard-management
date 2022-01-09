@@ -25,7 +25,10 @@ __all__ = [
 
 def recalculate_selected_count(modeladmin, request, queryset):
     if not request.user.has_perm('service_admin.change_releasestats'):
-        return messages.error(request, _("You do not have permission to request recalculation."))
+        return messages.error(
+            request,
+            _("You do not have permission to request recalculation. Operation aborted.")
+        )
 
     with connection.cursor() as cursor:
         cursor.execute(PERMISSIONS_QUERY)
@@ -84,7 +87,10 @@ recalculate_selected_count.short_description = _(f"Recalculate count and delta f
 
 def reset_release_stats(modeladmin, request, queryset):
     if not request.user.has_perm('service_admin.change_releasestats'):
-        return messages.error(request, _("You do not have permission to request recalculation."))
+        return messages.error(
+            request,
+            _("You do not have permission to request recalculation. Operation aborted.")
+        )
 
     for item in queryset:
         if not hasattr(item, 'releasestats'):
@@ -123,7 +129,6 @@ def reset_release_stats(modeladmin, request, queryset):
             request,
             _(f"Successfully reset: %s") % f"{category} [{item}]"
         )
-
 
 
 reset_release_stats.short_description = _(f"Reset release statistics for selected items")
