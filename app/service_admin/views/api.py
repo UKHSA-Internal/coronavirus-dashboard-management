@@ -41,7 +41,7 @@ def get_flesch_level(score):
 @login_required()
 @csrf_exempt
 def text_stats_api_view(request):
-    if request.is_ajax() and not request.method == "POST":
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' and not request.method == "POST":
         raise Http404()
 
     payload = loads(request.body)['payload']
