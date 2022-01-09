@@ -4,6 +4,8 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Python:
 from functools import wraps
+from datetime import datetime
+from hashlib import md5
 
 # 3rd party:
 from django.utils.translation import gettext as _
@@ -16,11 +18,13 @@ from django.contrib import messages
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 __all__ = [
-    'confirm_action'
+    'confirm_release',
+    'confirm_with_date',
+    'get_minute_instance_id',
 ]
 
 
-def confirm_action(form_class=None):
+def confirm_release(form_class=None):
     def decorator(func):
         @wraps(func)
         def wrapper(modeladmin, request, queryset):
@@ -59,3 +63,40 @@ def confirm_action(form_class=None):
         return wrapper
 
     return decorator
+
+
+def confirm_with_date(form_class=None):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(modeladmin, request, queryset):
+            form = form_class()
+
+            if request.POST and 'confirm' in request.POST:
+                form = form_class(request.POST)
+                if form.is_valid():
+                    return func(modeladmin, request, queryset)
+
+            context = dict(
+                modeladmin.admin_site.each_context(request),
+                title=form_class.title,
+                action=func.__name__,
+                opts=modeladmin.model._meta,
+                queryset=[],
+                form=form,
+                action_checkbox_name=ACTION_CHECKBOX_NAME
+            )
+
+            return TemplateResponse(request, 'admin/action_confirmation.html', context)
+
+        wrapper.short_description = form_class.title
+
+        return wrapper
+
+    return decorator
+
+
+def get_minute_instance_id(identifier):
+    now = datetime.utcnow()
+    instance_id = f"-{now:%Y%m%d%H%M}".encode()
+
+    return f"{identifier}-{md5(instance_id).hexdigest()}"
