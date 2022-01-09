@@ -193,6 +193,9 @@ class ProcessedFile(models.Model):
         blank=False
     )
 
+    def __str__(self):
+        return self.file_path
+
     class Meta:
         managed = False
         db_table = 'covid19"."processed_file'
