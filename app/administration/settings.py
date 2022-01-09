@@ -17,11 +17,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 db_cstr = getenv("POSTGRES_CONNECTION_STRING")
 
-ENVIRONMENT = getenv("API_ENV")
+API_ENV = ENVIRONMENT = getenv("API_ENV")
 INSTRUMENTATION_KEY_RAW = getenv("APPINSIGHTS_INSTRUMENTATIONKEY", "")
 INSTRUMENTATION_KEY = f'InstrumentationKey={INSTRUMENTATION_KEY_RAW}'
 CLOUD_ROLE_NAME = getenv("WEBSITE_SITE_NAME", "Administration")
 CLOUD_INSTANCE_ID = getenv("WEBSITE_INSTANCE_ID", "local")
+SERVICE_BUS_CREDENTIALS = getenv("SERVICEBUS_CONNECTION_STRING")
+
 
 SECRET_KEY = getenv("DJANGO_SECRET_KEY")
 
@@ -67,9 +69,24 @@ if not DEBUG:
         f"*.{URL_LOCATION}",
         getenv("WEBSITE_HOSTNAME"),
     ]
+
+    CSRF_TRUSTED_ORIGINS = [
+        f"http://{item}" for item in ALLOWED_HOSTS
+    ]
+
+    CSRF_TRUSTED_ORIGINS.extend([
+        f"https://{item}" for item in ALLOWED_HOSTS
+    ])
+
 else:
     ALLOWED_HOSTS = [
-        '*'
+        '0.0.0.0',
+        'localhost'
+    ]
+
+    CSRF_TRUSTED_ORIGINS = [
+        'http://0.0.0.0:5510',
+        'http://localhost:5510',
     ]
 
 DISALLOWED_USER_AGENTS = []
@@ -89,6 +106,7 @@ INSTALLED_APPS = [
     'guardian',
     'markdownx',
     'django_admin_json_editor',
+    'django_object_actions',
     'rest_framework',
     'reversion',
 ]
@@ -406,7 +424,7 @@ STATICFILES_STORAGE = 'storage.handler.AzureStorage'
 
 ETL_STORAGE = getenv("ETL_STORAGE")
 ETL_STORAGE_TABLE_NAME = f"c19dash{ENVIRONMENT[0].lower()}uketlfuncInstances"
-AZURE_CONNECTION_STRING = getenv("DeploymentBlobStorage")
+AZURE_CONNECTION_STRING = STORAGE_CREDENTIALS = getenv("DeploymentBlobStorage")
 AZURE_SSL = True
 AZURE_UPLOAD_MAX_CONN = 10
 AZURE_CONNECTION_TIMEOUT_SECS = 20
