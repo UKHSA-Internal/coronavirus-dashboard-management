@@ -16,11 +16,12 @@ from django.contrib import messages
 from django.conf import settings
 from django.core.exceptions import ValidationError
 
+from azure.servicebus import ServiceBusClient, ServiceBusMessage
+
 # Internal: 
 from service_admin.models import Despatch, DespatchToRelease
-from service_admin.utils.dispatch_ops import update_timestamps
 from service_admin.utils.presets import ServiceName
-from .confirm_action import confirm_action
+from .utils import confirm_release, get_minute_instance_id
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -29,10 +30,11 @@ __all__ = [
 ]
 
 
+TOPIC_NAME = "data-despatch"
 SERVICE_NAME = getattr(ServiceName, settings.ENVIRONMENT)
 
 
-class PostCategoryForm(Form):
+class ConfirmDespatchForm(Form):
     title = _(f'Despatch selected releases to %s') % SERVICE_NAME.capitalize()
     environment_name = CharField(
         max_length=len(settings.ENVIRONMENT),
@@ -51,7 +53,7 @@ class PostCategoryForm(Form):
 
     def __init__(self, *args, data_dates, **kwargs):
         self.data_dates = data_dates
-        super(PostCategoryForm, self).__init__(*args, **kwargs)
+        super(ConfirmDespatchForm, self).__init__(*args, **kwargs)
 
     def clean_environment_name(self):
         data = self.cleaned_data['environment_name']
@@ -74,10 +76,16 @@ class PostCategoryForm(Form):
         return data
 
 
-@confirm_action(PostCategoryForm)
+@confirm_release(ConfirmDespatchForm)
 def release_selected(modeladmin, request, queryset):
     if settings.DEBUG:
         return messages.error(request, _(f"This feature is unavailable in debug mode."))
+
+    if not request.user.has_perm('service_admin.change_releasereference'):
+        return messages.error(
+            request,
+            _("You do not have permission to despatch. Operation aborted.")
+        )
 
     timestamp = datetime.utcnow()
     time_past_the_hour = timedelta(
@@ -141,9 +149,21 @@ def release_selected(modeladmin, request, queryset):
 
     DespatchToRelease.objects.bulk_create(new_objects)
 
-    update_timestamps(timestamp)
+    timestamp = timestamp.isoformat()
+
+    message = ServiceBusMessage(dumps({
+        "event": "data despatched.",
+        "instance_id": get_minute_instance_id(TOPIC_NAME),
+        "ENVIRONMENT": settings.API_ENV,
+        "timestamp": datetime.utcnow().isoformat(),
+        "releaseTimestamp": timestamp
+    }))
+
+    with ServiceBusClient.from_connection_string(settings.SERVICE_BUS_CREDENTIALS, logging_enable=True) as sb_client:
+        with sb_client.get_topic_sender(topic_name=TOPIC_NAME) as sender:
+            sender.send_messages(message)
 
     return messages.success(request, _(f"Successfully released %d items.") % len(new_objects))
 
 
-release_selected.short_description = _(f"Release selected items on {SERVICE_NAME.capitalize()}")
+release_selected.short_description = _(f"Despatch selected items on {SERVICE_NAME.capitalize()}")
