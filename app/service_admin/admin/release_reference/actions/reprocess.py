@@ -118,6 +118,7 @@ def reporocess_release(modeladmin, request, queryset):
         # Trigger ETL
         payload = dumps({
             "to": RESUBMIT_PROCESS,
+            "fileName": old_path,
             "ENVIRONMENT": settings.API_ENV,
             "timestamp": datetime.utcnow().isoformat(),
         })
