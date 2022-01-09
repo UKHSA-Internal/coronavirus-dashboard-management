@@ -30,7 +30,7 @@ __all__ = [
 
 
 @admin.register(ReleaseReference)
-class ReleaseReferenceAdmin(VersionAdmin, DjangoObjectActions, GuardedAdmin):
+class ReleaseReferenceAdmin(DjangoObjectActions, VersionAdmin, GuardedAdmin):
     try:
         table_obj = TableService(connection_string=settings.ETL_STORAGE)
     except ValueError as err:
@@ -41,10 +41,17 @@ class ReleaseReferenceAdmin(VersionAdmin, DjangoObjectActions, GuardedAdmin):
     search_fields = ('label',)
     list_per_page = 30
     readonly_fields = ["category"]
+    changelist_actions = [
+        'purge_storage_cache',
+        'repopulate_cache',
+        'flush_despatch_cache',
+        'flush_all_cache',
+    ]
     actions = [
         actions.release_selected,
         actions.recalculate_selected_count,
         actions.reset_release_stats,
+        actions.reporocess_release,
     ]
     list_filter = [
         list_filters.FilterByReleaseStatus,
@@ -80,6 +87,9 @@ class ReleaseReferenceAdmin(VersionAdmin, DjangoObjectActions, GuardedAdmin):
             },
         ),
     )
+
+    def has_add_permission(self, request):
+        return request.user.is_superuser
 
     def formatted_release_time(self, obj):
         return mark_safe(obj.timestamp.strftime("%a, %d %b %Y &ndash; %H:%M:%S"))
@@ -144,3 +154,27 @@ class ReleaseReferenceAdmin(VersionAdmin, DjangoObjectActions, GuardedAdmin):
 
     etl_status.admin_order_field = 'ETL Status'
     etl_status.short_description = 'ETL Status'
+
+    def flush_all_cache(self, request, obj):
+        return actions.flush_all_cache(self, request, obj)
+
+    flush_all_cache.label = "Flush all cache"
+    flush_all_cache.short_description = "Instantly flush all cache"
+
+    def flush_despatch_cache(self, request, obj):
+        return actions.flush_despatch_cache(self, request, obj)
+
+    flush_despatch_cache.label = "Flush despatch cache"
+    flush_despatch_cache.short_description = "Flush cache servers in serial"
+
+    def repopulate_cache(self, request, obj):
+        return actions.repopulate_cache(self, request, obj)
+
+    repopulate_cache.label = "Repopulate summary cache"
+    repopulate_cache.short_description = "Repopulate cache for Summary pages"
+
+    def purge_storage_cache(self, request, obj):
+        return actions.purge_storage_cache(self, request, obj)
+
+    purge_storage_cache.label = "Purge storage cache"
+    purge_storage_cache.short_description = "Purge storage cache for APIv2 and Easy-Read pages"
