@@ -1,8 +1,8 @@
-django>=3.2,<4
+django>=4
 psycopg2-binary
 django-guardian
 django[argon2]
-django-markdownx
+django-markdownx>=4.0.0b1
 django_multitenant
 django-admin-json-editor
 django-object-actions
