@@ -28,10 +28,16 @@ CONTAINER = "rawdbdata"
 
 def resubmit_file(modeladmin, request, queryset):
     if not request.user.has_perm('service_admin.add_processedfile'):
-        return messages.error(request, _("You do not have permission to resubmit source files."))
+        return messages.error(
+            request,
+            _("You do not have permission to resubmit source files. Operation aborted.")
+        )
 
     if queryset.count() > 1:
-        return messages.error(request, _("You can only request one resubmission at a time."))
+        return messages.error(
+            request,
+            _("You can only request one resubmission at a time. Operation aborted.")
+        )
 
     for item in queryset:
         file_path: str = item.file_path
@@ -77,7 +83,7 @@ def resubmit_file_for_today(modeladmin, request, queryset):
     if not request.user.has_perm('service_admin.change_releasereference'):
         return messages.error(
             request,
-            _("You do not have permission to resubmit source files as today's data.")
+            _("You do not have permission to resubmit source files as today's data. Operation aborted.")
         )
 
     if queryset.count() > 1:
