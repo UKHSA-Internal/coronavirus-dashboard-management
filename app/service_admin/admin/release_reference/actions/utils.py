@@ -99,4 +99,4 @@ def get_minute_instance_id(identifier):
     now = datetime.utcnow()
     instance_id = f"-{now:%Y%m%d%H%M}".encode()
 
-    return f"{identifier}-{md5(instance_id).hexdigest()}"
+    return f"{identifier}:{md5(instance_id).hexdigest()}"
