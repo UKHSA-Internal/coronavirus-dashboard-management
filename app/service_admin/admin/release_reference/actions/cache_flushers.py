@@ -3,7 +3,7 @@
 # Python:
 from json import dumps
 from datetime import datetime
-from hashlib import md5
+from logging import getLogger
 
 # 3rd party:
 from django.utils.translation import gettext as _
@@ -11,6 +11,7 @@ from django.conf import settings
 from django.contrib import messages
 
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
+from azure.servicebus.exceptions import ServiceBusError
 
 # Internal:
 from .utils import get_minute_instance_id
@@ -26,6 +27,8 @@ TOPIC_NAME = "cache_flusher"
 
 FLUSH_ALL = "ALL"
 FLUSH_DESPATCH = "DESPATCH"
+
+logger = getLogger("django")
 
 
 def flush_all_cache(modeladmin, request, queryset):
@@ -49,9 +52,19 @@ def flush_all_cache(modeladmin, request, queryset):
         message_id=get_minute_instance_id(FLUSH_ALL)
     )
 
-    with ServiceBusClient.from_connection_string(settings.SERVICE_BUS_CREDENTIALS, logging_enable=True) as sb_client:
-        with sb_client.get_topic_sender(topic_name=TOPIC_NAME) as sender:
+    try:
+        sb_client = ServiceBusClient.from_connection_string(
+            settings.SERVICE_BUS_CREDENTIALS,
+            logging_enable=True
+        )
+
+        with sb_client, sb_client.get_topic_sender(topic_name=TOPIC_NAME) as sender:
             sender.send_messages(msg)
+
+    except ServiceBusError as err:
+        messages.error(request, _(f"Failed to trigger the flusher task."))
+        logger.exception(err)
+        return
 
     messages.success(request, _("Request submitted to flush all cache."))
 
@@ -77,8 +90,16 @@ def flush_despatch_cache(modeladmin, request, queryset):
         message_id=get_minute_instance_id(FLUSH_DESPATCH)
     )
 
-    with ServiceBusClient.from_connection_string(settings.SERVICE_BUS_CREDENTIALS, logging_enable=True) as sb_client:
-        with sb_client.get_topic_sender(topic_name=TOPIC_NAME) as sender:
+    try:
+        sb_client = ServiceBusClient.from_connection_string(
+            settings.SERVICE_BUS_CREDENTIALS,
+            logging_enable=True
+        )
+        with sb_client, sb_client.get_topic_sender(topic_name=TOPIC_NAME) as sender:
             sender.send_messages(msg)
+    except ServiceBusError as err:
+        messages.error(request, _(f"Failed to trigger the flusher task."))
+        logger.exception(err)
+        return
 
     messages.success(request, _("Request submitted to flush despatch cache."))
