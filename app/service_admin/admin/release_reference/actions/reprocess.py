@@ -75,14 +75,9 @@ def reporocess_release(modeladmin, request, queryset):
             }])
         )
 
-        file_obj.file_path = new_path
-        file_obj.update()
+        file_obj.update(file_path=new_path)
 
         messages.info(request, _(f"File renamed to: %s") % new_path)
-        sb_client = ServiceBusClient.from_connection_string(
-            settings.SERVICE_BUS_CREDENTIALS,
-            logging_enable=True
-        )
 
         # Reset release stats:
         if not hasattr(item, 'releasestats'):
@@ -136,6 +131,11 @@ def reporocess_release(modeladmin, request, queryset):
         )
 
         try:
+            sb_client = ServiceBusClient.from_connection_string(
+                settings.SERVICE_BUS_CREDENTIALS,
+                logging_enable=True
+            )
+
             with sb_client, sb_client.get_topic_sender(topic_name=TOPIC_NAME) as sender:
                 sender.send_messages(msg)
         except ServiceBusError as err:
