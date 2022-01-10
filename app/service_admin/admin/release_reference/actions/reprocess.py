@@ -5,15 +5,17 @@
 # Python:
 from json import dumps
 from datetime import datetime
+from logging import getLogger
 
 # 3rd party:
 from django.utils.translation import gettext as _
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.admin.models import LogEntry, CHANGE, ADDITION, DELETION
+from django.contrib.admin.models import LogEntry, CHANGE, DELETION
 from django.contrib import messages
 from django.conf import settings
 
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
+from azure.servicebus.exceptions import ServiceBusError
 
 # Internal:
 from service_admin.models import ProcessedFile
@@ -25,9 +27,11 @@ __all__ = [
     'reporocess_release',
 ]
 
-TOPIC_NAME = "generic_tasks"
+TOPIC_NAME = "etl_operations"
 RESUBMIT_PROCESS = "GENERIC_TASKS"
 FUNC_NAME = "main_etl_orchestrator"
+
+logger = getLogger("django")
 
 
 def reporocess_release(modeladmin, request, queryset):
@@ -47,7 +51,8 @@ def reporocess_release(modeladmin, request, queryset):
     for item in queryset:
         category = item.category.process_name
 
-        file = ProcessedFile.objects.filter(release_id=item.pk)
+        file_obj = ProcessedFile.objects.filter(release_id=item.pk)
+        file = file_obj.first()
         old_path = file.file_path
 
         messages.info(
@@ -56,8 +61,6 @@ def reporocess_release(modeladmin, request, queryset):
         )
 
         new_path = old_path + f"-RESUBMIT:{now.isoformat()}"
-        file.file_path = new_path
-        file.update()
 
         LogEntry.objects.log_action(
             user_id=request.user.id,
@@ -72,9 +75,13 @@ def reporocess_release(modeladmin, request, queryset):
             }])
         )
 
-        messages.info(
-            request,
-            _(f"File renamed to: %s") % new_path
+        file_obj.file_path = new_path
+        file_obj.update()
+
+        messages.info(request, _(f"File renamed to: %s") % new_path)
+        sb_client = ServiceBusClient.from_connection_string(
+            settings.SERVICE_BUS_CREDENTIALS,
+            logging_enable=True
         )
 
         # Reset release stats:
@@ -109,10 +116,7 @@ def reporocess_release(modeladmin, request, queryset):
 
             messages.info(
                 request,
-                _(f"Release statistics reset for '%s' on %s.") % (
-                    item.category.process_name,
-                    str(item)
-                )
+                _(f"Release statistics reset for '%s' on %s.") % (category, str(item))
             )
 
         # Trigger ETL
@@ -131,12 +135,15 @@ def reporocess_release(modeladmin, request, queryset):
             message_id=get_minute_instance_id(RESUBMIT_PROCESS)
         )
 
-        with ServiceBusClient.from_connection_string(settings.SERVICE_BUS_CREDENTIALS,
-                                                     logging_enable=True) as sb_client:
-            with sb_client.get_topic_sender(topic_name=TOPIC_NAME) as sender:
+        try:
+            with sb_client, sb_client.get_topic_sender(topic_name=TOPIC_NAME) as sender:
                 sender.send_messages(msg)
+        except ServiceBusError as err:
+            messages.error(request, _(f"Failed to trigger the ETL."))
+            logger.exception(err)
+            return
 
-        messages.success(request, _(f"ETL has been trigger to reprocess the data file."))
+        messages.success(request, _(f"ETL has been triggered to reprocess the data file."))
 
 
 reporocess_release.short_description = _(f"Submit selected item to ETL for reprocessing")

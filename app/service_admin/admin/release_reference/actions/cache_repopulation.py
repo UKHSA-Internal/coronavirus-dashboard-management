@@ -2,6 +2,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Python:
 from json import dumps
+from logging import getLogger
 
 # 3rd party:
 from django.utils.translation import gettext as _
@@ -10,6 +11,7 @@ from django.contrib import messages
 from django.db.models import Max
 
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
+from azure.servicebus.exceptions import ServiceBusError
 
 # Internal:
 from service_admin.models import ReleaseReference
@@ -25,6 +27,8 @@ __all__ = [
 TOPIC_NAME = "etl_operations"
 
 REPOPULATE_CACHE = "REPOPULATE_CACHE"
+
+logger = getLogger("django")
 
 
 def repopulate_cache(modeladmin, request, queryset):
@@ -49,9 +53,19 @@ def repopulate_cache(modeladmin, request, queryset):
         message_id=get_minute_instance_id(REPOPULATE_CACHE)
     )
 
-    with ServiceBusClient.from_connection_string(settings.SERVICE_BUS_CREDENTIALS, logging_enable=True) as sb_client:
-        with sb_client.get_topic_sender(topic_name=TOPIC_NAME) as sender:
+    try:
+        sb_client = ServiceBusClient.from_connection_string(
+            settings.SERVICE_BUS_CREDENTIALS,
+            logging_enable=True
+        )
+
+        with sb_client, sb_client.get_topic_sender(topic_name=TOPIC_NAME) as sender:
             sender.send_messages(msg)
+
+    except ServiceBusError as err:
+        messages.error(request, _(f"Failed to trigger the ETL processes to repopulate the cache."))
+        logger.exception(err)
+        return
 
     messages.success(
         request,

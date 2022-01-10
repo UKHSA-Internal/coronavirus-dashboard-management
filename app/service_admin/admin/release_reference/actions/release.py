@@ -5,6 +5,7 @@
 # Python:
 from datetime import datetime, timedelta
 from json import dumps
+from logging import getLogger
 
 # 3rd party:
 from django.utils.translation import gettext as _
@@ -17,6 +18,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
+from azure.servicebus.exceptions import ServiceBusError
 
 # Internal: 
 from service_admin.models import Despatch, DespatchToRelease
@@ -32,6 +34,8 @@ __all__ = [
 
 TOPIC_NAME = "data-despatch"
 SERVICE_NAME = getattr(ServiceName, settings.ENVIRONMENT)
+
+logger = getLogger("django")
 
 
 class ConfirmDespatchForm(Form):
@@ -69,9 +73,7 @@ class ConfirmDespatchForm(Form):
 
         for item in self.data_dates:
             if item != data:
-                raise ValidationError(
-                    f"The date you entered does not match the data date of '{item}'."
-                )
+                raise ValidationError(f"The date you entered does not match the data date of '{item}'.")
 
         return data
 
@@ -118,6 +120,11 @@ def release_selected(modeladmin, request, queryset):
         old_releases = DespatchToRelease.objects.filter(release=release).all()
         for item in old_releases:
             category = item.release.category.process_name
+            messages.info(
+                request,
+                _('Deleted release item of category "%s" with id %d') % (category, item.id)
+            )
+
             LogEntry.objects.log_action(
                 user_id=request.user.id,
                 content_type_id=ContentType.objects.get_for_model(item).pk,
@@ -133,6 +140,12 @@ def release_selected(modeladmin, request, queryset):
 
         new_objects.append(DespatchToRelease(despatch=despatch, release=release))
 
+        release_category = release.category.process_name
+        messages.info(
+            request,
+            _(f'Despatched "%s" received on %s') % (release_category, f"{despatch.timestamp:%Y-%m-%d}")
+        )
+
         LogEntry.objects.log_action(
             user_id=request.user.id,
             content_type_id=ContentType.objects.get_for_model(release).pk,
@@ -142,7 +155,7 @@ def release_selected(modeladmin, request, queryset):
             change_message=dumps([{
                 "description": "despatched",
                 "timestamp": timestamp.isoformat(),
-                "category": release.category.process_name,
+                "category": release_category,
                 "despatch_object_id": despatch.id
             }])
         )
@@ -159,11 +172,27 @@ def release_selected(modeladmin, request, queryset):
         "releaseTimestamp": timestamp
     }))
 
-    with ServiceBusClient.from_connection_string(settings.SERVICE_BUS_CREDENTIALS, logging_enable=True) as sb_client:
-        with sb_client.get_topic_sender(topic_name=TOPIC_NAME) as sender:
+    try:
+        sb_client = ServiceBusClient.from_connection_string(
+            settings.SERVICE_BUS_CREDENTIALS,
+            logging_enable=True
+        )
+
+        with sb_client, sb_client.get_topic_sender(topic_name=TOPIC_NAME) as sender:
             sender.send_messages(message)
 
-    return messages.success(request, _(f"Successfully released %d items.") % len(new_objects))
+    except ServiceBusError as err:
+        messages.warning(request, _(f"Failed to trigger post-despatch processes."))
+        logger.exception(err)
+
+    return messages.success(
+        request,
+        _(f"Successfully released %d items - timestamp: %s on %s") % (
+            len(new_objects),
+            f"{despatch.timestamp:%H:%M:%S}",
+            f"{despatch.timestamp:%A, %-d %B %Y}"
+        )
+    )
 
 
 release_selected.short_description = _(f"Despatch selected items on {SERVICE_NAME.capitalize()}")
