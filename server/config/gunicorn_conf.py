@@ -69,7 +69,7 @@ use_accesslog = accesslog_var or None
 errorlog_var = getenv("ERROR_LOG", "-")
 use_errorlog = errorlog_var or None
 graceful_timeout_str = getenv("GRACEFUL_TIMEOUT", "45")
-timeout_str = getenv("TIMEOUT", "60")
+# timeout_str = getenv("TIMEOUT", "60")
 
 reload = getenv("RELOAD", "0") == "1"
 
@@ -81,7 +81,7 @@ errorlog = use_errorlog
 worker_tmp_dir = "/dev/shm"
 accesslog = use_accesslog
 graceful_timeout = int(graceful_timeout_str)
-timeout = int(timeout_str)
+# timeout = int(timeout_str)
 proxy_protocol = True
 secure_scheme_headers = {
     'X-FORWARDED-PROTO': 'https'
@@ -93,8 +93,8 @@ log_data = {
     "loglevel": loglevel,
     "workers": workers,
     "bind": bind,
-    "graceful_timeout": graceful_timeout,
-    "timeout": timeout,
+    # "graceful_timeout": graceful_timeout,
+    # "timeout": timeout,
     "errorlog": errorlog,
     "accesslog": accesslog,
     # Additional, non-gunicorn variables
