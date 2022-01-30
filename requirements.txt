@@ -33,3 +33,4 @@ pyyaml
 django-filter
 django-modeladmin-reorder
 azure-cosmosdb-table
+git+git://github.com/xenatisch/django-recaptcha2.git@2e5d047407aaa1e8674cdcfdd18146ebd22f1b09
