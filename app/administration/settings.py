@@ -23,6 +23,9 @@ INSTRUMENTATION_KEY = f'InstrumentationKey={INSTRUMENTATION_KEY_RAW}'
 CLOUD_ROLE_NAME = getenv("WEBSITE_SITE_NAME", "Administration")
 CLOUD_INSTANCE_ID = getenv("WEBSITE_INSTANCE_ID", "local")
 SERVICE_BUS_CREDENTIALS = getenv("SERVICEBUS_CONNECTION_STRING")
+RECAPTCHA_PUBLIC_KEY = getenv("RECAPTCHA_PUBLIC_KEY")
+RECAPTCHA_PRIVATE_KEY = getenv("RECAPTCHA_PRIVATE_KEY")
+RECAPTCHA_LANGUAGE = 'en'
 
 
 SECRET_KEY = getenv("DJANGO_SECRET_KEY")
@@ -38,9 +41,9 @@ if not DEBUG:
     SESSION_COOKIE_HTTPONLY = True
     SESSION_EXPIRE_AT_BROWSER_CLOSE = True
     # SESSION_COOKIE_SECURE = True
-    SESSION_COOKIE_DOMAIN = BASE_DOMAIN
-    SESSION_COOKIE_AGE = 7200
     # SESSION_COOKIE_SAMESITE = 'Strict'
+    SESSION_COOKIE_DOMAIN = BASE_DOMAIN
+    SESSION_COOKIE_AGE = 28800  # 8 hours
     SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
     SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -103,6 +106,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'service_admin.apps.ServiceAdminConfig',
     'cms.apps.CMSConfig',
+    'snowpenguin.django.recaptcha2',
     'guardian',
     'markdownx',
     'django_admin_json_editor',
