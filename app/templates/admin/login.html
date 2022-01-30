@@ -1,6 +1,9 @@
 {% extends "admin/base_site.html" %}
-{% load i18n static %}
+{% load i18n static recaptcha2 %}
 
+{% block head %}
+	{% recaptcha_explicit_support %}
+{% endblock %}
 {% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/login.css" %}">
 {{ form.media }}
 {% endblock %}
@@ -43,26 +46,44 @@
 </p>
 {% endif %}
 
+<div class="govuk-grid-column-full">
 <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
-  <div class="form-row">
+  <div class="form-row govuk-grid-row">
     {{ form.username.errors }}
     {{ form.username.label_tag }} {{ form.username }}
   </div>
-  <div class="form-row">
+  <div class="form-row govuk-grid-row">
     {{ form.password.errors }}
     {{ form.password.label_tag }} {{ form.password }}
     <input type="hidden" name="next" value="{{ next }}">
   </div>
   {% url 'admin_password_reset' as password_reset_url %}
   {% if password_reset_url %}
-  <div class="password-reset-link">
+  <div class="password-reset-link govuk-grid-row">
     <a href="{{ password_reset_url }}">{% translate 'Forgotten your password or username?' %}</a>
   </div>
   {% endif %}
-  <div class="submit-row">
+  <div class="submit-row govuk-grid-row">
     <input type="submit" value="{% translate 'Log in' %}">
   </div>
+	<div class="govuk-grid-row">
+  <div id="recaptcha" style="margin-top: 1rem;" data-sitekey="{% recaptcha_key %}"></div>
+	</div>
 </form>
+</div>
 
 </div>
+	{% if not debug %}
+		{% block extra_js %}
+		  <script type="application/javascript">
+		    django_recaptcha_callbacks.push(function() {
+		        grecaptcha.render('recaptcha', {
+		            'theme': 'light',
+		            'sitekey': '{% recaptcha_key %}'
+		        })
+		    });
+		  </script>
+		  {% recaptcha_explicit_init %}
+		{% endblock %}
+	{% endif %}
 {% endblock %}
