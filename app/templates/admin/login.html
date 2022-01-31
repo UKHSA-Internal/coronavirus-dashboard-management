@@ -38,7 +38,7 @@
 <div id="content-main">
 
 {% if user.is_authenticated %}
-<p class="errornote">
+<p class="errornote govuk-!-padding-right-2">
 {% blocktranslate trimmed %}
     You are authenticated as {{ username }}, but are not authorized to
     access this page. Would you like to login to a different account?
@@ -46,29 +46,33 @@
 </p>
 {% endif %}
 
-<div class="govuk-grid-column-full">
+<div class="govuk-!-padding-right-2">
 <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
-  <div class="form-row govuk-grid-row">
+  <div class="form-row">
     {{ form.username.errors }}
     {{ form.username.label_tag }} {{ form.username }}
   </div>
-  <div class="form-row govuk-grid-row">
+  <div class="form-row">
     {{ form.password.errors }}
     {{ form.password.label_tag }} {{ form.password }}
     <input type="hidden" name="next" value="{{ next }}">
   </div>
   {% url 'admin_password_reset' as password_reset_url %}
   {% if password_reset_url %}
-  <div class="password-reset-link govuk-grid-row">
+  <div class="password-reset-link">
     <a href="{{ password_reset_url }}">{% translate 'Forgotten your password or username?' %}</a>
   </div>
   {% endif %}
-  <div class="submit-row govuk-grid-row">
+	<div class="form-row">
+		<div class="govuk-!-margin-top-2">
+			{{ form.captcha.errors }}
+	    <div id="recaptcha" style="margin-top: 1rem;" data-sitekey="{% recaptcha_key %}"></div>
+		</div>
+	</div>
+  <div class="submit-row">
     <input type="submit" value="{% translate 'Log in' %}">
   </div>
-	<div class="govuk-grid-row">
-  <div id="recaptcha" style="margin-top: 1rem;" data-sitekey="{% recaptcha_key %}"></div>
-	</div>
+
 </form>
 </div>
 
