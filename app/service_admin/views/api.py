@@ -34,6 +34,8 @@ def get_flesch_level(score):
         return "Fairly difficult"
     elif score >= 30:
         return "Difficult"
+    elif score >= 20:
+        return "Very difficult"
     else:
         return "Confusing"
 
