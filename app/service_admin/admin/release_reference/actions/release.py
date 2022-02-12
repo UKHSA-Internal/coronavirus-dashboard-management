@@ -33,6 +33,8 @@ __all__ = [
 
 
 TOPIC_NAME = "data-despatch"
+FLUSH_ALL = "ALL"
+FLUSH_TOPIC = "cache_flusher"
 SERVICE_NAME = getattr(ServiceName, settings.ENVIRONMENT)
 
 logger = getLogger("django")
@@ -103,6 +105,27 @@ def release_selected(modeladmin, request, queryset):
     if despatch is None:
         despatch = Despatch.objects.create(timestamp=timestamp)
 
+        messages.info(
+            request,
+            _('New despatch object [%s] created at %s on %s') % (
+                str(despatch.id),
+                f"{despatch.timestamp:%H:%M:%S}",
+                f"{despatch.timestamp:%A, %-d %B %Y}"
+            )
+        )
+    else:
+        messages.warning(
+            request,
+            _(
+                'Found an existing despatch object [%s] created within the last '
+                'hour (%s on %s). The object was recycled - timestamp will not be updated.'
+            ) % (
+                str(despatch.id),
+                f"{despatch.timestamp:%H:%M:%S}",
+                f"{despatch.timestamp:%A, %-d %B %Y}"
+            )
+        )
+
     LogEntry.objects.log_action(
         user_id=request.user.id,
         content_type_id=ContentType.objects.get_for_model(despatch).pk,
@@ -162,15 +185,48 @@ def release_selected(modeladmin, request, queryset):
 
     DespatchToRelease.objects.bulk_create(new_objects)
 
-    timestamp = timestamp.isoformat()
+    messages.success(
+        request,
+        _("Successfully released %d items - despatch object [%s] timestamp: %s on %s") % (
+            len(new_objects),
+            str(despatch.id),
+            f"{despatch.timestamp:%H:%M:%S}",
+            f"{despatch.timestamp:%A, %-d %B %Y}"
+        )
+    )
 
-    message = ServiceBusMessage(dumps({
-        "event": "data despatched.",
-        "instance_id": get_minute_instance_id(TOPIC_NAME),
-        "ENVIRONMENT": settings.API_ENV,
-        "timestamp": datetime.utcnow().isoformat(),
-        "releaseTimestamp": timestamp
-    }))
+    # Perform despatch processes immediately.
+    despatch_exec_time = datetime.utcnow()
+    despatch_message = ServiceBusMessage(
+        body=dumps({
+            "event": "data despatched.",
+            "instance_id": get_minute_instance_id(TOPIC_NAME),
+            "ENVIRONMENT": settings.API_ENV,
+            "despatch_timestamp": despatch.timestamp.isoformat(),
+            "generated_at": despatch_exec_time.isoformat(),
+            "scheduled_for": despatch_exec_time.isoformat(),
+            "timestamp": despatch_exec_time.isoformat(),
+            "releaseTimestamp": timestamp.isoformat(),
+        }),
+        session_id=request.session.session_key,
+        message_id=get_minute_instance_id(FLUSH_ALL),
+        scheduled_enqueue_time_utc=despatch_exec_time
+    )
+
+    # Schedule cache flusher to run 150 seconds later.
+    flush_execution_time = datetime.utcnow() + timedelta(minutes=2, seconds=30)
+    cache_flush_message = ServiceBusMessage(
+        body=dumps({
+            "ENVIRONMENT": settings.API_ENV,
+            "to": FLUSH_ALL,
+            "generated_at": timestamp.isoformat(),
+            "scheduled_for": flush_execution_time.isoformat(),
+        }),
+        session_id=request.session.session_key,
+        to=FLUSH_ALL,
+        message_id=get_minute_instance_id(FLUSH_ALL),
+        scheduled_enqueue_time_utc=flush_execution_time
+    )
 
     try:
         sb_client = ServiceBusClient.from_connection_string(
@@ -178,21 +234,32 @@ def release_selected(modeladmin, request, queryset):
             logging_enable=True
         )
 
+        # Send despatch
         with sb_client, sb_client.get_topic_sender(topic_name=TOPIC_NAME) as sender:
-            sender.send_messages(message)
+            sender.send_messages(despatch_message)
+
+        messages.info(
+            request,
+            _("Despatch jobs were scheduled at %s for immediate execution.") % f"{despatch_exec_time:%H:%M:%S}"
+        )
+
+        # Send cache flusher
+        with sb_client, sb_client.get_topic_sender(topic_name=FLUSH_TOPIC) as sender:
+            sender.send_messages(cache_flush_message)
+
+        messages.info(
+            request,
+            _(
+                "Redis cache has been scheduled to be flushed at %s. Fresh data are "
+                "expected to appear universally approximately 30 seconds later."
+            ) % f"{flush_execution_time:%H:%M:%S}"
+        )
 
     except ServiceBusError as err:
         messages.warning(request, _(f"Failed to trigger post-despatch processes."))
         logger.exception(err)
 
-    return messages.success(
-        request,
-        _(f"Successfully released %d items - timestamp: %s on %s") % (
-            len(new_objects),
-            f"{despatch.timestamp:%H:%M:%S}",
-            f"{despatch.timestamp:%A, %-d %B %Y}"
-        )
-    )
+    messages.success(request, _("Greenhouse despatch tasks have been successfully completed."))
 
 
 release_selected.short_description = _(f"Despatch selected items on {SERVICE_NAME.capitalize()}")
