@@ -50,7 +50,7 @@ class ConfirmDespatchForm(Form):
         ))
     )
     release_date = DateField(
-        help_text=(
+        help_text=_(
             "Select a date that matches the date for all "
             "of the items you are attempting to despatch."
         ),
@@ -65,7 +65,7 @@ class ConfirmDespatchForm(Form):
         data = self.cleaned_data['environment_name']
 
         if data.lower() != SERVICE_NAME.lower():
-            raise ValidationError("Environment name does not match.")
+            raise ValidationError(_("Environment name does not match."))
 
         return data
 
@@ -75,7 +75,9 @@ class ConfirmDespatchForm(Form):
 
         for item in self.data_dates:
             if item != data:
-                raise ValidationError(f"The date you entered does not match the data date of '{item}'.")
+                raise ValidationError(
+                    _(f"The date you entered does not match the data date of '%s'.") % str(item)
+                )
 
         return data
 
@@ -217,6 +219,7 @@ def release_selected(modeladmin, request, queryset):
     flush_execution_time = datetime.utcnow() + timedelta(minutes=2, seconds=30)
     cache_flush_message = ServiceBusMessage(
         body=dumps({
+            "event": "flush all cache",
             "ENVIRONMENT": settings.API_ENV,
             "to": FLUSH_ALL,
             "generated_at": timestamp.isoformat(),
@@ -258,8 +261,8 @@ def release_selected(modeladmin, request, queryset):
     except ServiceBusError as err:
         messages.warning(request, _(f"Failed to trigger post-despatch processes."))
         logger.exception(err)
-
-    messages.success(request, _("Greenhouse despatch tasks have been successfully completed."))
+    else:
+        messages.success(request, _("Greenhouse despatch tasks have been successfully completed."))
 
 
 release_selected.short_description = _(f"Despatch selected items on {SERVICE_NAME.capitalize()}")
