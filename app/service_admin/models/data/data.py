@@ -21,6 +21,7 @@ PROCESS_TYPE_ENUM = [
     ('HEALTHCARE', _('Healthcare')),
     ('TESTING: MAIN', _("Testing")),
     ('CASES: MAIN', _("Cases")),
+    ('DEATHS: MAIN', _("Deaths")),
 ]
 
 
