@@ -110,9 +110,8 @@ RUN apt update                                                   && \
 # Installing Python requirements
 COPY ./requirements.txt                     $_INSTALLATION/requirements.txt
 
-RUN python3 -m pip install --no-cache-dir -U pip                                && \
-    python3 -m pip install --no-cache-dir setuptools                            && \
-    python3 -m pip install -U --no-cache-dir -r $_INSTALLATION/requirements.txt
+RUN pip install --no-cache-dir -U pip setuptools wheel && \
+    pip install -U --no-cache-dir -r $_INSTALLATION/requirements.txt
 
 # Nginx configurations
 COPY server/nginx/base.nginx                $_NGINX_BASE_PATH/nginx.conf
