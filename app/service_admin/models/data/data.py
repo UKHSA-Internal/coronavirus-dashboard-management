@@ -22,6 +22,8 @@ PROCESS_TYPE_ENUM = [
     ('TESTING: MAIN', _("Testing")),
     ('CASES: MAIN', _("Cases")),
     ('DEATHS: MAIN', _("Deaths")),
+    ('AGE-DEMOGRAPHICS: CASES - FIRST EPISODES', _("Age demographics: Cases - First episodes")),
+    ('AGE-DEMOGRAPHICS: CASES - REINFECTIONS', _("Age demographics: Cases - Reinfections")),
 ]
 
 
