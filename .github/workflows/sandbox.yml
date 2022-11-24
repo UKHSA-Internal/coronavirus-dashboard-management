@@ -1,4 +1,4 @@
-name: Deploy Dashboard Management / Greenhouse App to Sandbox Environment
+name: Deploy Dashboard Management / Greenhouse App to Sandbox Environment..
 
 on:
  push:
