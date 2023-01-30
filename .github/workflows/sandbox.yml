@@ -8,7 +8,9 @@ on:
 env:
   AZURE_APP_NAME: 'c19dashsbuksfe01greenhouse01' 
   NODE_VERSION: '14.x'
-  PYTHON_VERSION: '3.9'     
+  PYTHON_VERSION: '3.9'
+  DATASTORE_STORAGE_ACCOUNT_NAME: 
+  
 
 jobs:
  deploy:
@@ -78,5 +80,35 @@ jobs:
           --ignore=package.json --ignore=package-lock.json \
           --ignore=.babelrc --ignore=*.log --ignore=*.sh   \
           --noinput
+     cd ./app/static/
 
-   
+  - name: Log in with Azure
+    uses: azure/login@v1
+    with:
+     creds: '${{ secrets.AZURE_CREDENTIALS }}'
+     enable-AzPSSession: true
+
+
+  - name: Upload static assets Blob Storage
+    uses: Azure/powershell@v1
+    with:
+      inlineScript: |
+        DIR
+        #Write-Output "> Initialising for ${{ env.DATASTORE_STORAGE_ACCOUNT_NAME }}"
+        
+        ## Generate SAS token for the 'publicdata' container
+        #$expiry=(Get-Date).AddMinutes(10).ToString("yyyy-MM-ddTHH:mm:ssZ")
+        #Write-Output "> Generated expiry timestamp - $expiry"
+        #$sas=$(az storage container generate-sas --name static --account-name ${{ env.DATASTORE_STORAGE_ACCOUNT_NAME }} --permissions dlrw --expiry $expiry --auth-mode key -o tsv)
+        #Write-Output "> Generated SAS token"
+
+        ## Upload files using the generated SAS token. We are using the sync command of azcopy which removes old files from storage
+        #azcopy sync "$(System.DefaultWorkingDirectory)\dashboard-greenhouse-assets" "https://${{ env.DATASTORE_STORAGE_ACCOUNT_NAME }}.blob.core.windows.net/static/admin/?$sas" --recursive --put-md5
+        #Write-Output "> Uploaded the blobs"
+
+      azPSVersion: "latest"
+
+#  - name: Upload static assets Blob Storage
+
+#  - name: Set cache-control headers
+
