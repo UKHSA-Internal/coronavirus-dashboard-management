@@ -105,7 +105,7 @@ jobs:
         Write-Output "> Generated SAS token"
 
         # Upload files using the generated SAS token. We are using the sync command of azcopy which removes old files from storage
-        azcopy sync "app/static/*" "https://${{ env.DATASTORE_STORAGE_ACCOUNT_NAME }}.blob.core.windows.net/static/admin/?$sas" --recursive --put-md5
+        azcopy copy "app/static/*" "https://${{ env.DATASTORE_STORAGE_ACCOUNT_NAME }}.blob.core.windows.net/static/admin/?$sas" --recursive --put-md5
         Write-Output "> Uploaded the blobs"
 
       azPSVersion: "latest"
