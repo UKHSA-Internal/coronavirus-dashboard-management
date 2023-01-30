@@ -9,7 +9,7 @@ env:
   AZURE_APP_NAME: 'c19dashsbuksfe01greenhouse01' 
   NODE_VERSION: '14.x'
   PYTHON_VERSION: '3.9'
-  DATASTORE_STORAGE_ACCOUNT_NAME: 
+  DATASTORE_STORAGE_ACCOUNT_NAME: c19dashsbuksdatastore
   
 
 jobs:
@@ -81,6 +81,7 @@ jobs:
           --ignore=.babelrc --ignore=*.log --ignore=*.sh   \
           --noinput
      cd static
+     ls -la
 
   - name: Log in with Azure
     uses: azure/login@v1
@@ -93,7 +94,7 @@ jobs:
     uses: Azure/powershell@v1
     with:
       inlineScript: |
-        DIR
+        ls
         #Write-Output "> Initialising for ${{ env.DATASTORE_STORAGE_ACCOUNT_NAME }}"
         
         ## Generate SAS token for the 'publicdata' container
