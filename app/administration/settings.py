@@ -427,7 +427,13 @@ STATICFILES_STORAGE = 'storage.handler.AzureStorage'
 
 
 ETL_STORAGE = getenv("ETL_STORAGE")
-ETL_STORAGE_TABLE_NAME = f"c19dash{ENVIRONMENT[0].lower()}uketlfuncInstances"
+# This could be stored in the app configuration and retrieved from there
+# instead of dynamically generate it here
+ETL_STORAGE_TABLE_NAME = (
+    f"c19dash{ENVIRONMENT[0].lower()}uketlfuncInstances"
+    if ENVIRONMENT.upper() != 'SANDBOX'
+    else f"c19dashsbuketlfuncInstances"
+)
 AZURE_CONNECTION_STRING = STORAGE_CREDENTIALS = getenv("DeploymentBlobStorage")
 AZURE_SSL = True
 AZURE_UPLOAD_MAX_CONN = 10
